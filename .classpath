@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="G:/Dropbox/ECLIPSE/Libaries/Misc/DragonTravel.jar"/>
+	<classpathentry kind="lib" path="G:/Dropbox/ECLIPSE/Libaries/Misc/RideThaDragon.jar"/>
+	<classpathentry kind="lib" path="G:/Dropbox/ECLIPSE/Libaries/Permissions/EssentialsGroupManager.jar"/>
+	<classpathentry kind="lib" path="G:/Dropbox/ECLIPSE/Libaries/Permissions/PermissionsBukkit-1.6.jar"/>
+	<classpathentry kind="lib" path="G:/Dropbox/ECLIPSE/Libaries/Permissions/PermissionsEx.jar"/>
+	<classpathentry kind="lib" path="G:/Dropbox/ECLIPSE/Libaries/Permissions/Vault.jar"/>
+	<classpathentry kind="lib" path="G:/Dropbox/ECLIPSE/Libaries/bukkit/craftbukkit.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

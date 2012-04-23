@@ -1,0 +1,46 @@
+name: EnderdragonsPlus
+main: de.tobiyas.enderdragonsplus.EnderdragonsPlus
+version: 0.1
+website: http://
+author: tobiyas
+depend:
+softdepend: [DragonTravel, RideThaDragon]
+
+description: >
+             plugin to disable DragonPortals spawning and don't make them fly to spawn
+commands:
+  killenderdragons:
+    description: Kills all dragons in range (if range = 0, kills ALL dragons. Default is 100)
+    aliases: [kedp]
+    usage: |
+           /killenderdragons [range]
+  spawnenderdragon:
+    description: spawns a new LimitedEnderDragon to your position
+    aliases: [sedp]
+    usage: |
+           /spawnenderdragon
+  edpreload:
+    description: reloads the config of Enderdragons+
+    aliases: [edprc]
+    usage: |
+           /edpreload
+  edpgohome:
+    description: sends all LimitedEnderDragons to their home
+    aliases: [edpgh]
+    usage: |
+           /edpgohome
+  edpinfo:
+    description: info loaded
+    aliases: []
+    usage: |
+           /edpinfo
+  edpunload:
+    description: unloads all dragons
+    aliases: []
+    usage: |
+           /edpunload
+  edpload:
+    description: loads all dragons
+    aliases: []
+    usage: |
+           /edpload
