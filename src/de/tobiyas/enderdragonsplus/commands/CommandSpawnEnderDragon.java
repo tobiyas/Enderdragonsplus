@@ -51,7 +51,7 @@ public class CommandSpawnEnderDragon implements CommandExecutor {
 		
 		World world = ((CraftWorld)player.getWorld()).getHandle();
 		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world);
-		dragon.spawn();
+		dragon.spawn(false);
 		dragon.setHealth(plugin.interactConfig().getconfig_dragonHealth());
 		return dragon;
 	}

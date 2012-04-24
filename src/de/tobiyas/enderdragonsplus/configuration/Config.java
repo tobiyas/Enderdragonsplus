@@ -31,6 +31,10 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 	
 	private boolean config_ignorePlayerGamemode1;
 
+	private boolean config_disableEnderdragonBlockDamage;
+
+	private boolean config_neverUnloadChunkWithED;
+
 
 	public Config(EnderdragonsPlus plugin){
 		this.plugin = plugin;
@@ -53,6 +57,8 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 		config.addDefault("dragonDamage", 10);
 		config.addDefault("ignorePlayerGamemode1", true);
 		config.addDefault("fireBukkitEvents", false);
+		config.addDefault("disableEnderdragonBlockDamage", true);
+		config.addDefault("neverUnloadChunkWithED", false);
 		
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -75,6 +81,8 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 		config_dragonDamage = config.getInt("dragonDamage", 10);
 		config_ignorePlayerGamemode1 = config.getBoolean("ignorePlayerGamemode1");
 		config_fireBukkitEvents = config.getBoolean("fireBukkitEvents");
+		config_disableEnderdragonBlockDamage = config.getBoolean("disableEnderdragonBlockDamage", true);
+		config_neverUnloadChunkWithED = config.getBoolean("neverUnloadChunkWithED", false);
 	}
 	
 	public void reload(){
@@ -124,6 +132,14 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 
 	public boolean getconfig_fireBukkitEvents() {
 		return config_fireBukkitEvents;
+	}
+
+	public boolean getconfig_disableEnderdragonBlockDamage() {
+		return config_disableEnderdragonBlockDamage;
+	}
+	
+	public boolean getconfig_neverUnloadChunkWithED(){
+		return config_neverUnloadChunkWithED;
 	}
 
 }

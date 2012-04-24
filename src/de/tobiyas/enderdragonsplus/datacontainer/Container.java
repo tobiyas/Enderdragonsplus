@@ -59,7 +59,7 @@ public class Container {
 					container.dragon.remove();
 				}
 			}else{
-				
+				//handle unloaded dragons
 			}
 		}
 		
@@ -118,34 +118,38 @@ public class Container {
 		for(File child : children){
 			LimitedEnderDragon dragon = LimitedEnderDragon.loadFromFile(child.getPath());
 			if(dragon != null){
-				dragon.spawn();
+				if(!dragon.spawn(false)){
+					homeList.get(dragon.getID()).isLoaded = false;
+					homeList.get(dragon.getID()).firstLoad = true;
+					dragon.saveToPath();
+				}
 				i++;
 			}
 		}
 		
-		if(i != 0) plugin.log("Loaded " + i + " Dragons.");
+		if(i != 0) plugin.log("Loaded " + i + " Dragon(s).");
 	}
 	
 	public String loadDragonsInLoadedChunks(){
 		int i = 0;
 		String dragonPath = plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon.";
 		
-		List<Integer> toDelete = new LinkedList<Integer>();
+		List<Integer> toLoad = new LinkedList<Integer>();
 		
 		for(int id : homeList.keySet()){
 			if(!homeList.get(id).isLoaded){
-				if(homeList.get(id).location.getChunk().isLoaded()){
-					toDelete.add(id);
-					i++;
-				}
+				Location location = homeList.get(id).location;
+				if(location.getWorld().isChunkLoaded(getChunkX(location), getChunkY(location)))
+					toLoad.add(id);
+				i++;
 			}
 		}
 		
 		int j = 0;
-		for(int id : toDelete){
+		for(int id : toLoad){
 			LimitedEnderDragon dragon = LimitedEnderDragon.loadFromFile(dragonPath + id);
 			if(dragon == null) continue;
-			dragon.spawn();
+			dragon.spawn(false);
 			homeList.remove(id);
 			j++;
 		}
@@ -201,27 +205,25 @@ public class Container {
 		for(int id : homeList.keySet()){
 			DragonInfoContainer con = homeList.get(id);
 			if(con.isLoaded) continue;
-			if(con.location.getChunk().equals(chunk)){
+			if(locationIsInChunk(con.location, chunk)){
 				if(plugin.interactConfig().getconfig_debugOutput()) 
 					plugin.log("loading: " + con.ID);
 				
 				String path = plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon.";
 				LimitedEnderDragon dragon = LimitedEnderDragon.loadFromFile(path + con.ID);
-				dragon.spawn();
+				dragon.spawn(con.firstLoad);
 				homeList.remove(con.ID);
 			}
 		}
 	}
 
 	public void saveDragon(int entityId) {
+		if(plugin.interactConfig().getconfig_debugOutput())
+			plugin.log("Saving Dragon: " + entityId);
 		DragonInfoContainer con = homeList.get(entityId);
 		con.dragon.saveToPath();
 		con.location = con.dragon.getLocation();
-		con.dragon.remove();
 		con.isLoaded = false;
-		
-		if(plugin.interactConfig().getconfig_debugOutput()) 
-			plugin.log("saving: " + con.ID);
 	}
 	
 	public int loaded(){
@@ -235,5 +237,43 @@ public class Container {
 	
 	public int count(){
 		return homeList.size();
+	}
+	
+	public LimitedEnderDragon getDragonById(int id){
+		DragonInfoContainer con = homeList.get(id);
+		if(con == null || !con.isLoaded) return null;
+		return con.dragon;
+	}
+	
+	
+	private boolean locationIsInChunk(Location location, Chunk chunk){
+		int chunkX = chunk.getX();
+		int chunkZ = chunk.getZ();
+
+		int locX = getChunkX(location);
+		int locZ = getChunkY(location);
+		
+		return chunkX == locX && chunkZ == locZ;
+	}
+	
+	private int getChunkX(Location loc){
+		int locX = loc.getBlockX();
+		if(locX < 0)
+			locX = (((locX-1) / 16)-1);
+		else
+			locX /= 16;
+		
+		return locX;
+	}
+	
+	private int getChunkY(Location loc){
+		int locZ = loc.getBlockZ();
+				
+		if(locZ < 0) 
+			locZ = (((locZ-1) / 16)-1);
+		else
+			locZ /= 16;
+		
+		return locZ;
 	}
 }

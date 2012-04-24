@@ -61,7 +61,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	public LimitedEnderDragon(World world){
 		super(world);
-		plugin = EnderdragonsPlus.getPlugin();
+		remove();
 	}
 	
 	private void checkRegainHealth() {
@@ -311,7 +311,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
             if (!this.world.isStatic && this.at == 0) {
                 this.a(this.world.getEntities(this, this.l.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0.0D)));
                 this.a(this.world.getEntities(this, this.m.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0.0D)));
-                this.b(this.world.getEntities(this, this.g.boundingBox.grow(1.0D, 1.0D, 1.0D)));
+                this.damageEntities(this.world.getEntities(this, this.g.boundingBox.grow(1.0D, 1.0D, 1.0D)));
             }
 
             double[] adouble = this.a(5, 1.0F);
@@ -339,7 +339,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
                 }
 
                 double[] adouble2 = this.a(12 + j * 2, 1.0F);
-                float f14 = this.yaw * (float)Math.PI / 180.0F + this.fixRotation(adouble2[0] - adouble[0]) * (float)Math.PI / 180.0F * 1.0F;
+                float f14 = this.yaw * (float)Math.PI / 180.0F + this.normRotation(adouble2[0] - adouble[0]) * (float)Math.PI / 180.0F * 1.0F;
                 float f15 = MathHelper.sin(f14);
                 float f16 = MathHelper.cos(f14);
                 float f17 = 1.5F;
@@ -357,47 +357,52 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	 private void C() {}
 	
-	 private void a(List<?> list) {
-	        double d0 = (this.h.boundingBox.a + this.h.boundingBox.d) / 2.0D;
-	        double d1 = (this.h.boundingBox.c + this.h.boundingBox.f) / 2.0D;
-	        Iterator<?> iterator = list.iterator();
+	private void a(List<?> list) {
+	    double d0 = (this.h.boundingBox.a + this.h.boundingBox.d) / 2.0D;
+	    double d1 = (this.h.boundingBox.c + this.h.boundingBox.f) / 2.0D;
+	    Iterator<?> iterator = list.iterator();
 
-	        while (iterator.hasNext()) {
-	            Entity entity = (Entity) iterator.next();
+	    while (iterator.hasNext()) {
+	        Entity entity = (Entity) iterator.next();
 
-	            if (entity instanceof EntityLiving) {
-	                double d2 = entity.locX - d0;
-	                double d3 = entity.locZ - d1;
-	                double d4 = d2 * d2 + d3 * d3;
+	        if (entity instanceof EntityLiving) {
+	            double d2 = entity.locX - d0;
+	            double d3 = entity.locZ - d1;
+	            double d4 = d2 * d2 + d3 * d3;
 
-	                entity.b_(d2 / d4 * 4.0D, 0.2D, d3 / d4 * 4.0D);
-	            }
+	           entity.b_(d2 / d4 * 4.0D, 0.2D, d3 / d4 * 4.0D);
 	        }
 	    }
+	}
 
-	    private void b(List<?> list) {
-	        for (int i = 0; i < list.size(); ++i) {
-	            Entity entity = (Entity) list.get(i);
+	private void damageEntities(List<?> list) {
+	    for (int i = 0; i < list.size(); ++i) {
+	        Entity entity = (Entity) list.get(i);
 
-	            if (entity instanceof EntityLiving) {
-	                // CraftBukkit start - throw damage events when the dragon attacks
-	                // The EntityHuman case is handled in EntityHuman, so don't throw it here
-	                if (!(entity instanceof EntityHuman)) {
-	                    org.bukkit.event.entity.EntityDamageByEntityEvent damageEvent = new org.bukkit.event.entity.EntityDamageByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK, 10);
-	                    Bukkit.getPluginManager().callEvent(damageEvent);
+	        if (entity instanceof EntityLiving) {
+	            // CraftBukkit start - throw damage events when the dragon attacks
+	            // The EntityHuman case is handled in EntityHuman, so don't throw it here
+	            if (!(entity instanceof EntityHuman)) {
+	                org.bukkit.event.entity.EntityDamageByEntityEvent damageEvent = 
+	                		new org.bukkit.event.entity.EntityDamageByEntityEvent(this.getBukkitEntity(), 
+	            			entity.getBukkitEntity(), 
+	                		org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK, 
+	                		plugin.interactConfig().getconfig_dragonDamage());
+	                
+	                Bukkit.getPluginManager().callEvent(damageEvent);
 
-	                    if (!damageEvent.isCancelled()) {
-	                        entity.damageEntity(DamageSource.mobAttack(this), damageEvent.getDamage());
-	                    }
-	                } else {
-	                    entity.damageEntity(DamageSource.mobAttack(this), 10);
+	                if (!damageEvent.isCancelled()) {
+	                    entity.damageEntity(DamageSource.mobAttack(this), damageEvent.getDamage());
 	                }
-	                // CraftBukkit end
+	            } else {
+	                entity.damageEntity(DamageSource.mobAttack(this), plugin.interactConfig().getconfig_dragonDamage());
 	            }
+	                // CraftBukkit end
 	        }
 	    }
+	}
 	
-	private float fixRotation(double d0) {
+	private float normRotation(double d0) {
         while (d0 >= 180.0D) {
             d0 -= 360.0D;
         }
@@ -488,7 +493,6 @@ public class LimitedEnderDragon extends EntityEnderDragon {
         	for(Entity player : list){
         		if(plugin.interactConfig().getconfig_ignorePlayerGamemode1()){
         			Player bukkitPlayer = (Player) player.getBukkitEntity();
-        			plugin.log(bukkitPlayer.getName() + "  " + bukkitPlayer.getGameMode().getValue());
         			if(bukkitPlayer.getGameMode().getValue() == 1) continue;
         		}
         		
@@ -545,7 +549,6 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			
 			LimitedEnderDragon.broadcastedError = 0;
 			plugin.log("An Error has Accured. Tried to access to an illigel mob (function: changeTarget). Disabling ErrorMessage for massive Spaming!");
-			plugin.log("ID: " + getID() + " IDs: " + plugin.getContainer().getAllIDs());
 			e.printStackTrace();
 			return;
 		}
@@ -600,14 +603,16 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		return getBukkitEntity().getLocation();
 	}
 	
-	public void spawn(){
-		spawnCraftBukkit();
+	public boolean spawn(boolean firstLoad){
+		return spawnCraftBukkit(firstLoad);
 	}
 	
-	private void spawnCraftBukkit(){
+	private boolean spawnCraftBukkit(boolean firstLoad){
 		World world = ((CraftWorld) getLocation().getWorld()).getHandle();
-		world.addEntity(this);
+		if(firstLoad) this.getLocation().getChunk().isLoaded();
+		if(!world.addEntity(this)) return false;
 		setPosition(locX, locY, locZ);
+		return true;
 	}
 	
 	public boolean saveToPath(){
@@ -637,13 +642,14 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			plugin.log("Could not save Dragon.");
 			return false;
 		}
-		
+
 		return true;
 	}
 	
 	public static LimitedEnderDragon loadFromFile(String path){
 		File file = new File(path);
-		if(!file.exists()) return null;
+		if(!file.exists())
+			return null;
 		
 		YamlConfiguration config = new YamlConfiguration();
 		try{
@@ -691,5 +697,24 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	private boolean getFlyingHome(){
 		return plugin.getContainer().getFlyingHome(getBukkitEntity().getEntityId());
-	}	
+	}
+	
+	public void setTarget(LivingEntity entity){
+		Entity nextTarget = ((org.bukkit.craftbukkit.entity.CraftEntity)entity).getHandle();
+		//fire bukkit event: Target change
+    	if(plugin.interactConfig().getconfig_fireBukkitEvents()){
+    		if(!u.equals(nextTarget)){
+    			EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), (LivingEntity)nextTarget, TargetReason.RANDOM_TARGET);
+    			this.world.getServer().getPluginManager().callEvent(event);
+    			if(!event.isCancelled())
+    				this.u = nextTarget;
+    		}
+    	}else
+    		this.u = nextTarget;
+	}
+	
+	public org.bukkit.entity.Entity getTarget(){
+		if(u == null) return null;
+		return this.u.getBukkitEntity();
+	}
 }

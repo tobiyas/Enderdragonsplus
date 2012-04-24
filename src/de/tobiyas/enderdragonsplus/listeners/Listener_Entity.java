@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
@@ -64,6 +65,15 @@ public class Listener_Entity implements Listener {
 	}
 	
 	@EventHandler
+	public void onEnderDragonExlplode(EntityExplodeEvent event) {
+		if(!plugin.interactConfig().getconfig_disableEnderdragonBlockDamage()) return;
+		int id = event.getEntity().getEntityId();
+		if (plugin.getContainer().containsID(id)) {
+			event.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
 	public void event(EntityDamageByEntityEvent event){
 		if(event.isCancelled()) return;
 		if(!event.getDamager().getType().equals(EntityType.ENDER_DRAGON)) return;
@@ -76,7 +86,7 @@ public class Listener_Entity implements Listener {
 	private LimitedEnderDragon spawnLimitedEnderDragon(Location location){
 		World world = ((CraftWorld)location.getWorld()).getHandle();
 		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world);
-		dragon.spawn();
+		dragon.spawn(false);
 		dragon.setHealth(plugin.interactConfig().getconfig_dragonHealth());
 		return dragon;
 	}

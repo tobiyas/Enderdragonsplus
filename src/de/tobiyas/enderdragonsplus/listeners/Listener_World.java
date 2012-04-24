@@ -23,6 +23,10 @@ public class Listener_World implements Listener{
 		Chunk chunk = event.getChunk();
 		for(Entity entity : chunk.getEntities()){
 			if(plugin.getContainer().containsID(entity.getEntityId())){
+				if(plugin.interactConfig().getconfig_neverUnloadChunkWithED()){
+					event.setCancelled(true);
+					return;
+				}
 				plugin.getContainer().saveDragon(entity.getEntityId());
 			}
 		}
@@ -34,7 +38,8 @@ public class Listener_World implements Listener{
 			Chunk chunk = event.getChunk();
 			plugin.getContainer().loadDragonsInChunk(chunk);
 		}catch(Exception e){
-			if(plugin.interactConfig().getconfig_debugOutput()) plugin.log("DEBUG: Chunk load error.");
+			e.printStackTrace();
+			if(plugin.interactConfig().getconfig_debugOutput()) plugin.log("DEBUG: Dragon in Chunk load error.");
 		}
 	}	
 }

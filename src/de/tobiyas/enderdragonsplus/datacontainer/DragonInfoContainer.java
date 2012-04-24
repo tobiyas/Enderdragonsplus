@@ -12,6 +12,7 @@ public class DragonInfoContainer {
 	public boolean flyingHome;
 	public boolean isLoaded;
 	public LimitedEnderDragon dragon;
+	public boolean firstLoad = true;
 	
 	
 	public DragonInfoContainer(int ID, Location location, Location homeLocation, boolean flyingHome, boolean isLoaded, LimitedEnderDragon dragon){
