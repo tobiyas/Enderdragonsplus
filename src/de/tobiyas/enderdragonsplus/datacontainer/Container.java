@@ -276,4 +276,16 @@ public class Container {
 		
 		return locZ;
 	}
+	
+	public Location getPositionByID(int id){
+		DragonInfoContainer con = homeList.get(id);
+		if(con == null) return null;
+		return con.location;
+	}
+
+	public boolean isLoaded(int id) {
+		DragonInfoContainer con = homeList.get(id);
+		if(con == null) return false;
+		return con.isLoaded;
+	}
 }

@@ -37,6 +37,10 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	private EnderdragonsPlus plugin;
 	public static int broadcastedError = 0;
 	
+	private Location forceGoTo;
+	
+	private int logicCall = 0;
+	
 	public LimitedEnderDragon(Location location, World world){
 		super(world);
 		
@@ -107,6 +111,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	@Override
 	public void e() {
+		logicCall++;
         this.n = this.o;
         if (!this.world.isStatic) {
             this.datawatcher.watch(16, Integer.valueOf(this.health));
@@ -485,7 +490,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		if(getVectorDistance(homeLocation, includeHeight) > homeRange)
 			plugin.getContainer().setFlyingHome(getID(), true);
 			
-		if(getFlyingHome()) force = true;
+		if(getFlyingHome() || forceGoTo != null) force = true;
         if (!force && this.random.nextInt(2) == 0 && this.world.players.size() > 0) {
         	List<Entity> list = this.world.players;
         	List<Entity> targets = new LinkedList<Entity>();
@@ -519,27 +524,9 @@ public class LimitedEnderDragon extends EntityEnderDragon {
         	}else
         		this.u = nextTarget;
            
-        } else {
-            boolean flag = false;
-            
-            if(getVectorDistance(homeLocation, includeHeight) < 100)
-            	plugin.getContainer().setFlyingHome(getID(), false);
-            
-            do {
-                this.a = homeLocation.getX();
-                this.b = (double) (70.0F + this.random.nextFloat() * 50.0F);
-                this.c = homeLocation.getZ();
-                this.a += (double) (this.random.nextFloat() * 120.0F - 60.0F);
-                this.c += (double) (this.random.nextFloat() * 120.0F - 60.0F);
-                double d0 = this.locX - this.a;
-                double d1 = this.locY - this.b;
-                double d2 = this.locZ - this.c;
-
-                flag = d0 * d0 + d1 * d1 + d2 * d2 > 100.0D;
-            } while (!flag);
-
-            this.u = null;
-        }
+        } else 
+            setNewTarget(homeLocation, false);
+        
 		}catch(Exception e){
 			if(!plugin.interactConfig().getconfig_debugOutput()) return;
 			if(LimitedEnderDragon.broadcastedError != 10){
@@ -553,6 +540,51 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			return;
 		}
 	}
+	
+	
+	private void setNewTarget(Location location, boolean lockTarget){
+		boolean includeHeight = plugin.interactConfig().getconfig_includeHeight();
+		
+		if(lockTarget)
+			forceGoTo = location;
+		
+		if(forceGoTo != null)
+			location = forceGoTo;
+        
+        if(getVectorDistance(location, includeHeight) < 30){
+        	plugin.getContainer().setFlyingHome(getID(), false);
+        	if(forceGoTo != null){
+        		forceGoTo = null;
+        		location = plugin.getContainer().getHomeByID(this.getID());
+        		return;
+        	}
+        }
+        
+        double vecDistance = 0;
+        do {
+	        this.a = location.getX();
+	        this.b = (double) (70.0F + this.random.nextFloat() * 50.0F);            
+	        this.c = location.getZ();
+	        if(forceGoTo == null){
+	        	this.a += (double) (this.random.nextFloat() * 120.0F - 60.0F);
+	        	this.c += (double) (this.random.nextFloat() * 120.0F - 60.0F);
+	        
+	            
+	        	double distanceX = this.locX - this.a;
+	        	double distanceY = this.locY - this.b;
+	        	double distanceZ = this.locZ - this.c;
+	        
+	        	vecDistance = distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ;
+	        }else{
+	        	this.b = location.getY();
+	        	vecDistance = 101;
+	        }
+	       
+	    } while (vecDistance < 100);
+
+        this.u = null;
+	}
+	
 	
 	public boolean isInRange(Location location, int range, boolean includeHeight){
 		if(range == 0) return true;
@@ -633,6 +665,13 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		config.set("actualPosition.y", locY);
 		config.set("actualPosition.z", locZ);
 		
+		if(forceGoTo != null){
+			config.set("forceTarget.x", forceGoTo.getX());
+			config.set("forceTarget.y", forceGoTo.getY());
+			config.set("forceTarget.z", forceGoTo.getZ());
+			config.set("forceTarget.world", forceGoTo.getWorld().getName());
+		}
+		
 		config.set("flyingHome", getFlyingHome());
 		
 		config.set("health", this.getHealth());
@@ -680,6 +719,17 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		dragon.locY = actY;
 		dragon.locZ = actZ;
 		
+		if(config.isString("forceTarget.world")){
+			double forceLocationX = config.getDouble("forceTarget.x");
+			double forceLocationY = config.getDouble("forceTarget.y");
+			double forceLocationZ = config.getDouble("forceTarget.z");
+			String forceLocationWorld = config.getString("forceTarget.world");
+			
+			org.bukkit.World forceWorld = Bukkit.getWorld(forceLocationWorld);
+			Location forceLocation = new Location(forceWorld, forceLocationX, forceLocationY, forceLocationZ);
+			dragon.goToLocation(forceLocation);
+		}
+		
 		dragon.setHealth(health);
 		EnderdragonsPlus.getPlugin().getContainer().setFlyingHome(dragon.getID(), flyingHome);
 
@@ -716,5 +766,15 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	public org.bukkit.entity.Entity getTarget(){
 		if(u == null) return null;
 		return this.u.getBukkitEntity();
+	}
+	
+	public int getLogicCalls(){
+		int calls = logicCall;
+		logicCall = 0;
+		return calls;
+	}
+	
+	public void goToLocation(Location location){
+		setNewTarget(location, true);
 	}
 }

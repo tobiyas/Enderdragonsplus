@@ -1,5 +1,6 @@
 package de.tobiyas.enderdragonsplus.API;
 
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -22,6 +23,15 @@ public class DragonAPI {
 	
 	public static boolean setTarget(LivingEntity dragon, Player player){
 		return setTarget(dragon, (LivingEntity) player);
+	}
+	
+	public static boolean setTarget(LivingEntity dragon, Location location){
+		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getEntityId());
+		if(LEdragon == null)
+			return false;
+		
+		LEdragon.goToLocation(location);
+		return true;
 	}
 	
 	public static boolean sendHome(LivingEntity dragon){

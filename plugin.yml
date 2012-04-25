@@ -44,3 +44,8 @@ commands:
     aliases: []
     usage: |
            /edpload
+  gethere:
+    description: fsa
+    aliases: []
+    usage: |
+           /gethere

@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import de.tobiyas.enderdragonsplus.bridges.BridgeController;
+import de.tobiyas.enderdragonsplus.commands.CommandDEBUGGOTO;
 import de.tobiyas.enderdragonsplus.commands.CommandGoHome;
 import de.tobiyas.enderdragonsplus.commands.CommandInfo;
 import de.tobiyas.enderdragonsplus.commands.CommandKillEnderDragon;
@@ -28,6 +29,7 @@ import de.tobiyas.enderdragonsplus.commands.CommandSpawnEnderDragon;
 import de.tobiyas.enderdragonsplus.commands.CommandUnloadAll;
 import de.tobiyas.enderdragonsplus.configuration.Config;
 import de.tobiyas.enderdragonsplus.datacontainer.Container;
+import de.tobiyas.enderdragonsplus.datacontainer.DragonLogicTicker;
 import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Entity;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
@@ -67,8 +69,8 @@ public class EnderdragonsPlus extends JavaPlugin{
 		registerCommands();
 		
 		container.loadContainer();
-
 		checkDepends();
+		registerTasks();
 		
 		log(description.getFullName() + " fully loaded with: " + permissionManager.getPermissionsName());
 	}
@@ -120,6 +122,12 @@ public class EnderdragonsPlus extends JavaPlugin{
 		new CommandInfo();
 		new CommandUnloadAll();
 		new CommandLoadAll();
+		
+		new CommandDEBUGGOTO();
+	}
+	
+	private void registerTasks(){
+		new DragonLogicTicker();
 	}
 
 

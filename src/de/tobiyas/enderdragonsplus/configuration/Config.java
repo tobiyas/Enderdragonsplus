@@ -35,6 +35,8 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 
 	private boolean config_neverUnloadChunkWithED;
 
+	private int config_ticksWhenOutOfRange;
+
 
 	public Config(EnderdragonsPlus plugin){
 		this.plugin = plugin;
@@ -59,6 +61,7 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 		config.addDefault("fireBukkitEvents", false);
 		config.addDefault("disableEnderdragonBlockDamage", true);
 		config.addDefault("neverUnloadChunkWithED", false);
+		config.addDefault("ticksPerSecondWhenOutOfRange", 25);
 		
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
@@ -83,6 +86,7 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 		config_fireBukkitEvents = config.getBoolean("fireBukkitEvents");
 		config_disableEnderdragonBlockDamage = config.getBoolean("disableEnderdragonBlockDamage", true);
 		config_neverUnloadChunkWithED = config.getBoolean("neverUnloadChunkWithED", false);
+		config_ticksWhenOutOfRange = config.getInt("ticksPerSecondWhenOutOfRange", 25);
 	}
 	
 	public void reload(){
@@ -140,6 +144,10 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 	
 	public boolean getconfig_neverUnloadChunkWithED(){
 		return config_neverUnloadChunkWithED;
+	}
+	
+	public int getconfig_ticksPerSeconds(){
+		return config_ticksWhenOutOfRange;
 	}
 
 }

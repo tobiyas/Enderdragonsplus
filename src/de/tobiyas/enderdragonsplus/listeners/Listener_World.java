@@ -28,6 +28,7 @@ public class Listener_World implements Listener{
 					return;
 				}
 				plugin.getContainer().saveDragon(entity.getEntityId());
+				entity.remove();
 			}
 		}
 	}
