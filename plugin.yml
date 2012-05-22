@@ -1,13 +1,13 @@
 name: EnderdragonsPlus
 main: de.tobiyas.enderdragonsplus.EnderdragonsPlus
-version: 1.0
-website: http://
+version: 1.1
+website: http://dev.bukkit.org/server-mods/enderdragonsplus/
 author: tobiyas
 depend:
 softdepend: [DragonTravel, RideThaDragon]
 
 description: >
-             plugin to disable DragonPortals spawning and don't make them fly to spawn
+             plugin to disable DragonPortals spawning and dont make them fly to spawn
 commands:
   killenderdragons:
     description: Kills all dragons in range (if range = 0, kills ALL dragons. Default is 100)
@@ -44,8 +44,8 @@ commands:
     aliases: []
     usage: |
            /edpload
-  gethere:
-    description: fsa
-    aliases: []
-    usage: |
-           /gethere
+#  gethere:
+#    description: fsa
+#    aliases: []
+#    usage: |
+#           /gethere

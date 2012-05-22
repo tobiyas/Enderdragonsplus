@@ -8,9 +8,7 @@
  package de.tobiyas.enderdragonsplus.configuration;
 
  
- import org.bukkit.configuration.file.FileConfiguration;
-
-import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
+ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 
  
  public class Config{
@@ -18,7 +16,7 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 
 	private EnderdragonsPlus plugin;
 
-	private boolean config_active;
+	private boolean config_deactivateDragonTemples;
 	private boolean config_includeHeight;
 	private int config_maxFollowDistance;
 	private int config_maxHomeDistance;
@@ -26,76 +24,76 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 	private boolean config_replaceAllDragons;
 	private boolean config_debugOutput;
 	private int config_dragonDamage;
-
 	private int config_dragonHealtch;
-	
 	private boolean config_ignorePlayerGamemode1;
-
 	private boolean config_disableEnderdragonBlockDamage;
-
 	private boolean config_neverUnloadChunkWithED;
-
 	private int config_ticksWhenOutOfRange;
+	private boolean config_pluginHandleLoads;
+	private int config_dragonMaxHealth;
 
+	private boolean config_informPlayerDamageDone;
+	private boolean config_informPlayerDamageTaken;
 
 	public Config(EnderdragonsPlus plugin){
 		this.plugin = plugin;
-		setupConfiguration();
 		reloadConfiguration();
 	}
 
 	private void setupConfiguration(){
-		FileConfiguration config = plugin.getConfig();
-		config.options().header("active: true means it will not spawn.");
-
-		config.addDefault("deactivateDragonTemples", true);
-		config.addDefault("maxPlayerFollowDistance", 100);
-		config.addDefault("maxHomeDisatance", 500);
-		config.addDefault("includeHeight", false);
-		config.addDefault("dropEXP", 200);
-		config.addDefault("debugOutputs", false);
-		config.addDefault("replaceAllDragons", true);
-		config.addDefault("dragonHealth", 200);
-		config.addDefault("dragonDamage", 10);
-		config.addDefault("ignorePlayerGamemode1", true);
-		config.addDefault("fireBukkitEvents", false);
-		config.addDefault("disableEnderdragonBlockDamage", true);
-		config.addDefault("neverUnloadChunkWithED", false);
-		config.addDefault("ticksPerSecondWhenOutOfRange", 25);
+		plugin.getConfig().addDefault("deactivateDragonTemples", true);
+		plugin.getConfig().addDefault("maxPlayerFollowDistance", 100);
+		plugin.getConfig().addDefault("maxHomeDisatance", 500);
+		plugin.getConfig().addDefault("includeHeight", false);
+		plugin.getConfig().addDefault("dropEXP", 200);
+		plugin.getConfig().addDefault("debugOutputs", false);
+		plugin.getConfig().addDefault("replaceAllDragons", true);
+		plugin.getConfig().addDefault("dragonSpawnHealth", 200);
+		plugin.getConfig().addDefault("dragonDamage", 10);
+		plugin.getConfig().addDefault("ignorePlayerGamemode1", true);
+		plugin.getConfig().addDefault("fireBukkitEvents", false);
+		plugin.getConfig().addDefault("disableEnderdragonBlockDamage", true);
+		plugin.getConfig().addDefault("neverUnloadChunkWithED", false);
+		plugin.getConfig().addDefault("ticksPerSecondWhenOutOfRange", 25);
+		plugin.getConfig().addDefault("pluginHandlesDragonLoads", true);
+		plugin.getConfig().addDefault("dragonMaxHealth", 200);
+		plugin.getConfig().addDefault("informPlayerDamageDone", true);
+		plugin.getConfig().addDefault("informPlayerDamageTaken", true);
 		
-		config.options().copyDefaults(true);
-		plugin.saveConfig();
-
+		plugin.getConfig().options().copyDefaults(true);
 	}
 	
 	
 	private void reloadConfiguration(){
 		plugin.reloadConfig();
-		FileConfiguration config = plugin.getConfig();
+		setupConfiguration();
 
-		config_active = config.getBoolean("deactivateDragonTemples", true);
-		config_maxFollowDistance = config.getInt("maxPlayerFollowDistance", 100);
-		config_maxHomeDistance = config.getInt("maxHomeDisatance", 500);
-		config_includeHeight = config.getBoolean("includeHeight", false);
-		config_dropEXP = config.getInt("dropEXP", 2000);
-		config_debugOutput = config.getBoolean("debugOutputs", false);
-		config_replaceAllDragons = config.getBoolean("replaceAllDragons", true);
-		config_dragonHealtch = config.getInt("dragonHealth", 200);
-		config_dragonDamage = config.getInt("dragonDamage", 10);
-		config_ignorePlayerGamemode1 = config.getBoolean("ignorePlayerGamemode1");
-		config_fireBukkitEvents = config.getBoolean("fireBukkitEvents");
-		config_disableEnderdragonBlockDamage = config.getBoolean("disableEnderdragonBlockDamage", true);
-		config_neverUnloadChunkWithED = config.getBoolean("neverUnloadChunkWithED", false);
-		config_ticksWhenOutOfRange = config.getInt("ticksPerSecondWhenOutOfRange", 25);
+		config_deactivateDragonTemples = plugin.getConfig().getBoolean("deactivateDragonTemples", true);
+		config_maxFollowDistance = plugin.getConfig().getInt("maxPlayerFollowDistance", 100);
+		config_maxHomeDistance = plugin.getConfig().getInt("maxHomeDisatance", 500);
+		config_includeHeight = plugin.getConfig().getBoolean("includeHeight", false);
+		config_dropEXP = plugin.getConfig().getInt("dropEXP", 2000);
+		config_debugOutput = plugin.getConfig().getBoolean("debugOutputs", false);
+		config_replaceAllDragons = plugin.getConfig().getBoolean("replaceAllDragons", true);
+		config_dragonHealtch = plugin.getConfig().getInt("dragonSpawnHealth", 200);
+		config_dragonDamage = plugin.getConfig().getInt("dragonDamage", 10);
+		config_ignorePlayerGamemode1 = plugin.getConfig().getBoolean("ignorePlayerGamemode1");
+		config_fireBukkitEvents = plugin.getConfig().getBoolean("fireBukkitEvents");
+		config_disableEnderdragonBlockDamage = plugin.getConfig().getBoolean("disableEnderdragonBlockDamage", true);
+		config_neverUnloadChunkWithED = plugin.getConfig().getBoolean("neverUnloadChunkWithED", false);
+		config_ticksWhenOutOfRange = plugin.getConfig().getInt("ticksPerSecondWhenOutOfRange", 25);
+		config_pluginHandleLoads = plugin.getConfig().getBoolean("pluginHandlesDragonLoads", true);
+		config_dragonMaxHealth = plugin.getConfig().getInt("dragonMaxHealth", 200);
+		config_informPlayerDamageDone = plugin.getConfig().getBoolean("informPlayerDamageDone", true);
+		config_informPlayerDamageTaken = plugin.getConfig().getBoolean("informPlayerDamageTaken", true);
 	}
 	
 	public void reload(){
 		reloadConfiguration();
 	}
 	
-	
-	public boolean getconfig_active(){
-		return config_active;
+	public boolean getconfig_deactivateDragonTemples(){
+		return config_deactivateDragonTemples;
 	}
 	
 	public int getconfig_maxFollowDistance(){
@@ -148,6 +146,22 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 	
 	public int getconfig_ticksPerSeconds(){
 		return config_ticksWhenOutOfRange;
+	}
+	
+	public boolean getconfig_pluginHandleLoads(){
+		return config_pluginHandleLoads;
+	}
+
+	public int getconfig_dragonMaxHealth() {
+		return config_dragonMaxHealth;
+	}
+	
+	public boolean getconfig_informPlayerDamageDone(){
+		return config_informPlayerDamageDone;
+	}
+	
+	public boolean getconfig_informPlayerDamageTaken(){
+		return config_informPlayerDamageTaken;
 	}
 
 }

@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import de.tobiyas.enderdragonsplus.bridges.BridgeController;
-import de.tobiyas.enderdragonsplus.commands.CommandDEBUGGOTO;
+//import de.tobiyas.enderdragonsplus.commands.CommandDEBUGGOTO;
 import de.tobiyas.enderdragonsplus.commands.CommandGoHome;
 import de.tobiyas.enderdragonsplus.commands.CommandInfo;
 import de.tobiyas.enderdragonsplus.commands.CommandKillEnderDragon;
@@ -28,6 +28,7 @@ import de.tobiyas.enderdragonsplus.commands.CommandReloadConfig;
 import de.tobiyas.enderdragonsplus.commands.CommandSpawnEnderDragon;
 import de.tobiyas.enderdragonsplus.commands.CommandUnloadAll;
 import de.tobiyas.enderdragonsplus.configuration.Config;
+import de.tobiyas.enderdragonsplus.configuration.ConfigTemplate;
 import de.tobiyas.enderdragonsplus.datacontainer.Container;
 import de.tobiyas.enderdragonsplus.datacontainer.DragonLogicTicker;
 import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
@@ -86,6 +87,9 @@ public class EnderdragonsPlus extends JavaPlugin{
 	    	  		"LimitedEnderDragon", 
 	    	  		Integer.valueOf(63) 
 	    	  	});
+	      
+	      
+	            
 	    } catch (Exception e) {
 	      log("Could not inject LimitedEnderDragon. Disabling Plugin.");
 	      e.printStackTrace();
@@ -123,7 +127,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 		new CommandUnloadAll();
 		new CommandLoadAll();
 		
-		new CommandDEBUGGOTO();
+		//new CommandDEBUGGOTO();
 	}
 	
 	private void registerTasks(){
@@ -133,6 +137,9 @@ public class EnderdragonsPlus extends JavaPlugin{
 
 	private void setupConfiguration(){
 		config = new Config(this);
+		ConfigTemplate template = new ConfigTemplate();
+		if(template.isOldConfigVersion())
+			template.writeTemplate();
 	}
 
 	

@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
@@ -27,6 +29,7 @@ import net.minecraft.server.EntityEnderCrystal;
 import net.minecraft.server.EntityEnderDragon;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
+import net.minecraft.server.LocaleI18n;
 import net.minecraft.server.MathHelper;
 import net.minecraft.server.Vec3D;
 import net.minecraft.server.World;
@@ -45,27 +48,34 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		super(world);
 		
 		plugin = EnderdragonsPlus.getPlugin();
-		plugin.getContainer().setHomeID(getBukkitEntity().getEntityId(), location, location, false, this);
+		plugin.getContainer().setHomeID(getUUID(), location, location, false, this);
+		
+		this.t = plugin.interactConfig().getconfig_dragonMaxHealth();
+		setPosition(location.getX(), location.getY(), location.getZ());
+	}
+	
+	public LimitedEnderDragon(Location location, World world, UUID uid){
+		super(world);
+		
+		plugin = EnderdragonsPlus.getPlugin();
+		changeUUID(uid);
+		plugin.getContainer().setHomeID(getUUID(), location, location, false, this);
 		
 		setPosition(location.getX(), location.getY(), location.getZ());
-		this.yaw = (location.getYaw() + 180.0F);
-	    while (this.yaw > 360.0F)
-	      this.yaw -= 360.0F;
-	    while (this.yaw < 0.0F)
-	      this.yaw += 360.0F;
-	    if ((this.yaw < 45.0F) || (this.yaw > 315.0F))
-	      this.yaw = 0.0F;
-	    else if (this.yaw < 135.0F)
-	      this.yaw = 90.0F;
-	    else if (this.yaw < 225.0F)
-	      this.yaw = 180.0F;
-	    else
-	      this.yaw = 270.0F;
+		this.t = plugin.interactConfig().getconfig_dragonMaxHealth();
 	}
 	
 	public LimitedEnderDragon(World world){
 		super(world);
-		remove();
+		
+		plugin = EnderdragonsPlus.getPlugin();
+		if(plugin.interactConfig().getconfig_pluginHandleLoads()){
+			remove();
+			return;
+		}
+		
+		if(!plugin.getContainer().containsID(this.getUUID()))
+			remove();
 	}
 	
 	private void checkRegainHealth() {
@@ -108,6 +118,11 @@ public class LimitedEnderDragon extends EntityEnderDragon {
             this.s = entityendercrystal;
         }
     }
+	
+	@Override
+	public String getLocalizedName() {
+	    return LocaleI18n.get("entity.EnderDragon.name");
+	}
 	
 	@Override
 	public void e() {
@@ -488,7 +503,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		Location homeLocation = getHomeLocation();
 		
 		if(getVectorDistance(homeLocation, includeHeight) > homeRange)
-			plugin.getContainer().setFlyingHome(getID(), true);
+			plugin.getContainer().setFlyingHome(getUUID(), true);
 			
 		if(getFlyingHome() || forceGoTo != null) force = true;
         if (!force && this.random.nextInt(2) == 0 && this.world.players.size() > 0) {
@@ -552,10 +567,10 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			location = forceGoTo;
         
         if(getVectorDistance(location, includeHeight) < 30){
-        	plugin.getContainer().setFlyingHome(getID(), false);
+        	plugin.getContainer().setFlyingHome(getUUID(), false);
         	if(forceGoTo != null){
         		forceGoTo = null;
-        		location = plugin.getContainer().getHomeByID(this.getID());
+        		location = plugin.getContainer().getHomeByID(this.getUUID());
         		return;
         	}
         }
@@ -588,6 +603,8 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	public boolean isInRange(Location location, int range, boolean includeHeight){
 		if(range == 0) return true;
+		if(!this.getLocation().getWorld().equals(location.getWorld())) return false;
+		
 		double posX = location.getX();
 		double posY = location.getY();
 		double posZ = location.getZ();
@@ -648,12 +665,12 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	}
 	
 	public boolean saveToPath(){
-		String path = plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon." + getID();
+		String path = plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon." + getUUID();
 		File file = new File(path);
 		if(file.exists())
 			file.delete();
 		
-		Location homeLocation = plugin.getContainer().getHomeByID(getBukkitEntity().getEntityId());
+		Location homeLocation = plugin.getContainer().getHomeByID(getUUID());
 		YamlConfiguration config = new YamlConfiguration();
 		config.createSection("homeLocation");
 		config.set("homeLocation.x", homeLocation.getX());
@@ -664,6 +681,8 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		config.set("actualPosition.x", locX);
 		config.set("actualPosition.y", locY);
 		config.set("actualPosition.z", locZ);
+		
+		config.set("uuid", getUUID() + "");
 		
 		if(forceGoTo != null){
 			config.set("forceTarget.x", forceGoTo.getX());
@@ -687,8 +706,10 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	public static LimitedEnderDragon loadFromFile(String path){
 		File file = new File(path);
-		if(!file.exists())
+		if(!file.exists()){
+			EnderdragonsPlus.getPlugin().log("Could not find dragon at: " + path);
 			return null;
+		}
 		
 		YamlConfiguration config = new YamlConfiguration();
 		try{
@@ -697,6 +718,8 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			EnderdragonsPlus.getPlugin().log("Loading Dragon failed.");
 			return null;
 		}
+		
+		UUID uid = UUID.fromString(config.getString("uuid"));
 		
 		double x = config.getDouble("homeLocation.x");
 		double y = config.getDouble("homeLocation.y");
@@ -713,11 +736,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		int health = config.getInt("health");
 		boolean flyingHome = config.getBoolean("flyingHome");
 		
-		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world);
-		
-		dragon.locX = actX;
-		dragon.locY = actY;
-		dragon.locZ = actZ;
+		Location forceLocation = null;
 		
 		if(config.isString("forceTarget.world")){
 			double forceLocationX = config.getDouble("forceTarget.x");
@@ -726,19 +745,50 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			String forceLocationWorld = config.getString("forceTarget.world");
 			
 			org.bukkit.World forceWorld = Bukkit.getWorld(forceLocationWorld);
-			Location forceLocation = new Location(forceWorld, forceLocationX, forceLocationY, forceLocationZ);
-			dragon.goToLocation(forceLocation);
+			forceLocation = new Location(forceWorld, forceLocationX, forceLocationY, forceLocationZ);
 		}
 		
-		dragon.setHealth(health);
-		EnderdragonsPlus.getPlugin().getContainer().setFlyingHome(dragon.getID(), flyingHome);
-
-		file.delete();
-		return dragon;
+		if(EnderdragonsPlus.getPlugin().interactConfig().getconfig_pluginHandleLoads()){
+			LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uid);
+			
+			dragon.locX = actX;
+			dragon.locY = actY;
+			dragon.locZ = actZ;
+			
+			
+			if(forceLocation!=  null)
+				dragon.goToLocation(forceLocation);
+			
+			dragon.setHealth(health);
+			
+			EnderdragonsPlus.getPlugin().getContainer().setFlyingHome(dragon.getUUID(), flyingHome);
+			file.delete();
+			return dragon;
+			
+		}else{
+			List<org.bukkit.entity.Entity> list = location.getWorld().getEntities();
+			
+			org.bukkit.entity.Entity dragon = null;
+			for(org.bukkit.entity.Entity entity : list){
+				if(entity.getUniqueId().equals(uid)){
+					dragon = entity;
+					break;
+				}
+			}
+			
+			if(dragon == null)
+				return null;
+			
+			LimitedEnderDragon dragonEntity = (LimitedEnderDragon) ((CraftEntity)dragon).getHandle();
+			EnderdragonsPlus.getPlugin().getContainer().setHomeID(uid, location, location, flyingHome, dragonEntity);
+			EnderdragonsPlus.getPlugin().getContainer().setFlyingHome(uid, flyingHome);
+			file.delete();
+			return null;
+		}
 	}
 	
 	public Location getHomeLocation(){
-		return plugin.getContainer().getHomeByID(getBukkitEntity().getEntityId());
+		return plugin.getContainer().getHomeByID(getUUID());
 	}
 	
 	public int getID(){
@@ -746,7 +796,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	}
 	
 	private boolean getFlyingHome(){
-		return plugin.getContainer().getFlyingHome(getBukkitEntity().getEntityId());
+		return plugin.getContainer().getFlyingHome(getUUID());
 	}
 	
 	public void setTarget(LivingEntity entity){
@@ -776,5 +826,13 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	public void goToLocation(Location location){
 		setNewTarget(location, true);
+	}
+	
+	public void changeUUID(UUID uID){
+		this.uniqueId = UUID.fromString(uID.toString());
+	}
+	
+	public UUID getUUID(){
+		return this.getBukkitEntity().getUniqueId();
 	}
 }

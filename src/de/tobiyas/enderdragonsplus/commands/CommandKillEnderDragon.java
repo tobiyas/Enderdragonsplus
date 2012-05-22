@@ -34,11 +34,21 @@ public class CommandKillEnderDragon implements CommandExecutor {
 		if(!(plugin.getPermissionManager().checkPermissions(player, PermissionNode.killEnderDragons)))
 			return true;
 		
+		if(args.length != 1){
+			player.sendMessage(ChatColor.RED + "The command only supports 1 argument.");
+			return true;
+		}
+		
 		int range = 100;
 		
-		if(args.length == 1){
-			range = Integer.parseInt(args[0]);
-			if(range < 0) range = 100;
+		try{
+			if(args.length == 1){
+				range = Integer.parseInt(args[0]);
+				if(range < 0) range = 100;
+			}
+		}catch(NumberFormatException e){
+			player.sendMessage(ChatColor.LIGHT_PURPLE + args[0] + " " + ChatColor.RED + "is not a legal number.");
+			return true;
 		}
 		
 		int killed = plugin.getContainer().killEnderDragons(player.getLocation(), range);

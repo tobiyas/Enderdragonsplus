@@ -1,6 +1,7 @@
 package de.tobiyas.enderdragonsplus.commands;
 
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -28,10 +29,10 @@ public class CommandDEBUGGOTO implements CommandExecutor {
 		
 		Player player = (Player) sender;
 		
-		Set<Integer> ids = plugin.getContainer().getAllIDs();
+		Set<UUID> ids = plugin.getContainer().getAllIDs();
 		
 		int i = 0;
-		for(int id : ids){
+		for(UUID id : ids){
 			if(!plugin.getContainer().isLoaded(id)) continue;
 			
 			plugin.getContainer().getDragonById(id).goToLocation(player.getLocation());

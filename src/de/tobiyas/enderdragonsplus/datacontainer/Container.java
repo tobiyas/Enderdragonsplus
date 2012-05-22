@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -15,19 +16,19 @@ import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
 
 public class Container {
 
-	private HashMap<Integer, DragonInfoContainer> homeList;
+	private HashMap<UUID, DragonInfoContainer> homeList;
 	private EnderdragonsPlus plugin;
 	
 	public Container(){
 		plugin = EnderdragonsPlus.getPlugin();
-		homeList = new HashMap<Integer, DragonInfoContainer>();
+		homeList = new HashMap<UUID, DragonInfoContainer>();
 		new CleanRunner(this);
 	}
 	
 	public int cleanRun(){
-		List<Integer> toDelete = new ArrayList<Integer>();
+		List<UUID> toDelete = new ArrayList<UUID>();
 		
-		for(int id : homeList.keySet()){
+		for(UUID id : homeList.keySet()){
 			DragonInfoContainer dragonContainer = homeList.get(id);
 			if(dragonContainer.dragon == null || !dragonContainer.dragon.isAlive())
 				if(dragonContainer.isLoaded) toDelete.add(id);
@@ -35,7 +36,7 @@ public class Container {
 		
 		if(toDelete.size() == 0) return 0;
 		
-		for(int dragon : toDelete){
+		for(UUID dragon : toDelete){
 			DragonInfoContainer container = homeList.get(dragon);
 			if(!container.isLoaded)
 				new File(plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon." + dragon).delete();
@@ -48,10 +49,10 @@ public class Container {
 	}
 	
 	public int killEnderDragons(Location location, int range){
-		ArrayList<Integer> toRemove = new ArrayList<Integer>();
+		ArrayList<UUID> toRemove = new ArrayList<UUID>();
 		boolean considerRange = plugin.interactConfig().getconfig_includeHeight();
 		
-		for(int dragonID : homeList.keySet()){
+		for(UUID dragonID : homeList.keySet()){
 			DragonInfoContainer container = homeList.get(dragonID);
 			if(container.isLoaded){
 				if(container.dragon != null && container.dragon.isInRange(location, range, considerRange)){
@@ -66,7 +67,7 @@ public class Container {
 		if(toRemove.size() == 0)
 			return 0;
 		
-		for(int dragonID : toRemove)
+		for(UUID dragonID : toRemove)
 			homeList.remove(dragonID);
 		
 		return toRemove.size();
@@ -80,7 +81,7 @@ public class Container {
 		int i = 0;
 		int j = 0;
 		
-		for(int dragonID : homeList.keySet()){
+		for(UUID dragonID : homeList.keySet()){
 			DragonInfoContainer container = homeList.get(dragonID);
 			if(!container.dragon.saveToPath()) j++;
 			container.isLoaded = false;
@@ -97,12 +98,12 @@ public class Container {
 		
 		int j = 0;
 		
-		for(int id : homeList.keySet()){
+		for(UUID id : homeList.keySet()){
 			DragonInfoContainer con = homeList.get(id);
 			if(!con.isLoaded) continue;
 			con.isLoaded = false;
 			con.dragon.saveToPath();
-			con.dragon.remove();
+			if(plugin.interactConfig().getconfig_pluginHandleLoads()) con.dragon.remove();
 			j++;
 		}
 		
@@ -119,8 +120,8 @@ public class Container {
 			LimitedEnderDragon dragon = LimitedEnderDragon.loadFromFile(child.getPath());
 			if(dragon != null){
 				if(!dragon.spawn(false)){
-					homeList.get(dragon.getID()).isLoaded = false;
-					homeList.get(dragon.getID()).firstLoad = true;
+					homeList.get(dragon.uniqueId).isLoaded = false;
+					homeList.get(dragon.uniqueId).firstLoad = true;
 					dragon.saveToPath();
 				}
 				i++;
@@ -134,9 +135,9 @@ public class Container {
 		int i = 0;
 		String dragonPath = plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon.";
 		
-		List<Integer> toLoad = new LinkedList<Integer>();
+		List<UUID> toLoad = new LinkedList<UUID>();
 		
-		for(int id : homeList.keySet()){
+		for(UUID id : homeList.keySet()){
 			if(!homeList.get(id).isLoaded){
 				Location location = homeList.get(id).location;
 				if(location.getWorld().isChunkLoaded(getChunkX(location), getChunkY(location)))
@@ -146,11 +147,10 @@ public class Container {
 		}
 		
 		int j = 0;
-		for(int id : toLoad){
+		for(UUID id : toLoad){
 			LimitedEnderDragon dragon = LimitedEnderDragon.loadFromFile(dragonPath + id);
 			if(dragon == null) continue;
 			dragon.spawn(false);
-			homeList.remove(id);
 			j++;
 		}
 		
@@ -160,7 +160,7 @@ public class Container {
 	public int sendAllDragonsHome() {
 		int i = 0;
 		
-		for(int dragonID : homeList.keySet()){
+		for(UUID dragonID : homeList.keySet()){
 			DragonInfoContainer container = homeList.get(dragonID);
 			if(container.dragon != null){
 				container.flyingHome = true;
@@ -170,17 +170,17 @@ public class Container {
 		return i;
 	}
 	
-	public boolean getFlyingHome(int id){
+	public boolean getFlyingHome(UUID id){
 		DragonInfoContainer temp = homeList.get(id);
 		return temp.flyingHome;
 	}
 
-	public Location getHomeByID(int id) {
+	public Location getHomeByID(UUID id) {
 		DragonInfoContainer temp = homeList.get(id);
 		return temp.homeLocation;
 	}
 
-	public void setHomeID(int entityId, Location homelocation, Location location, boolean flyingHome, LimitedEnderDragon dragon){
+	public void setHomeID(UUID entityId, Location homelocation, Location location, boolean flyingHome, LimitedEnderDragon dragon){
 		if(plugin.interactConfig().getconfig_debugOutput()) 
 			plugin.log("set ID: " + entityId);
 		
@@ -188,21 +188,21 @@ public class Container {
 		homeList.put(entityId, temp);
 	}
 	
-	public void setFlyingHome(int id, boolean value){
-		DragonInfoContainer temp = homeList.get(id);
+	public void setFlyingHome(UUID uid, boolean value){
+		DragonInfoContainer temp = homeList.get(uid);
 		temp.flyingHome = value;
 	}
 	
-	public boolean containsID(int id){
+	public boolean containsID(UUID id){
 		return homeList.containsKey(id);
 	}
 	
-	public Set<Integer> getAllIDs(){
+	public Set<UUID> getAllIDs(){
 		return homeList.keySet();
 	}
 
 	public void loadDragonsInChunk(Chunk chunk) {
-		for(int id : homeList.keySet()){
+		for(UUID id : homeList.keySet()){
 			DragonInfoContainer con = homeList.get(id);
 			if(con.isLoaded) continue;
 			if(locationIsInChunk(con.location, chunk)){
@@ -212,12 +212,11 @@ public class Container {
 				String path = plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon.";
 				LimitedEnderDragon dragon = LimitedEnderDragon.loadFromFile(path + con.ID);
 				dragon.spawn(con.firstLoad);
-				homeList.remove(con.ID);
 			}
 		}
 	}
 
-	public void saveDragon(int entityId) {
+	public void saveDragon(UUID entityId) {
 		if(plugin.interactConfig().getconfig_debugOutput())
 			plugin.log("Saving Dragon: " + entityId);
 		DragonInfoContainer con = homeList.get(entityId);
@@ -228,7 +227,7 @@ public class Container {
 	
 	public int loaded(){
 		int i = 0;
-		for(int id : homeList.keySet()){
+		for(UUID id : homeList.keySet()){
 			if(homeList.get(id).isLoaded) i++;
 		}
 		
@@ -239,7 +238,7 @@ public class Container {
 		return homeList.size();
 	}
 	
-	public LimitedEnderDragon getDragonById(int id){
+	public LimitedEnderDragon getDragonById(UUID id){
 		DragonInfoContainer con = homeList.get(id);
 		if(con == null || !con.isLoaded) return null;
 		return con.dragon;
@@ -277,15 +276,34 @@ public class Container {
 		return locZ;
 	}
 	
-	public Location getPositionByID(int id){
+	public Location getPositionByID(UUID id){
 		DragonInfoContainer con = homeList.get(id);
 		if(con == null) return null;
 		return con.location;
 	}
 
-	public boolean isLoaded(int id) {
+	public boolean isLoaded(UUID id) {
 		DragonInfoContainer con = homeList.get(id);
 		if(con == null) return false;
 		return con.isLoaded;
+	}
+
+	public boolean setHome(UUID id, Location location) {
+		DragonInfoContainer con = homeList.get(id);
+		if(con == null) return false;
+		con.homeLocation = location;
+		return true;
+	}
+	
+	public void setProperty(UUID id, String property, Object value){
+		DragonInfoContainer con = homeList.get(id);
+		if(con == null) return;
+		con.properties.put(property, value);
+	}
+	
+	public Object getProperty(UUID id, String property){
+		DragonInfoContainer con = homeList.get(id);
+		if(con == null) return null;
+		return con.properties.get(property);
 	}
 }

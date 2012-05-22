@@ -8,12 +8,19 @@
 package de.tobiyas.enderdragonsplus.listeners;
 
 
-import net.minecraft.server.EntityEnderDragon;
+import java.lang.reflect.Field;
+import java.util.UUID;
+
 import net.minecraft.server.World;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEnderDragon;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener; 
 import org.bukkit.event.EventHandler; 
@@ -21,6 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
@@ -29,7 +37,8 @@ import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
 
 public class Listener_Entity implements Listener {
 	private EnderdragonsPlus plugin;
-
+	public static int recDepth = 0;
+	
 	public Listener_Entity(){
 		this.plugin = EnderdragonsPlus.getPlugin();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -39,7 +48,7 @@ public class Listener_Entity implements Listener {
 	public void onEntityCreatePortal(EntityCreatePortalEvent event){
 		if(!event.getEntityType().equals(EntityType.ENDER_DRAGON)) return;
 		
-		if(plugin.interactConfig().getconfig_active()) 
+		if(plugin.interactConfig().getconfig_deactivateDragonTemples()) 
 			event.setCancelled(true);
 	}
 	
@@ -52,7 +61,7 @@ public class Listener_Entity implements Listener {
 		if(plugin.interactConfig().getconfig_debugOutput())
 			plugin.log("enderdragon id: " + event.getEntity().getEntityId());
 		
-		int id = event.getEntity().getEntityId();
+		UUID id = event.getEntity().getUniqueId();
 		if(plugin.getContainer().containsID(id)) return;
 		
 		if(plugin.interactConfig().getconfig_debugOutput())
@@ -60,32 +69,111 @@ public class Listener_Entity implements Listener {
 		
 		if(plugin.interactBridgeController().isSpecialDragon(event.getEntity())) return;
 		
-		spawnLimitedEnderDragon(event.getLocation());
-		event.setCancelled(true);
+		if(recDepth > 40){
+			plugin.log("CRITICAL: Concurring plugins detected! Disable the concurring plugin!");
+			return;
+		}
+		
+		if(recDepth == 0)
+			new RecursionEraser();
+		
+		recDepth ++;
+			
+		String uidString = id.toString();
+		event.getEntity().remove();
+		
+		Entity newDragon = spawnLimitedEnderDragon(event.getLocation(), uidString).getBukkitEntity();
+		try{
+			EntityEvent entityEvent = (EntityEvent) event;			
+			
+			Field field = entityEvent.getClass().getSuperclass().getDeclaredField("entity");
+			field.setAccessible(true);
+			field.set(entityEvent, newDragon);
+			
+		}catch (IllegalArgumentException e) {
+			plugin.log("Something gone Wrong with Injecting!");
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			plugin.log("Something gone Wrong with Injecting!");
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			plugin.log("Something gone Wrong with Injecting!");
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			plugin.log("Something gone Wrong with Injecting!");
+			e.printStackTrace();
+		}	
 	}
 	
 	@EventHandler
-	public void onEnderDragonExlplode(EntityExplodeEvent event) {
+	public void onEnderDragonExplode(EntityExplodeEvent event) {
 		if(!plugin.interactConfig().getconfig_disableEnderdragonBlockDamage()) return;
-		int id = event.getEntity().getEntityId();
+		UUID id = event.getEntity().getUniqueId();
 		if (plugin.getContainer().containsID(id)) {
 			event.setCancelled(true);
 		}
 	}
 	
-	@EventHandler
-	public void event(EntityDamageByEntityEvent event){
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void entityDamageEvent(EntityDamageByEntityEvent event){
 		if(event.isCancelled()) return;
+		
+		checkPlayerDamageDragon(event);
 		if(!event.getDamager().getType().equals(EntityType.ENDER_DRAGON)) return;
-		EntityEnderDragon dragon = ((CraftEnderDragon) event.getDamager()).getHandle();
-		if(dragon instanceof LimitedEnderDragon){
-			event.setDamage(plugin.interactConfig().getconfig_dragonDamage());
+		
+		if(!(event.getEntity() instanceof Player)) return;
+		if(plugin.interactConfig().getconfig_informPlayerDamageTaken()){
+			Player player = (Player) event.getEntity();
+			player.sendMessage(ChatColor.YELLOW + "The Dragon has done " + ChatColor.LIGHT_PURPLE + event.getDamage() + ChatColor.YELLOW + " damage to you.");
 		}
 	}
 	
-	private LimitedEnderDragon spawnLimitedEnderDragon(Location location){
+	private void checkPlayerDamageDragon(EntityDamageByEntityEvent event){
+		if(!plugin.interactConfig().getconfig_informPlayerDamageDone()) return;
+		
+		if(event.getEntity().getType() == EntityType.ENDER_DRAGON){
+			Entity damager = event.getDamager();
+			
+			if(damager.getType() == EntityType.ARROW){
+				Arrow arrow = (Arrow) event.getDamager();
+				LivingEntity shooter = arrow.getShooter();
+				damager = shooter;
+			}
+			
+			if(damager instanceof Player){
+				Player player = (Player) damager;
+				UUID uid = event.getEntity().getUniqueId();
+				LimitedEnderDragon dragon = plugin.getContainer().getDragonById(uid);
+				if(dragon == null)
+					return;
+				
+				int actualLife = dragon.getHealth() - event.getDamage();
+				int maxLife = dragon.getMaxHealth();
+				
+				String midLifeString = parsePersentageLife(actualLife, maxLife);
+				player.sendMessage(ChatColor.YELLOW + "The Dragon has " + midLifeString + ChatColor.YELLOW + " health left. You did " + 
+						ChatColor.LIGHT_PURPLE + event.getDamage() + ChatColor.YELLOW + " damage.");
+			}
+		}
+	}
+	
+	private String parsePersentageLife(int actual, int max){
+		float currentPercentage = actual / max;
+		
+		if(currentPercentage < 0.2)
+			return ChatColor.RED + "" + actual + "/" + max;
+		
+		if(currentPercentage < 0.5)
+			return ChatColor.YELLOW + "" + actual + "/" + max;
+		
+		return ChatColor.GREEN + "" + actual + "/" + max;
+	}
+	
+	private LimitedEnderDragon spawnLimitedEnderDragon(Location location, String uid){
 		World world = ((CraftWorld)location.getWorld()).getHandle();
-		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world);
+		
+		UUID uuid = UUID.fromString(uid);
+		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
 		dragon.spawn(false);
 		dragon.setHealth(plugin.interactConfig().getconfig_dragonHealth());
 		return dragon;
