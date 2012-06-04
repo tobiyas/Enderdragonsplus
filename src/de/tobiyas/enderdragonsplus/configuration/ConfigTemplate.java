@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
+import de.tobiyas.enderdragonsplus.util.Consts;
 
 public class ConfigTemplate {
 	
@@ -14,6 +15,12 @@ public class ConfigTemplate {
 	private File configFile;
 	
 	public ConfigTemplate(){
+		plugin = EnderdragonsPlus.getPlugin();
+		
+		File pluginFolder = new File(plugin.getDataFolder().toString());
+		if(!pluginFolder.exists())
+			pluginFolder.mkdirs();
+		
 		plugin = EnderdragonsPlus.getPlugin();
 		configFile = new File(plugin.getDataFolder() + File.separator + "config.yml");
 	}
@@ -35,7 +42,7 @@ public class ConfigTemplate {
 				if(currentLine.contains("#TemplateVersion ")){
 					currentLine = currentLine.replace("#TemplateVersion ", "");
 					
-					if(currentLine.equalsIgnoreCase("1.0"))
+					if(currentLine.equalsIgnoreCase(Consts.ConfigVersion))
 						isOldVersion = false;
 					break;
 				}

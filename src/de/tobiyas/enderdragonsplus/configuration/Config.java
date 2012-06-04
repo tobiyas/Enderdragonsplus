@@ -31,6 +31,8 @@
 	private int config_ticksWhenOutOfRange;
 	private boolean config_pluginHandleLoads;
 	private int config_dragonMaxHealth;
+	
+	private boolean config_replaceOnTheFly;
 
 	private boolean config_informPlayerDamageDone;
 	private boolean config_informPlayerDamageTaken;
@@ -59,6 +61,7 @@
 		plugin.getConfig().addDefault("dragonMaxHealth", 200);
 		plugin.getConfig().addDefault("informPlayerDamageDone", true);
 		plugin.getConfig().addDefault("informPlayerDamageTaken", true);
+		plugin.getConfig().addDefault("replaceOnTheFly", true);
 		
 		plugin.getConfig().options().copyDefaults(true);
 	}
@@ -86,6 +89,7 @@
 		config_dragonMaxHealth = plugin.getConfig().getInt("dragonMaxHealth", 200);
 		config_informPlayerDamageDone = plugin.getConfig().getBoolean("informPlayerDamageDone", true);
 		config_informPlayerDamageTaken = plugin.getConfig().getBoolean("informPlayerDamageTaken", true);
+		config_replaceOnTheFly = plugin.getConfig().getBoolean("replaceOnTheFly", true);
 	}
 	
 	public void reload(){
@@ -162,6 +166,10 @@
 	
 	public boolean getconfig_informPlayerDamageTaken(){
 		return config_informPlayerDamageTaken;
+	}
+	
+	public boolean getconfig_replaceOnTheFly(){
+		return config_replaceOnTheFly;
 	}
 
 }

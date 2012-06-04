@@ -6,7 +6,7 @@ public class ConfigText {
 		String text = "";
 		
 		text += "#Config for Enderdragons+\n";
-		text += "#TemplateVersion 1.0\n\n";
+		text += "#TemplateVersion 1.1\n\n";
 
 		text += "#	REGION: EnderDragons\n";
 		text += "#The maximal Life an EnderDragon comes to Life\n";
@@ -47,6 +47,11 @@ public class ConfigText {
 		text += "#NOTICE: It will never replace special Dragons (as in DragonTravel, RideThaDragon)\n";
 		text += "#default: true\n"; 
 		text += "replaceAllDragons: true\n\n";
+		
+		text += "#replaces all dragons On the fly when loaded.\n";
+		text += "#This gets triggered for example when there are dragons active,\n";
+		text += "#before the plugin is active\n";
+		text += "replaceOnTheFly: true\n\n";
 
 		text += "#if set to true the plugin will cancle all unloads of EnderDragons\n";
 		text += "#default: false\n";

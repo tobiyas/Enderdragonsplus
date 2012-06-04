@@ -1,0 +1,56 @@
+package de.tobiyas.enderdragonsplus.datacontainer;
+
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+
+import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
+import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
+
+public class OnTheFlyReplacer implements Runnable {
+
+	private EnderdragonsPlus plugin;
+	
+	public OnTheFlyReplacer(){
+		plugin = EnderdragonsPlus.getPlugin();
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this, 20, 10);
+	}
+	
+	@Override
+	public void run() {
+		if(plugin.interactConfig().getconfig_replaceOnTheFly()){
+			for(World world : Bukkit.getWorlds()){
+				for(Entity entity : world.getEntities()){
+					if(entity.getType() != EntityType.ENDER_DRAGON) continue;
+					UUID entityID = entity.getUniqueId();
+					if(plugin.interactBridgeController().isSpecialDragon((LivingEntity)entity)) continue;
+					if(entityID == null) continue;
+					boolean isEDPDragon = plugin.getContainer().getDragonById(entityID) != null;
+					if(isEDPDragon) continue;
+					
+					Location loctaion = entity.getLocation();
+					entity.remove();
+					boolean worked = spawnLimitedEnderDragon(loctaion, entityID) != null;
+					if(plugin.interactConfig().getconfig_debugOutput())
+						plugin.log("Replaced dragon: " + entityID + " worked: " + worked);
+				}
+			}
+		}
+	}
+	
+	private LimitedEnderDragon spawnLimitedEnderDragon(Location location, UUID uuid){
+		net.minecraft.server.World world = ((CraftWorld)location.getWorld()).getHandle();
+		
+		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
+		dragon.spawn(false);
+		dragon.setHealth(plugin.interactConfig().getconfig_dragonHealth());
+		return dragon;
+	}
+
+}

@@ -22,6 +22,7 @@ public class Listener_Plugins implements Listener{
 		plugin.interactBridgeController().setDTActive(pluginName, false);
 	}
 	
+	@EventHandler
 	public void onPluginEnable(PluginEnableEvent event){
 		String pluginName = event.getPlugin().getName();
 		plugin.interactBridgeController().setDTActive(pluginName, true);

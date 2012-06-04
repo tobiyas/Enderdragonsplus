@@ -25,17 +25,21 @@ import de.tobiyas.enderdragonsplus.commands.CommandInfo;
 import de.tobiyas.enderdragonsplus.commands.CommandKillEnderDragon;
 import de.tobiyas.enderdragonsplus.commands.CommandLoadAll;
 import de.tobiyas.enderdragonsplus.commands.CommandReloadConfig;
+import de.tobiyas.enderdragonsplus.commands.CommandRespawner;
 import de.tobiyas.enderdragonsplus.commands.CommandSpawnEnderDragon;
 import de.tobiyas.enderdragonsplus.commands.CommandUnloadAll;
 import de.tobiyas.enderdragonsplus.configuration.Config;
 import de.tobiyas.enderdragonsplus.configuration.ConfigTemplate;
 import de.tobiyas.enderdragonsplus.datacontainer.Container;
 import de.tobiyas.enderdragonsplus.datacontainer.DragonLogicTicker;
+import de.tobiyas.enderdragonsplus.datacontainer.OnTheFlyReplacer;
 import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Entity;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
+import de.tobiyas.enderdragonsplus.listeners.Listener_Sign;
 import de.tobiyas.enderdragonsplus.listeners.Listener_World;
-import de.tobiyas.enderdragonsplus.permissions.PermissionManager;
+import de.tobiyas.enderdragonsplus.spawner.DragonSpawnerManager;
+import de.tobiyas.util.permissions.PermissionManager;
 
 
 public class EnderdragonsPlus extends JavaPlugin{
@@ -49,6 +53,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 	private Container container;
 	
 	private BridgeController bridgeController;
+	private DragonSpawnerManager dragonSpawnerManager;
 	
 	private static EnderdragonsPlus plugin;
 
@@ -61,7 +66,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 		prefix = "["+description.getName()+"] ";
 		
 		injectDragon();
-		permissionManager = new PermissionManager();
+		permissionManager = new PermissionManager(this);
 		
 		setupConfiguration();
 		container = new Container();
@@ -72,6 +77,8 @@ public class EnderdragonsPlus extends JavaPlugin{
 		container.loadContainer();
 		checkDepends();
 		registerTasks();
+		
+		registerManagers();
 		
 		log(description.getFullName() + " fully loaded with: " + permissionManager.getPermissionsName());
 	}
@@ -104,6 +111,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 	@Override
 	public void onDisable(){
 		container.saveContainer();
+		dragonSpawnerManager.saveList();
 		log("disabled "+description.getFullName());
 
 	}
@@ -116,6 +124,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 		new Listener_Entity();
 		new Listener_World();
 		new Listener_Plugins();
+		new Listener_Sign();
 	}
 	
 	private void registerCommands(){
@@ -126,12 +135,19 @@ public class EnderdragonsPlus extends JavaPlugin{
 		new CommandInfo();
 		new CommandUnloadAll();
 		new CommandLoadAll();
+		new CommandRespawner();
 		
 		//new CommandDEBUGGOTO();
 	}
 	
 	private void registerTasks(){
 		new DragonLogicTicker();
+		new OnTheFlyReplacer();
+	}
+	
+	private void registerManagers(){
+		dragonSpawnerManager = new DragonSpawnerManager();
+		dragonSpawnerManager.init();
 	}
 
 
@@ -161,6 +177,10 @@ public class EnderdragonsPlus extends JavaPlugin{
 	
 	public BridgeController interactBridgeController(){
 		return bridgeController;
+	}
+	
+	public DragonSpawnerManager getDragonSpawnerManager(){
+		return dragonSpawnerManager;
 	}
 
 }

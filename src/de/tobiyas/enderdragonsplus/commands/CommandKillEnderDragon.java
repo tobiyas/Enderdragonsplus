@@ -34,7 +34,11 @@ public class CommandKillEnderDragon implements CommandExecutor {
 		if(!(plugin.getPermissionManager().checkPermissions(player, PermissionNode.killEnderDragons)))
 			return true;
 		
-		if(args.length != 1){
+		if(args.length == 0){
+			args = new String[]{"100"};
+		}
+		
+		if(args.length > 1){
 			player.sendMessage(ChatColor.RED + "The command only supports 1 argument.");
 			return true;
 		}

@@ -50,7 +50,9 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		plugin = EnderdragonsPlus.getPlugin();
 		plugin.getContainer().setHomeID(getUUID(), location, location, false, this);
 		
-		this.t = plugin.interactConfig().getconfig_dragonMaxHealth();
+		int maxHealth = plugin.interactConfig().getconfig_dragonMaxHealth();
+		if(maxHealth > 0)
+			this.t = maxHealth;
 		setPosition(location.getX(), location.getY(), location.getZ());
 	}
 	
@@ -62,7 +64,9 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		plugin.getContainer().setHomeID(getUUID(), location, location, false, this);
 		
 		setPosition(location.getX(), location.getY(), location.getZ());
-		this.t = plugin.interactConfig().getconfig_dragonMaxHealth();
+		int maxHealth = plugin.interactConfig().getconfig_dragonMaxHealth();
+		if(maxHealth > 0)
+			this.t = maxHealth;
 	}
 	
 	public LimitedEnderDragon(World world){
@@ -124,6 +128,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	    return LocaleI18n.get("entity.EnderDragon.name");
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void e() {
 		logicCall++;
@@ -324,15 +329,13 @@ public class LimitedEnderDragon extends EntityEnderDragon {
             this.l.setPositionRotation(this.locX + (double) (f12 * 4.5F), this.locY + 2.0D, this.locZ + (double) (f11 * 4.5F), 0.0F, 0.0F);
             this.m.F_();
             this.m.setPositionRotation(this.locX - (double) (f12 * 4.5F), this.locY + 2.0D, this.locZ - (double) (f11 * 4.5F), 0.0F, 0.0F);
-            if (!this.world.isStatic) {
-                this.C();
-            }
 
             if (!this.world.isStatic && this.at == 0) {
                 this.a(this.world.getEntities(this, this.l.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0.0D)));
                 this.a(this.world.getEntities(this, this.m.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0.0D)));
                 this.damageEntities(this.world.getEntities(this, this.g.boundingBox.grow(1.0D, 1.0D, 1.0D)));
-            }
+            }else
+            	at -= 1;
 
             double[] adouble = this.a(5, 1.0F);
             double[] adouble1 = this.a(0, 1.0F);
@@ -375,7 +378,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
         }
     }
 	
-	 private void C() {}
+	//private void C() {}
 	
 	private void a(List<?> list) {
 	    double d0 = (this.h.boundingBox.a + this.h.boundingBox.d) / 2.0D;
@@ -390,14 +393,14 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	            double d3 = entity.locZ - d1;
 	            double d4 = d2 * d2 + d3 * d3;
 
-	           entity.b_(d2 / d4 * 4.0D, 0.2D, d3 / d4 * 4.0D);
+	           entity.b_(d2 / d4 * 4, 0.2, d3 / d4 * 4.0D);
 	        }
 	    }
 	}
 
-	private void damageEntities(List<?> list) {
+	private void damageEntities(List<Entity> list) {
 	    for (int i = 0; i < list.size(); ++i) {
-	        Entity entity = (Entity) list.get(i);
+	        Entity entity = list.get(i);
 
 	        if (entity instanceof EntityLiving) {
 	            // CraftBukkit start - throw damage events when the dragon attacks
