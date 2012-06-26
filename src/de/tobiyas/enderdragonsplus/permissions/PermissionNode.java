@@ -10,6 +10,8 @@ public class PermissionNode {
 	public final static String unloadAll = pluginPre + "unloadall";
 	public final static String loadAll = pluginPre + "loadall";
 	public final static String info = pluginPre + "info";
+	
+	//Respawner Permissions
 	public final static String createRespawner = pluginPre + "respawner.create";
 	public final static String removeRespawner = pluginPre + "respawner.remove";
 	public final static String clearRespawners = pluginPre + "respawner.clear";

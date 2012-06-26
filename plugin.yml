@@ -1,6 +1,6 @@
 name: EnderdragonsPlus
 main: de.tobiyas.enderdragonsplus.EnderdragonsPlus
-version: 1.2
+version: 1.4
 website: http://dev.bukkit.org/server-mods/enderdragonsplus/
 author: tobiyas
 depend:
@@ -49,8 +49,3 @@ commands:
     aliases: []
     usage: |
            /edprespawner <respawntime> <dragons>
-#  gethere:
-#    description: fsa
-#    aliases: []
-#    usage: |
-#           /gethere

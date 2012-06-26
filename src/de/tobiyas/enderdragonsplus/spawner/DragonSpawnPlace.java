@@ -1,5 +1,7 @@
 package de.tobiyas.enderdragonsplus.spawner;
 
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -12,16 +14,17 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class DragonSpawnPlace {
 
-	private Location loc;
+	//private Location loc;
+	private DragonSpawnerContainer dsContainer;
 	private int respawnTime;
 	private UUID dragonID;
 	private int newRespawnIn;
 	
 	private EnderdragonsPlus plugin;
 	
-	public DragonSpawnPlace(Location loc, int respawnTime){
+	public DragonSpawnPlace(DragonSpawnerContainer dsContainer, int respawnTime){
 		plugin = EnderdragonsPlus.getPlugin();
-		this.loc = loc;
+		this.dsContainer = dsContainer;
 		this.respawnTime = respawnTime;
 		this.newRespawnIn = respawnTime;
 	}
@@ -41,9 +44,11 @@ public class DragonSpawnPlace {
 	}
 	
 	public void saveSelf(YAMLConfigExtended config, String id, int nr){
+		config.load();
 		if(dragonID != null) 
 			config.set("spawners." + id + ".places." + nr + ".id", dragonID.toString());
 		config.set("spawners." + id + ".places." + nr + ".respawnIn", newRespawnIn);
+		config.save();
 	}
 	
 	public void tick(){
@@ -52,6 +57,7 @@ public class DragonSpawnPlace {
 			dragonID = null;
 			newRespawnIn --;
 			if(newRespawnIn < 0){
+				Location loc = getRandomLoc();
 				LivingEntity newDragon = DragonAPI.spawnNewEnderdragon(loc);
 				if(newDragon != null){
 					newRespawnIn = respawnTime;
@@ -59,6 +65,16 @@ public class DragonSpawnPlace {
 				}
 			}
 		}
+	}
+	
+	private Location getRandomLoc(){
+		ArrayList<Location> locs = dsContainer.getLocation();
+		if(locs.size() == 1)
+			return locs.get(0);
+			
+		Random rand = new Random();
+		int randInt = rand.nextInt(locs.size());
+		return locs.get(randInt);
 	}
 
 	public void setRemainingRespawntime(int timeLeft) {

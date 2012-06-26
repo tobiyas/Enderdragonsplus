@@ -31,11 +31,15 @@
 	private int config_ticksWhenOutOfRange;
 	private boolean config_pluginHandleLoads;
 	private int config_dragonMaxHealth;
+	private boolean config_dragonsSpitFireballs;
+	private int config_dragonSpitFireballsEvery;
+	private int config_dragonsSpitFireballsRange;
 	
 	private boolean config_replaceOnTheFly;
 
 	private boolean config_informPlayerDamageDone;
 	private boolean config_informPlayerDamageTaken;
+	private boolean config_anounceDragonSpawning;
 
 	public Config(EnderdragonsPlus plugin){
 		this.plugin = plugin;
@@ -45,7 +49,7 @@
 	private void setupConfiguration(){
 		plugin.getConfig().addDefault("deactivateDragonTemples", true);
 		plugin.getConfig().addDefault("maxPlayerFollowDistance", 100);
-		plugin.getConfig().addDefault("maxHomeDisatance", 500);
+		plugin.getConfig().addDefault("maxHomeDistance", 500);
 		plugin.getConfig().addDefault("includeHeight", false);
 		plugin.getConfig().addDefault("dropEXP", 200);
 		plugin.getConfig().addDefault("debugOutputs", false);
@@ -62,6 +66,10 @@
 		plugin.getConfig().addDefault("informPlayerDamageDone", true);
 		plugin.getConfig().addDefault("informPlayerDamageTaken", true);
 		plugin.getConfig().addDefault("replaceOnTheFly", true);
+		plugin.getConfig().addDefault("dragonsSpitFireballs", true);
+		plugin.getConfig().addDefault("dragonsSpitFireballsEveryXSeconds", 7);
+		plugin.getConfig().addDefault("dragonsSpitFireballsRange", 100);
+		plugin.getConfig().addDefault("anounceDragonSpawning", true);
 		
 		plugin.getConfig().options().copyDefaults(true);
 	}
@@ -73,7 +81,7 @@
 
 		config_deactivateDragonTemples = plugin.getConfig().getBoolean("deactivateDragonTemples", true);
 		config_maxFollowDistance = plugin.getConfig().getInt("maxPlayerFollowDistance", 100);
-		config_maxHomeDistance = plugin.getConfig().getInt("maxHomeDisatance", 500);
+		config_maxHomeDistance = plugin.getConfig().getInt("maxHomeDistance", 500);
 		config_includeHeight = plugin.getConfig().getBoolean("includeHeight", false);
 		config_dropEXP = plugin.getConfig().getInt("dropEXP", 2000);
 		config_debugOutput = plugin.getConfig().getBoolean("debugOutputs", false);
@@ -90,73 +98,81 @@
 		config_informPlayerDamageDone = plugin.getConfig().getBoolean("informPlayerDamageDone", true);
 		config_informPlayerDamageTaken = plugin.getConfig().getBoolean("informPlayerDamageTaken", true);
 		config_replaceOnTheFly = plugin.getConfig().getBoolean("replaceOnTheFly", true);
+		config_dragonsSpitFireballs = plugin.getConfig().getBoolean("dragonsSpitFireballs", true);
+		config_dragonSpitFireballsEvery = plugin.getConfig().getInt("dragonsSpitFireballsEveryXSeconds", 7);
+		config_dragonsSpitFireballsRange = plugin.getConfig().getInt("dragonsSpitFireballsRange", 100);
+		config_anounceDragonSpawning = plugin.getConfig().getBoolean("anounceDragonSpawning", true);
+		
+		//stay compatible to old versions
+		if(plugin.getConfig().getInt("maxHomeDisatance", -1) != -1)
+			config_maxHomeDistance = plugin.getConfig().getInt("maxHomeDisatance", 500);
 	}
 	
 	public void reload(){
 		reloadConfiguration();
 	}
 	
-	public boolean getconfig_deactivateDragonTemples(){
+	public boolean getConfig_deactivateDragonTemples(){
 		return config_deactivateDragonTemples;
 	}
 	
-	public int getconfig_maxFollowDistance(){
+	public int getConfig_maxFollowDistance(){
 		return config_maxFollowDistance;
 	}
 	
-	public int getconfig_maxHomeDistance(){
+	public int getConfig_maxHomeDistance(){
 		return config_maxHomeDistance;
 	}
 	
-	public boolean getconfig_includeHeight(){
+	public boolean getConfig_includeHeight(){
 		return config_includeHeight;
 	}
 	
-	public int getconfig_dropEXP(){
+	public int getConfig_dropEXP(){
 		return config_dropEXP;
 	}
 	
-	public boolean getconfig_debugOutput(){
+	public boolean getConfig_debugOutput(){
 		return config_debugOutput;
 	}
 	
-	public boolean getconfig_replaceAllDragons(){
+	public boolean getConfig_replaceAllDragons(){
 		return config_replaceAllDragons;
 	}
 	
-	public int getconfig_dragonHealth(){
+	public int getConfig_dragonHealth(){
 		return config_dragonHealtch;
 	}
 
-	public int getconfig_dragonDamage() {
+	public int getConfig_dragonDamage() {
 		return config_dragonDamage;
 	}
 	
-	public boolean getconfig_ignorePlayerGamemode1(){
+	public boolean getConfig_ignorePlayerGamemode1(){
 		return config_ignorePlayerGamemode1;
 	}
 
-	public boolean getconfig_fireBukkitEvents() {
+	public boolean getConfig_fireBukkitEvents() {
 		return config_fireBukkitEvents;
 	}
 
-	public boolean getconfig_disableEnderdragonBlockDamage() {
+	public boolean getConfig_disableEnderdragonBlockDamage() {
 		return config_disableEnderdragonBlockDamage;
 	}
 	
-	public boolean getconfig_neverUnloadChunkWithED(){
+	public boolean getConfig_neverUnloadChunkWithED(){
 		return config_neverUnloadChunkWithED;
 	}
 	
-	public int getconfig_ticksPerSeconds(){
+	public int getConfig_ticksPerSeconds(){
 		return config_ticksWhenOutOfRange;
 	}
 	
-	public boolean getconfig_pluginHandleLoads(){
+	public boolean getConfig_pluginHandleLoads(){
 		return config_pluginHandleLoads;
 	}
 
-	public int getconfig_dragonMaxHealth() {
+	public int getConfig_dragonMaxHealth() {
 		return config_dragonMaxHealth;
 	}
 	
@@ -164,12 +180,28 @@
 		return config_informPlayerDamageDone;
 	}
 	
-	public boolean getconfig_informPlayerDamageTaken(){
+	public boolean getConfig_informPlayerDamageTaken(){
 		return config_informPlayerDamageTaken;
 	}
 	
-	public boolean getconfig_replaceOnTheFly(){
+	public boolean getConfig_replaceOnTheFly(){
 		return config_replaceOnTheFly;
+	}
+	
+	public boolean getConfig_dragonsSpitFireballs(){
+		return config_dragonsSpitFireballs;
+	}
+	
+	public boolean getConfig_anounceDragonSpawning(){
+		return config_anounceDragonSpawning;
+	}
+	
+	public int getConfig_dragonSpitFireballsEvery(){
+		return config_dragonSpitFireballsEvery;
+	}
+	
+	public int getConfig_dragonsSpitFireballsRange(){
+		return config_dragonsSpitFireballsRange;
 	}
 
 }

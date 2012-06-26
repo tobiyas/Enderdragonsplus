@@ -13,10 +13,12 @@ import java.util.UUID;
 
 import net.minecraft.server.World;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -48,7 +50,7 @@ public class Listener_Entity implements Listener {
 	public void onEntityCreatePortal(EntityCreatePortalEvent event){
 		if(!event.getEntityType().equals(EntityType.ENDER_DRAGON)) return;
 		
-		if(plugin.interactConfig().getconfig_deactivateDragonTemples()) 
+		if(plugin.interactConfig().getConfig_deactivateDragonTemples()) 
 			event.setCancelled(true);
 	}
 	
@@ -56,15 +58,19 @@ public class Listener_Entity implements Listener {
 	public void replaceDragon(CreatureSpawnEvent event){
 		if(event.isCancelled()) return;
 		if(!event.getEntityType().equals(EntityType.ENDER_DRAGON)) return;
-		if(!plugin.interactConfig().getconfig_replaceAllDragons()) return;
+		if(!plugin.interactConfig().getConfig_replaceAllDragons()) return;
 		
-		if(plugin.interactConfig().getconfig_debugOutput())
+		if(plugin.interactConfig().getConfig_debugOutput())
 			plugin.log("enderdragon id: " + event.getEntity().getEntityId());
 		
 		UUID id = event.getEntity().getUniqueId();
-		if(plugin.getContainer().containsID(id)) return;
+		if(plugin.getContainer().containsID(id)){
+			if(plugin.interactConfig().getConfig_anounceDragonSpawning())
+				announceDragon(event.getEntity());
+			return;
+		}
 		
-		if(plugin.interactConfig().getconfig_debugOutput())
+		if(plugin.interactConfig().getConfig_debugOutput())
 			plugin.log("id detection failed.");
 		
 		if(plugin.interactBridgeController().isSpecialDragon(event.getEntity())) return;
@@ -105,9 +111,19 @@ public class Listener_Entity implements Listener {
 		}	
 	}
 	
+	private void announceDragon(Entity entity){
+		Location loc = entity.getLocation();
+		for(Player player : Bukkit.getOnlinePlayers()){
+			player.sendMessage(ChatColor.GREEN + "A new Dragon has spawned at: " + ChatColor.LIGHT_PURPLE + loc.getBlockX() +
+								ChatColor.GREEN + ", " + ChatColor.LIGHT_PURPLE + loc.getBlockZ() + ChatColor.GREEN + 
+								" on world: " + ChatColor.LIGHT_PURPLE + loc.getWorld().getName());
+		}
+	}
+	
 	@EventHandler
 	public void onEnderDragonExplode(EntityExplodeEvent event) {
-		if(!plugin.interactConfig().getconfig_disableEnderdragonBlockDamage()) return;
+		if(!plugin.interactConfig().getConfig_disableEnderdragonBlockDamage()) return;
+		if(!(event.getEntity() instanceof EnderDragon)) return;
 		UUID id = event.getEntity().getUniqueId();
 		if (plugin.getContainer().containsID(id)) {
 			event.setCancelled(true);
@@ -122,7 +138,7 @@ public class Listener_Entity implements Listener {
 		if(!event.getDamager().getType().equals(EntityType.ENDER_DRAGON)) return;
 		
 		if(!(event.getEntity() instanceof Player)) return;
-		if(plugin.interactConfig().getconfig_informPlayerDamageTaken()){
+		if(plugin.interactConfig().getConfig_informPlayerDamageTaken()){
 			Player player = (Player) event.getEntity();
 			player.sendMessage(ChatColor.YELLOW + "The Dragon has done " + ChatColor.LIGHT_PURPLE + event.getDamage() + ChatColor.YELLOW + " damage to you.");
 		}
@@ -175,7 +191,7 @@ public class Listener_Entity implements Listener {
 		UUID uuid = UUID.fromString(uid);
 		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
 		dragon.spawn(false);
-		dragon.setHealth(plugin.interactConfig().getconfig_dragonHealth());
+		dragon.setHealth(plugin.interactConfig().getConfig_dragonHealth());
 		return dragon;
 	}
 

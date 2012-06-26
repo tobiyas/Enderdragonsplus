@@ -41,7 +41,7 @@ public class Container {
 			if(!container.isLoaded)
 				new File(plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon." + dragon).delete();
 			homeList.remove(dragon);
-			if(plugin.interactConfig().getconfig_debugOutput())
+			if(plugin.interactConfig().getConfig_debugOutput())
 				plugin.log("removed Dragon!");
 		}
 		
@@ -50,7 +50,7 @@ public class Container {
 	
 	public int killEnderDragons(Location location, int range){
 		ArrayList<UUID> toRemove = new ArrayList<UUID>();
-		boolean considerRange = plugin.interactConfig().getconfig_includeHeight();
+		boolean considerRange = plugin.interactConfig().getConfig_includeHeight();
 		
 		for(UUID dragonID : homeList.keySet()){
 			DragonInfoContainer container = homeList.get(dragonID);
@@ -103,7 +103,7 @@ public class Container {
 			if(!con.isLoaded) continue;
 			con.isLoaded = false;
 			con.dragon.saveToPath();
-			if(plugin.interactConfig().getconfig_pluginHandleLoads()) con.dragon.remove();
+			if(plugin.interactConfig().getConfig_pluginHandleLoads()) con.dragon.remove();
 			j++;
 		}
 		
@@ -181,7 +181,7 @@ public class Container {
 	}
 
 	public void setHomeID(UUID entityId, Location homelocation, Location location, boolean flyingHome, LimitedEnderDragon dragon){
-		if(plugin.interactConfig().getconfig_debugOutput()) 
+		if(plugin.interactConfig().getConfig_debugOutput()) 
 			plugin.log("set ID: " + entityId);
 		
 		DragonInfoContainer temp = new DragonInfoContainer(entityId, location.clone(), homelocation.clone(), flyingHome, true, dragon);
@@ -206,7 +206,7 @@ public class Container {
 			DragonInfoContainer con = homeList.get(id);
 			if(con.isLoaded) continue;
 			if(locationIsInChunk(con.location, chunk)){
-				if(plugin.interactConfig().getconfig_debugOutput()) 
+				if(plugin.interactConfig().getConfig_debugOutput()) 
 					plugin.log("loading: " + con.ID);
 				
 				String path = plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon.";
@@ -217,7 +217,7 @@ public class Container {
 	}
 
 	public void saveDragon(UUID entityId) {
-		if(plugin.interactConfig().getconfig_debugOutput())
+		if(plugin.interactConfig().getConfig_debugOutput())
 			plugin.log("Saving Dragon: " + entityId);
 		DragonInfoContainer con = homeList.get(entityId);
 		con.dragon.saveToPath();

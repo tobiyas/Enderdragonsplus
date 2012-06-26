@@ -1,15 +1,18 @@
 package de.tobiyas.enderdragonsplus.configuration;
 
-public class ConfigText {
+import de.tobiyas.enderdragonsplus.util.Consts;
 
+public class ConfigText {
+	
 	public static String getConfig(){
 		String text = "";
 		
 		text += "#Config for Enderdragons+\n";
-		text += "#TemplateVersion 1.1\n\n";
+		text += "#TemplateVersion " + Consts.ConfigVersion + "\n\n";
 
 		text += "#	REGION: EnderDragons\n";
 		text += "#The maximal Life an EnderDragon comes to Life\n";
+		text += "#When set to -1, the Health will not be set (for compability to other plugins regulating health)\n";
 		text += "#default: 200\n";
 		text += "dragonMaxHealth: 200\n\n";
 
@@ -27,7 +30,27 @@ public class ConfigText {
 
 		text += "#Tells the EnderDragon at what distance to return to his home\n";
 		text += "#default: 500\n";
-		text += "maxHomeDisatance: 500\n";
+		text += "maxHomeDistance: 500\n\n";
+		
+		text += "#Defines if it is anounces publicaly if a dragon spawns\n";
+		text += "#default: true\n";
+		text += "anounceDragonSpawning: true\n\n";
+		
+		
+		text += "#SUBREGION: EnderDragons.Fireballs\n";
+		text += "#Defines if the dragon can spit FireBalls\n";
+		text += "#default: true\n";
+		text += "dragonsSpitFireballs: true\n\n";
+		
+		text += "#The time the enderdragon can spit Fireballs (every X seconds)\n";
+		text += "#default: 7\n";
+		text += "dragonsSpitFireballsEveryXSeconds: true\n\n";
+		
+		text += "#The maximum distance the enderdragon can spit Fireballs\n";
+		text += "#default: 100\n";
+		text += "dragonsSpitFireballsRange: 100\n\n";
+		
+		text += "#  /SUBREGION: EnderDragons.Fireballs\n";
 		text += "#	/REGION: EnderDragons\n\n\n";
 
 

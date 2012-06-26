@@ -39,6 +39,7 @@ import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Sign;
 import de.tobiyas.enderdragonsplus.listeners.Listener_World;
 import de.tobiyas.enderdragonsplus.spawner.DragonSpawnerManager;
+import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
 
 
@@ -71,14 +72,15 @@ public class EnderdragonsPlus extends JavaPlugin{
 		setupConfiguration();
 		container = new Container();
 		
+		checkDepends();
 		registerEvents();
 		registerCommands();
 		
 		container.loadContainer();
-		checkDepends();
 		registerTasks();
 		
 		registerManagers();
+		initMetrics();
 		
 		log(description.getFullName() + " fully loaded with: " + permissionManager.getPermissionsName());
 	}
@@ -94,8 +96,6 @@ public class EnderdragonsPlus extends JavaPlugin{
 	    	  		"LimitedEnderDragon", 
 	    	  		Integer.valueOf(63) 
 	    	  	});
-	      
-	      
 	            
 	    } catch (Exception e) {
 	      log("Could not inject LimitedEnderDragon. Disabling Plugin.");
@@ -156,6 +156,10 @@ public class EnderdragonsPlus extends JavaPlugin{
 		ConfigTemplate template = new ConfigTemplate();
 		if(template.isOldConfigVersion())
 			template.writeTemplate();
+	}
+	
+	private void initMetrics(){
+		SendMetrics.sendMetrics(this, false);
 	}
 
 	

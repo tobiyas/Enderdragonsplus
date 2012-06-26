@@ -4,23 +4,23 @@ import net.minecraft.server.EntityEnderDragon;
 
 import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.plugin.Plugin;
 
-import de.V10lator.RideThaDragon.RideThaDragon;
 import de.V10lator.RideThaDragon.V10Dragon;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 
 public class RideThaDragonBridge implements SpecialDragonBridge{
 
 	private EnderdragonsPlus plugin;
-	private RideThaDragon RTDPlugin;
 	private boolean RTDEnabled;
 	
 	
 	public RideThaDragonBridge(){
 		plugin = EnderdragonsPlus.getPlugin();
-		RTDPlugin = (RideThaDragon) plugin.getServer().getPluginManager().getPlugin("RideThaDragon");
-		RTDEnabled = (RTDPlugin != null  && RTDPlugin.isEnabled());
-		if(RTDEnabled) plugin.log("RideThaDragon found and hooked.");
+		Plugin otherPlugin = plugin.getServer().getPluginManager().getPlugin("RideThaDragon");
+		RTDEnabled = (otherPlugin != null  && otherPlugin.isEnabled());
+		if(RTDEnabled) 
+			plugin.log("RideThaDragon found and hooked.");
 	}
 
 	@Override

@@ -2,9 +2,11 @@ package de.tobiyas.enderdragonsplus.spawner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -15,7 +17,7 @@ import de.tobiyas.util.config.YAMLConfigExtended;
 public class DragonSpawnerManager {
 
 	private EnderdragonsPlus plugin;
-	private HashMap<Integer, DragonSpawnerContainer> spawners;
+	private HashMap<String, DragonSpawnerContainer> spawners;
 	private DragonSpawnerTimer ticker;
 	
 	private YAMLConfigExtended config;
@@ -23,7 +25,7 @@ public class DragonSpawnerManager {
 	
 	public DragonSpawnerManager(){
 		this.plugin = EnderdragonsPlus.getPlugin();
-		spawners = new HashMap<Integer, DragonSpawnerContainer>();
+		spawners = new HashMap<String, DragonSpawnerContainer>();
 	}
 	
 	public void init(){
@@ -39,27 +41,24 @@ public class DragonSpawnerManager {
 		ticker.continueTimer();
 	}
 	
-	public boolean addSpawner(Location loc, int respawnTime, int maxDragons){
-		int freeID = getNextFreeID();
-		String spawnerID = "spawner" + freeID;
-		DragonSpawnerContainer container = DragonSpawnerContainer.createContainer(loc.getBlock().getLocation(), maxDragons, respawnTime, spawnerID);
+	public boolean addSpawner(Location loc, int respawnTime, int maxDragons, String spawnerName){
+		if(containerContains(spawnerName)) return false;
+		DragonSpawnerContainer container = DragonSpawnerContainer.createContainer(loc.getBlock().getLocation(), maxDragons, respawnTime, spawnerName);
 		if(container == null)
 			return false;
-		spawners.put(freeID, container);
+		spawners.put(spawnerName, container);
 		return true;
 	}
 	
-	private int getNextFreeID() {
-		for(int i = 0; i < Integer.MAX_VALUE; i++){
-			DragonSpawnerContainer container = spawners.get(i);
-			if(container == null)
-				return i;
-		}
-		return -1;
+	private boolean containerContains(String name){
+		for(String sName : spawners.keySet())
+			if(sName.equalsIgnoreCase(name))
+				return true;
+		return false;
 	}
 
 	public boolean hasRespawnerOn(Location loc){
-		for(int id : spawners.keySet()){
+		for(String id : spawners.keySet()){
 			DragonSpawnerContainer spawner = spawners.get(id);
 			if(spawner.isNear(loc))
 				return true;
@@ -68,11 +67,11 @@ public class DragonSpawnerManager {
 	}
 	
 	public boolean deleteSpawner(Location loc){
-		for(int id : spawners.keySet()){
+		for(String id : spawners.keySet()){
 			DragonSpawnerContainer spawner = spawners.get(id);
 			if(spawner.isNear(loc)){
-				spawner.remove(config);
-				spawners.remove(id);
+				if(spawner.remove(config, loc, false))
+					spawners.remove(id);
 				return true;
 			}
 		}
@@ -94,8 +93,8 @@ public class DragonSpawnerManager {
 			DragonSpawnerContainer container = DragonSpawnerContainer.createContainer(config, spawner);
 			if(container == null)
 				continue;
-			int freeID = getNextFreeID();
-			spawners.put(freeID, container);
+			
+			spawners.put(container.getSpawnerID(), container);
 		}
 	}
 	
@@ -110,7 +109,7 @@ public class DragonSpawnerManager {
 	}
 	
 	public void saveList(){
-		for(int id : spawners.keySet()){
+		for(String id : spawners.keySet()){
 			DragonSpawnerContainer spawner = spawners.get(id);
 			spawner.saveContainer(config);
 		}
@@ -119,7 +118,7 @@ public class DragonSpawnerManager {
 	}
 	
 	public void tick() {
-		for(int id : spawners.keySet()){
+		for(String id : spawners.keySet()){
 			DragonSpawnerContainer spawner = spawners.get(id);
 			spawner.tick();
 		}
@@ -127,19 +126,18 @@ public class DragonSpawnerManager {
 	
 	public int resetSigns(){
 		int i = 0;
-		for(int id : spawners.keySet()){
+		for(String id : spawners.keySet()){
 			DragonSpawnerContainer spawner = spawners.get(id);
-			if(spawner.resetSign())
-				i++;
+			i+= spawner.createSigns();
 		}
 		return i;
 	}
 
 	public int clearAll() {
 		int cleared = spawners.size();
-		for(int id : spawners.keySet()){
+		for(String id : spawners.keySet()){
 			DragonSpawnerContainer spawner = spawners.get(id);
-			spawner.remove(config);
+			spawner.remove(config, new Location(Bukkit.getWorlds().get(0), 0, 250, 0), true);
 		}
 		
 		spawners.clear();
@@ -151,18 +149,30 @@ public class DragonSpawnerManager {
 		if(spawners.size() == 0)
 			player.sendMessage(ChatColor.RED + "No Spawners registered.");
 		
-		for(int id : spawners.keySet()){
+		for(String id : spawners.keySet()){
 			DragonSpawnerContainer spawner = spawners.get(id);
 			spawner.sendInfo(player);
 		}
 	}
 
-	public Location getLocationOfRespawner(int respawner) {
+	public ArrayList<Location> getLocationOfRespawner(String respawner) {
 		DragonSpawnerContainer spawner =  spawners.get(respawner);
 		if(spawner == null)
 			return null;
 		
 		return spawner.getLocation();
+	}
+
+	public boolean linkSpawner(String respawnerName, Location placeLocation) {
+		for(String id : spawners.keySet()){
+			DragonSpawnerContainer container = spawners.get(id);
+			if(container.getSpawnerID().equalsIgnoreCase(respawnerName)){
+				container.linkPosition(placeLocation);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 }

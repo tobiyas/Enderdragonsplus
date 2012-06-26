@@ -24,7 +24,7 @@ public class OnTheFlyReplacer implements Runnable {
 	
 	@Override
 	public void run() {
-		if(plugin.interactConfig().getconfig_replaceOnTheFly()){
+		if(plugin.interactConfig().getConfig_replaceOnTheFly()){
 			for(World world : Bukkit.getWorlds()){
 				for(Entity entity : world.getEntities()){
 					if(entity.getType() != EntityType.ENDER_DRAGON) continue;
@@ -37,7 +37,7 @@ public class OnTheFlyReplacer implements Runnable {
 					Location loctaion = entity.getLocation();
 					entity.remove();
 					boolean worked = spawnLimitedEnderDragon(loctaion, entityID) != null;
-					if(plugin.interactConfig().getconfig_debugOutput())
+					if(plugin.interactConfig().getConfig_debugOutput())
 						plugin.log("Replaced dragon: " + entityID + " worked: " + worked);
 				}
 			}
@@ -49,7 +49,7 @@ public class OnTheFlyReplacer implements Runnable {
 		
 		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
 		dragon.spawn(false);
-		dragon.setHealth(plugin.interactConfig().getconfig_dragonHealth());
+		dragon.setHealth(plugin.interactConfig().getConfig_dragonHealth());
 		return dragon;
 	}
 

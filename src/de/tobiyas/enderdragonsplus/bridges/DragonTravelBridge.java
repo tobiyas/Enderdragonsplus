@@ -4,23 +4,22 @@ import net.minecraft.server.EntityEnderDragon;
 
 import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.entity.LivingEntity;
-
-import TheEnd.DragonTravel.DragonTravelMain;
+import org.bukkit.plugin.Plugin;
 import TheEnd.DragonTravel.XemDragon;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 
 public class DragonTravelBridge implements SpecialDragonBridge{
 	
 	private EnderdragonsPlus plugin;
-	private DragonTravelMain dtPlugin;
 	private boolean dtEnabled;
 	
 	
 	public DragonTravelBridge(){
 		plugin = EnderdragonsPlus.getPlugin();
-		dtPlugin = (DragonTravelMain) plugin.getServer().getPluginManager().getPlugin("DragonTravel");
-		dtEnabled = (dtPlugin != null  && dtPlugin.isEnabled());
-		if(dtEnabled) plugin.log("DragonTravel found and hooked.");
+		Plugin otherPlugin = plugin.getServer().getPluginManager().getPlugin("DragonTravel");
+		dtEnabled = (otherPlugin != null  && otherPlugin.isEnabled());
+		if(dtEnabled)
+			plugin.log("DragonTravel found and hooked.");
 	}
 	
 	public boolean isXemDragon(LivingEntity entity){

@@ -27,6 +27,7 @@ import net.minecraft.server.Entity;
 import net.minecraft.server.EntityComplexPart;
 import net.minecraft.server.EntityEnderCrystal;
 import net.minecraft.server.EntityEnderDragon;
+import net.minecraft.server.EntityFireball;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.LocaleI18n;
@@ -37,12 +38,14 @@ import net.minecraft.server.World;
 public class LimitedEnderDragon extends EntityEnderDragon {
 
 	private Entity u;
+	private Entity lastTarget = null;
 	private EnderdragonsPlus plugin;
 	public static int broadcastedError = 0;
 	
 	private Location forceGoTo;
 	
 	private int logicCall = 0;
+	private int fireballTicks = 0;
 	
 	public LimitedEnderDragon(Location location, World world){
 		super(world);
@@ -50,7 +53,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		plugin = EnderdragonsPlus.getPlugin();
 		plugin.getContainer().setHomeID(getUUID(), location, location, false, this);
 		
-		int maxHealth = plugin.interactConfig().getconfig_dragonMaxHealth();
+		int maxHealth = plugin.interactConfig().getConfig_dragonMaxHealth();
 		if(maxHealth > 0)
 			this.t = maxHealth;
 		setPosition(location.getX(), location.getY(), location.getZ());
@@ -64,16 +67,16 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		plugin.getContainer().setHomeID(getUUID(), location, location, false, this);
 		
 		setPosition(location.getX(), location.getY(), location.getZ());
-		int maxHealth = plugin.interactConfig().getconfig_dragonMaxHealth();
+		int maxHealth = plugin.interactConfig().getConfig_dragonMaxHealth();
 		if(maxHealth > 0)
-			this.t = maxHealth;
+			this.datawatcher.watch(16, Integer.valueOf(this.health));
 	}
 	
 	public LimitedEnderDragon(World world){
 		super(world);
 		
 		plugin = EnderdragonsPlus.getPlugin();
-		if(plugin.interactConfig().getconfig_pluginHandleLoads()){
+		if(plugin.interactConfig().getConfig_pluginHandleLoads()){
 			remove();
 			return;
 		}
@@ -128,6 +131,28 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	    return LocaleI18n.get("entity.EnderDragon.name");
 	}
 	
+	@Override
+	public boolean damageEntity(DamageSource source, int amount){
+		if(health <= 0)
+			return false;
+			
+		if(this.noDamageTicks > 0)
+			return false;
+		
+		if(source != DamageSource.GENERIC)
+			return false;
+		
+		if(source.k())
+			return false;
+		
+		this.setHealth(health - amount);
+		if(this.health <= 0){
+			die(source);
+		}
+		return true;
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void e() {
@@ -146,6 +171,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
             d05 = (this.random.nextFloat() - 0.5F) * 4.0F;
             f1 = (this.random.nextFloat() - 0.5F) * 8.0F;
             this.world.a("largeexplode", this.locX + (double) f, this.locY + 2.0D + (double) d05, this.locZ + (double) f1, 0.0D, 0.0D, 0.0D);
+            this.aB();
         } else {
             this.checkRegainHealth();
             f = 0.2F / (MathHelper.sqrt(this.motX * this.motX + this.motZ * this.motZ) * 10.0F + 1.0F);
@@ -330,12 +356,15 @@ public class LimitedEnderDragon extends EntityEnderDragon {
             this.m.F_();
             this.m.setPositionRotation(this.locX - (double) (f12 * 4.5F), this.locY + 2.0D, this.locZ - (double) (f11 * 4.5F), 0.0F, 0.0F);
 
-            if (!this.world.isStatic && this.at == 0) {
+            if (!this.world.isStatic && this.hurtTicks == 0) {
                 this.a(this.world.getEntities(this, this.l.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0.0D)));
                 this.a(this.world.getEntities(this, this.m.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0.0D)));
                 this.damageEntities(this.world.getEntities(this, this.g.boundingBox.grow(1.0D, 1.0D, 1.0D)));
-            }else
-            	at -= 1;
+            }
+            
+            boolean fireFireBall = plugin.interactConfig().getConfig_dragonsSpitFireballs();
+            if(fireFireBall)
+            	checkSpitFireBall(false);
 
             double[] adouble = this.a(5, 1.0F);
             double[] adouble1 = this.a(0, 1.0F);
@@ -378,7 +407,42 @@ public class LimitedEnderDragon extends EntityEnderDragon {
         }
     }
 	
-	//private void C() {}
+	public boolean spitFireBallOnTarget(Entity target){
+		if(target == null)
+			return false;
+		
+		Entity tempEntity = lastTarget;
+		lastTarget = target;		
+		checkSpitFireBall(true);
+		lastTarget = tempEntity;
+		return true;
+	}
+	
+	private void checkSpitFireBall(boolean force){
+		fireballTicks++;
+		int fireEveryX = plugin.interactConfig().getConfig_dragonSpitFireballsEvery();
+		
+		if(force || (fireballTicks > (fireEveryX * 20))){
+			fireballTicks = 0;
+			if(lastTarget == null || !lastTarget.isAlive()){
+				lastTarget = null;
+				return;
+			}
+			
+			if(!force && u != null)
+				return;
+			
+			int maxDistance = plugin.interactConfig().getConfig_dragonsSpitFireballsRange();
+			if(!force && lastTarget.getBukkitEntity().getLocation().distance(this.getLocation()) > maxDistance)
+				return;
+			
+			Location loc = new Location(world.getWorld(), lastTarget.locX - this.locX, lastTarget.locY - this.locY, lastTarget.locZ - this.locZ);
+			
+			EntityFireball fireBall = new EntityFireball(world, this, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+			fireBall.setDirection(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+			world.addEntity(fireBall);
+		}
+	}
 	
 	private void a(List<?> list) {
 	    double d0 = (this.h.boundingBox.a + this.h.boundingBox.d) / 2.0D;
@@ -410,7 +474,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	                		new org.bukkit.event.entity.EntityDamageByEntityEvent(this.getBukkitEntity(), 
 	            			entity.getBukkitEntity(), 
 	                		org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK, 
-	                		plugin.interactConfig().getconfig_dragonDamage());
+	                		plugin.interactConfig().getConfig_dragonDamage());
 	                
 	                Bukkit.getPluginManager().callEvent(damageEvent);
 
@@ -418,7 +482,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	                    entity.damageEntity(DamageSource.mobAttack(this), damageEvent.getDamage());
 	                }
 	            } else {
-	                entity.damageEntity(DamageSource.mobAttack(this), plugin.interactConfig().getconfig_dragonDamage());
+	                entity.damageEntity(DamageSource.mobAttack(this), plugin.interactConfig().getConfig_dragonDamage());
 	            }
 	                // CraftBukkit end
 	        }
@@ -500,10 +564,14 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	public void changeTarget(boolean force){
 		try{
 		this.p = false;
-		boolean includeHeight = plugin.interactConfig().getconfig_includeHeight();
+		boolean includeHeight = plugin.interactConfig().getConfig_includeHeight();
 		
-		int homeRange = plugin.interactConfig().getconfig_maxHomeDistance();
+		int homeRange = plugin.interactConfig().getConfig_maxHomeDistance();
 		Location homeLocation = getHomeLocation();
+		
+		if(u != null){
+			lastTarget = u;
+		}
 		
 		if(getVectorDistance(homeLocation, includeHeight) > homeRange)
 			plugin.getContainer().setFlyingHome(getUUID(), true);
@@ -514,12 +582,12 @@ public class LimitedEnderDragon extends EntityEnderDragon {
         	List<Entity> targets = new LinkedList<Entity>();
         	
         	for(Entity player : list){
-        		if(plugin.interactConfig().getconfig_ignorePlayerGamemode1()){
+        		if(plugin.interactConfig().getConfig_ignorePlayerGamemode1()){
         			Player bukkitPlayer = (Player) player.getBukkitEntity();
         			if(bukkitPlayer.getGameMode().getValue() == 1) continue;
         		}
         		
-        		int maxRange = plugin.interactConfig().getconfig_maxFollowDistance();
+        		int maxRange = plugin.interactConfig().getConfig_maxFollowDistance();
         		if(getVectorDistance(player.locX, player.locY, player.locZ, includeHeight) < maxRange) targets.add(player);
         	}
         	if(targets.size() == 0){
@@ -530,14 +598,14 @@ public class LimitedEnderDragon extends EntityEnderDragon {
         	Entity nextTarget = (Entity) targets.get(this.random.nextInt(this.world.players.size()));
         	
         	//fire bukkit event: Target change
-        	if(plugin.interactConfig().getconfig_fireBukkitEvents()){
+        	if(plugin.interactConfig().getConfig_fireBukkitEvents()){
         		if(!u.equals(nextTarget)){
         			EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), (LivingEntity)nextTarget, TargetReason.RANDOM_TARGET);
         			this.world.getServer().getPluginManager().callEvent(event);
         			if(!event.isCancelled()){
-        				this.u = nextTarget;
+        				this.u = (Entity) event.getTarget();
         			}else
-        				changeTarget(true);
+        				return;
         		}
         	}else
         		this.u = nextTarget;
@@ -546,7 +614,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
             setNewTarget(homeLocation, false);
         
 		}catch(Exception e){
-			if(!plugin.interactConfig().getconfig_debugOutput()) return;
+			if(!plugin.interactConfig().getConfig_debugOutput()) return;
 			if(LimitedEnderDragon.broadcastedError != 10){
 				LimitedEnderDragon.broadcastedError ++;
 				return;
@@ -561,7 +629,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	
 	private void setNewTarget(Location location, boolean lockTarget){
-		boolean includeHeight = plugin.interactConfig().getconfig_includeHeight();
+		boolean includeHeight = plugin.interactConfig().getConfig_includeHeight();
 		
 		if(lockTarget)
 			forceGoTo = location;
@@ -648,7 +716,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	@Override
 	public int getExpReward(){
-		return plugin.interactConfig().getconfig_dropEXP();
+		return plugin.interactConfig().getConfig_dropEXP();
 	}
 
 	public Location getLocation() {
@@ -751,7 +819,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			forceLocation = new Location(forceWorld, forceLocationX, forceLocationY, forceLocationZ);
 		}
 		
-		if(EnderdragonsPlus.getPlugin().interactConfig().getconfig_pluginHandleLoads()){
+		if(EnderdragonsPlus.getPlugin().interactConfig().getConfig_pluginHandleLoads()){
 			LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uid);
 			
 			dragon.locX = actX;
@@ -805,7 +873,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	public void setTarget(LivingEntity entity){
 		Entity nextTarget = ((org.bukkit.craftbukkit.entity.CraftEntity)entity).getHandle();
 		//fire bukkit event: Target change
-    	if(plugin.interactConfig().getconfig_fireBukkitEvents()){
+    	if(plugin.interactConfig().getConfig_fireBukkitEvents()){
     		if(!u.equals(nextTarget)){
     			EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), (LivingEntity)nextTarget, TargetReason.RANDOM_TARGET);
     			this.world.getServer().getPluginManager().callEvent(event);

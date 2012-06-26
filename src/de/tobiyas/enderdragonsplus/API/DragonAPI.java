@@ -6,6 +6,7 @@ import net.minecraft.server.World;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -104,7 +105,7 @@ public class DragonAPI {
 		if(dragon.getBukkitEntity() == null)
 			return null;
 			
-		dragon.setHealth(EnderdragonsPlus.getPlugin().interactConfig().getconfig_dragonHealth());
+		dragon.setHealth(EnderdragonsPlus.getPlugin().interactConfig().getConfig_dragonHealth());
 		return (LivingEntity)dragon.getBukkitEntity();
 	}
 	
@@ -121,7 +122,6 @@ public class DragonAPI {
 		
 		UUID dragonID = LEdragon.getBukkitEntity().getUniqueId();
 		EnderdragonsPlus.getPlugin().getContainer().setProperty(dragonID, property, value);
-		
 		return true;
 	}
 	
@@ -137,5 +137,20 @@ public class DragonAPI {
 		
 		UUID dragonID = LEdragon.getBukkitEntity().getUniqueId();
 		return EnderdragonsPlus.getPlugin().getContainer().getProperty(dragonID, property);
+	}
+	
+	/**
+	 * Spits a fireball on the target Entity
+	 * 
+	 * @param dragon
+	 * @param target
+	 * @return if it worked
+	 */
+	public static boolean spitFireballOnTarget(LivingEntity dragon, Entity target){
+		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		if(LEdragon == null)
+			return false;
+		
+		return LEdragon.spitFireBallOnTarget((net.minecraft.server.Entity) target);
 	}
 }

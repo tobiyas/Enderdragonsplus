@@ -23,11 +23,11 @@ public class DragonLogicTicker implements Runnable {
 	
 	@Override
 	public void run() {
-		if(plugin.interactConfig().getconfig_pluginHandleLoads()){
-			int limit = plugin.interactConfig().getconfig_ticksPerSeconds();
+		if(plugin.interactConfig().getConfig_pluginHandleLoads()){
+			int limit = plugin.interactConfig().getConfig_ticksPerSeconds();
 			limit /= 5;
 			
-			boolean debugOutputs = plugin.interactConfig().getconfig_debugOutput();
+			boolean debugOutputs = plugin.interactConfig().getConfig_debugOutput();
 			
 			if(limit != 0){
 				Set<UUID> ids = plugin.getContainer().getAllIDs();
