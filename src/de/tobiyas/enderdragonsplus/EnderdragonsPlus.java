@@ -39,12 +39,14 @@ import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Sign;
 import de.tobiyas.enderdragonsplus.listeners.Listener_World;
 import de.tobiyas.enderdragonsplus.spawner.DragonSpawnerManager;
+import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
 
 
 public class EnderdragonsPlus extends JavaPlugin{
 	private Logger log;
+	private DebugLogger debugLogger;
 	private PluginDescriptionFile description;
 
 	private String prefix;
@@ -63,6 +65,8 @@ public class EnderdragonsPlus extends JavaPlugin{
 	public void onEnable(){
 		plugin = this;
 		log = Logger.getLogger("Minecraft");
+		debugLogger = new DebugLogger(this);
+		
 		description = getDescription();
 		prefix = "["+description.getName()+"] ";
 		
@@ -112,6 +116,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 	public void onDisable(){
 		container.saveContainer();
 		dragonSpawnerManager.saveList();
+		debugLogger.shutDown();
 		log("disabled "+description.getFullName());
 
 	}
@@ -185,6 +190,10 @@ public class EnderdragonsPlus extends JavaPlugin{
 	
 	public DragonSpawnerManager getDragonSpawnerManager(){
 		return dragonSpawnerManager;
+	}
+	
+	public DebugLogger getDebugLogger(){
+		return debugLogger;
 	}
 
 }

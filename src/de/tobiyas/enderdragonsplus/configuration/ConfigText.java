@@ -58,6 +58,10 @@ public class ConfigText {
 		text += "#Disables the BlockDamage of an EnderDragon fly through them\n";
 		text += "#default: true\n";
 		text += "disableEnderdragonBlockDamage: true\n\n";
+		
+		text += "#Disables Explosion effect when dragon hits block\n";
+		text += "#default: false \n";
+		text += "deactivateBlockExplodeEffect: false\n";
 
 		text += "#Disables the Temple when an EnderDragon dies\n";
 		text += "#default: true\n";

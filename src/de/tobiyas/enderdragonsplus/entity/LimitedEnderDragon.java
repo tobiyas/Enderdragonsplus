@@ -27,6 +27,7 @@ import net.minecraft.server.Entity;
 import net.minecraft.server.EntityComplexPart;
 import net.minecraft.server.EntityEnderCrystal;
 import net.minecraft.server.EntityEnderDragon;
+import net.minecraft.server.EntityExperienceOrb;
 import net.minecraft.server.EntityFireball;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
@@ -38,709 +39,818 @@ import net.minecraft.server.World;
 public class LimitedEnderDragon extends EntityEnderDragon {
 
 	private Entity u;
+	private int ticksToDeath = 200;
+	
 	private Entity lastTarget = null;
 	private EnderdragonsPlus plugin;
 	public static int broadcastedError = 0;
-	
+
 	private Location forceGoTo;
-	
+
 	private int logicCall = 0;
 	private int fireballTicks = 0;
-	
-	public LimitedEnderDragon(Location location, World world){
+
+	public LimitedEnderDragon(Location location, World world) {
 		super(world);
-		
+
 		plugin = EnderdragonsPlus.getPlugin();
-		plugin.getContainer().setHomeID(getUUID(), location, location, false, this);
-		
+		plugin.getContainer().setHomeID(getUUID(), location, location, false,
+				this);
+
 		int maxHealth = plugin.interactConfig().getConfig_dragonMaxHealth();
-		if(maxHealth > 0)
+		if (maxHealth > 0)
 			this.t = maxHealth;
 		setPosition(location.getX(), location.getY(), location.getZ());
+		this.expToDrop = plugin.interactConfig().getConfig_dropEXP();
 	}
-	
-	public LimitedEnderDragon(Location location, World world, UUID uid){
+
+	public LimitedEnderDragon(Location location, World world, UUID uid) {
 		super(world);
-		
+
 		plugin = EnderdragonsPlus.getPlugin();
 		changeUUID(uid);
-		plugin.getContainer().setHomeID(getUUID(), location, location, false, this);
-		
+		plugin.getContainer().setHomeID(getUUID(), location, location, false,
+				this);
+
 		setPosition(location.getX(), location.getY(), location.getZ());
 		int maxHealth = plugin.interactConfig().getConfig_dragonMaxHealth();
-		if(maxHealth > 0)
+		if (maxHealth > 0)
 			this.datawatcher.watch(16, Integer.valueOf(this.health));
+		this.expToDrop = plugin.interactConfig().getConfig_dropEXP();
 	}
-	
-	public LimitedEnderDragon(World world){
+
+	public LimitedEnderDragon(World world) {
 		super(world);
-		
+
 		plugin = EnderdragonsPlus.getPlugin();
-		if(plugin.interactConfig().getConfig_pluginHandleLoads()){
+		if (plugin.interactConfig().getConfig_pluginHandleLoads()) {
 			remove();
 			return;
-		}
-		
-		if(!plugin.getContainer().containsID(this.getUUID()))
+		} else
+			this.expToDrop = plugin.interactConfig().getConfig_dropEXP();
+
+		if (!plugin.getContainer().containsID(this.getUUID()))
 			remove();
 	}
-	
+
 	private void checkRegainHealth() {
-        if (this.s != null) {
-            if (this.s.dead) {
-                if (!this.world.isStatic) {
-                    this.a(this.g, DamageSource.EXPLOSION, 10);
-                }
+		if (this.s != null) {
+			if (this.s.dead) {
+				this.a(this.g, DamageSource.EXPLOSION, 10);
+				this.s = null;
+			} else if (this.ticksLived % 10 == 0 && this.health < this.t) {
+				// CraftBukkit start
+				org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(
+						this.getBukkitEntity(),
+						1,
+						org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL);
+				this.world.getServer().getPluginManager().callEvent(event);
 
-                this.s = null;
-            } else if (this.ticksLived % 10 == 0 && this.health < this.t) {
-                // CraftBukkit start
-                org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(this.getBukkitEntity(), 1, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL);
-                this.world.getServer().getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					this.health += event.getAmount();
+				}
+				// CraftBukkit end
+			}
+		}
 
-                if (!event.isCancelled()) {
-                    this.health += event.getAmount();
-                }
-                // CraftBukkit end
-            }
-        }
+		if (this.random.nextInt(10) == 0) {
+			float f = 32.0F;
+			List<?> list = this.world.a(EntityEnderCrystal.class,
+					this.boundingBox.grow(f, f, f));
+			EntityEnderCrystal entityendercrystal = null;
+			double d0 = Double.MAX_VALUE;
+			Iterator<?> iterator = list.iterator();
 
-        if (this.random.nextInt(10) == 0) {
-            float f = 32.0F;
-            List<?> list = this.world.a(EntityEnderCrystal.class, this.boundingBox.grow((double) f, (double) f, (double) f));
-            EntityEnderCrystal entityendercrystal = null;
-            double d0 = Double.MAX_VALUE;
-            Iterator<?> iterator = list.iterator();
+			while (iterator.hasNext()) {
+				Entity entity = (Entity) iterator.next();
+				double d1 = entity.j(this);
 
-            while (iterator.hasNext()) {
-                Entity entity = (Entity) iterator.next();
-                double d1 = entity.j(this);
+				if (d1 < d0) {
+					d0 = d1;
+					entityendercrystal = (EntityEnderCrystal) entity;
+				}
+			}
 
-                if (d1 < d0) {
-                    d0 = d1;
-                    entityendercrystal = (EntityEnderCrystal) entity;
-                }
-            }
+			this.s = entityendercrystal;
+		}
+	}
 
-            this.s = entityendercrystal;
-        }
-    }
-	
 	@Override
 	public String getLocalizedName() {
-	    return LocaleI18n.get("entity.EnderDragon.name");
+		return LocaleI18n.get("entity.EnderDragon.name");
 	}
-	
+
 	@Override
-	public boolean damageEntity(DamageSource source, int amount){
-		if(health <= 0)
+	public boolean damageEntity(DamageSource source, int amount) {
+		if (health <= 0)
 			return false;
-			
-		if(this.noDamageTicks > 0)
+
+		if (this.noDamageTicks > 0)
 			return false;
-		
-		if(source != DamageSource.GENERIC)
+
+		if (source != DamageSource.GENERIC)
 			return false;
-		
-		if(source.k())
+
+		if (source.k())
 			return false;
-		
+
 		this.setHealth(health - amount);
-		if(this.health <= 0){
+		if (this.health <= 0) {
 			die(source);
 		}
 		return true;
 	}
-	
-	
+
+	// Logic call. All Dragon log on tick
 	@SuppressWarnings("unchecked")
 	@Override
 	public void e() {
 		logicCall++;
-        this.n = this.o;
-        if (!this.world.isStatic) {
-            this.datawatcher.watch(16, Integer.valueOf(this.health));
-        }
+		this.n = this.o;
 
-        float f;
-        float f1;
-        float d05;
+		this.datawatcher.watch(16, Integer.valueOf(this.health));
 
-        if (this.health <= 0) {
-            f = (this.random.nextFloat() - 0.5F) * 8.0F;
-            d05 = (this.random.nextFloat() - 0.5F) * 4.0F;
-            f1 = (this.random.nextFloat() - 0.5F) * 8.0F;
-            this.world.a("largeexplode", this.locX + (double) f, this.locY + 2.0D + (double) d05, this.locZ + (double) f1, 0.0D, 0.0D, 0.0D);
-            this.aB();
-        } else {
-            this.checkRegainHealth();
-            f = 0.2F / (MathHelper.sqrt(this.motX * this.motX + this.motZ * this.motZ) * 10.0F + 1.0F);
-            f *= (float) Math.pow(2.0D, this.motY);
-            if (this.q) {
-                this.o += f * 0.5F;
-            } else {
-                this.o += f;
-            }
+		float f;
+		float f1;
+		double d05;
 
-            while (this.yaw >= 180.0F) {
-                this.yaw -= 360.0F;
-            }
+		if (this.health <= 0)
+			return;
 
-            while (this.yaw < -180.0F) {
-                this.yaw += 360.0F;
-            }
+		this.checkRegainHealth();
+		f = 0.2F / (MathHelper.sqrt(this.motX * this.motX + this.motZ
+				* this.motZ) * 10.0F + 1.0F);
+		f *= (float) Math.pow(2.0D, this.motY);
+		if (this.q) {
+			this.o += f * 0.5F;
+		} else {
+			this.o += f;
+		}
 
-            if (this.e < 0) {
-                for (int i = 0; i < this.d.length; ++i) {
-                    this.d[i][0] = (double) this.yaw;
-                    this.d[i][1] = this.locY;
-                }
-            }
+		while (this.yaw >= 180.0F) {
+			this.yaw -= 360.0F;
+		}
 
-            if (++this.e == this.d.length) {
-                this.e = 0;
-            }
+		while (this.yaw < -180.0F) {
+			this.yaw += 360.0F;
+		}
 
-            this.d[this.e][0] = (double) this.yaw;
-            this.d[this.e][1] = this.locY;
-            double d0;
-            double d1;
-            double d2;
-            double d3;
-            float f3;
+		if (this.e < 0) {
+			for (int i = 0; i < this.d.length; ++i) {
+				this.d[i][0] = this.yaw;
+				this.d[i][1] = this.locY;
+			}
+		}
 
-            if (this.world.isStatic) {
-                if (this.aN > 0) {
-                    d0 = this.locX + (this.aO - this.locX) / (double) this.aN;
-                    d1 = this.locY + (this.aP - this.locY) / (double) this.aN;
-                    d2 = this.locZ + (this.aQ - this.locZ) / (double) this.aN;
+		if (++this.e == this.d.length) {
+			this.e = 0;
+		}
 
-                    for (d3 = this.aR - (double) this.yaw; d3 < -180.0D; d3 += 360.0D) {
-                        ;
-                    }
+		this.d[this.e][0] = this.yaw;
+		this.d[this.e][1] = this.locY;
+		double d0;
+		double d1;
+		double d2;
+		double d3;
+		float f3;
 
-                    while (d3 >= 180.0D) {
-                        d3 -= 360.0D;
-                    }
+		d0 = this.a - this.locX;
+		d1 = this.b - this.locY;
+		d2 = this.c - this.locZ;
+		d3 = d0 * d0 + d1 * d1 + d2 * d2;
+		if (this.u != null) {
+			this.a = this.u.locX;
+			this.c = this.u.locZ;
+			double d4 = this.a - this.locX;
+			double d5 = this.c - this.locZ;
+			double d6 = Math.sqrt(d4 * d4 + d5 * d5);
+			double d7 = 0.4 + d6 / 80.0D - 1.0D;
 
-                    this.yaw = (float) ((double) this.yaw + d3 / (double) this.aN);
-                    this.pitch = (float) ((double) this.pitch + (this.aS - (double) this.pitch) / (double) this.aN);
-                    --this.aN;
-                    this.setPosition(d0, d1, d2);
-                    this.c(this.yaw, this.pitch);
-                }
-            } else {
-                d0 = this.a - this.locX;
-                d1 = this.b - this.locY;
-                d2 = this.c - this.locZ;
-                d3 = d0 * d0 + d1 * d1 + d2 * d2;
-                if (this.u != null) {
-                    this.a = this.u.locX;
-                    this.c = this.u.locZ;
-                    double d4 = this.a - this.locX;
-                    double d5 = this.c - this.locZ;
-                    double d6 = Math.sqrt(d4 * d4 + d5 * d5);
-                    double d7 = 0.4000000059604645D + d6 / 80.0D - 1.0D;
+			if (d7 > 10.0D) {
+				d7 = 10.0D;
+			}
 
-                    if (d7 > 10.0D) {
-                        d7 = 10.0D;
-                    }
+			this.b = this.u.boundingBox.b + d7;
+		} else {
+			this.a += this.random.nextGaussian() * 2.0D;
+			this.c += this.random.nextGaussian() * 2.0D;
+		}
 
-                    this.b = this.u.boundingBox.b + d7;
-                } else {
-                    this.a += this.random.nextGaussian() * 2.0D;
-                    this.c += this.random.nextGaussian() * 2.0D;
-                }
+		if (this.p || d3 < 100.0D || d3 > 22500.0D || this.positionChanged
+				|| this.bz) {
+			this.changeTarget(false);
+		}
 
-                if (this.p || d3 < 100.0D || d3 > 22500.0D || this.positionChanged || this.bz) {
-                    this.changeTarget(false);
-                }
+		d1 /= MathHelper.sqrt(d0 * d0 + d2 * d2);
+		f3 = 0.6F;
+		if (d1 < (-f3)) {
+			d1 = (-f3);
+		}
 
-                d1 /= (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
-                f3 = 0.6F;
-                if (d1 < (double) (-f3)) {
-                    d1 = (double) (-f3);
-                }
+		if (d1 > f3) {
+			d1 = f3;
+		}
 
-                if (d1 > (double) f3) {
-                    d1 = (double) f3;
-                }
+		for (this.motY += d1 * 0.1; this.yaw < -180.0F; this.yaw += 360.0F) {
+			;
+		}
 
-                for (this.motY += d1 * 0.10000000149011612D; this.yaw < -180.0F; this.yaw += 360.0F) {
-                    ;
-                }
+		while (this.yaw >= 180.0F) {
+			this.yaw -= 360.0F;
+		}
 
-                while (this.yaw >= 180.0F) {
-                    this.yaw -= 360.0F;
-                }
+		double d8 = 180.0D - Math.atan2(d0, d2) * 180.0D / Math.PI;
 
-                double d8 = 180.0D - Math.atan2(d0, d2) * 180.0D / Math.PI;
+		double d9;
 
-                double d9;
+		for (d9 = d8 - this.yaw; d9 < -180.0D; d9 += 360.0D) {
+			;
+		}
 
-                for (d9 = d8 - (double) this.yaw; d9 < -180.0D; d9 += 360.0D) {
-                    ;
-                }
+		while (d9 >= 180.0D) {
+			d9 -= 360.0D;
+		}
 
-                while (d9 >= 180.0D) {
-                    d9 -= 360.0D;
-                }
+		if (d9 > 50.0D) {
+			d9 = 50.0D;
+		}
 
-                if (d9 > 50.0D) {
-                    d9 = 50.0D;
-                }
+		if (d9 < -50.0D) {
+			d9 = -50.0D;
+		}
 
-                if (d9 < -50.0D) {
-                    d9 = -50.0D;
-                }
+		Vec3D vec3d = Vec3D.create(this.a - this.locX, this.b - this.locY,
+				this.c - this.locZ).b();
+		Vec3D vec3d1 = Vec3D
+				.create(MathHelper.sin(this.yaw * (float) Math.PI
+						/ 180.0F),
+						this.motY,
+						(-MathHelper.cos(this.yaw * (float) Math.PI
+								/ 180.0F))).b();
+		float f4 = (float) (vec3d1.a(vec3d) + 0.5D) / 1.5F;
 
-                Vec3D vec3d = Vec3D.create(this.a - this.locX, this.b - this.locY, this.c - this.locZ).b();
-                Vec3D vec3d1 = Vec3D.create((double) MathHelper.sin(this.yaw * (float)Math.PI / 180.0F), this.motY, (double) (-MathHelper.cos(this.yaw * (float)Math.PI / 180.0F))).b();
-                float f4 = (float) (vec3d1.a(vec3d) + 0.5D) / 1.5F;
+		if (f4 < 0.0F) {
+			f4 = 0.0F;
+		}
 
-                if (f4 < 0.0F) {
-                    f4 = 0.0F;
-                }
+		this.aY *= 0.8F;
+		float f5 = MathHelper.sqrt(this.motX * this.motX + this.motZ
+				* this.motZ) * 1.0F + 1.0F;
+		double d10 = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ) * 1.0D + 1.0D;
 
-                this.aY *= 0.8F;
-                float f5 = MathHelper.sqrt(this.motX * this.motX + this.motZ * this.motZ) * 1.0F + 1.0F;
-                double d10 = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ) * 1.0D + 1.0D;
+		if (d10 > 40.0D) {
+			d10 = 40.0D;
+		}
 
-                if (d10 > 40.0D) {
-                    d10 = 40.0D;
-                }
+		this.aY = (float) (this.aY + d9 * (0.7 / d10 / f5));
+		this.yaw += this.aY * 0.1F;
+		float f6 = (float) (2.0D / (d10 + 1.0D));
+		float f7 = 0.06F;
 
-                this.aY = (float) ((double) this.aY + d9 * (0.699999988079071D / d10 / (double) f5));
-                this.yaw += this.aY * 0.1F;
-                float f6 = (float) (2.0D / (d10 + 1.0D));
-                float f7 = 0.06F;
+		this.a(0.0F, -1.0F, f7 * (f4 * f6 + (1.0F - f6)));
+		if (this.q) {
+			this.move(this.motX * 0.8, this.motY * 0.8, this.motZ * 0.8);
+		} else {
+			this.move(this.motX, this.motY, this.motZ);
+		}
 
-                this.a(0.0F, -1.0F, f7 * (f4 * f6 + (1.0F - f6)));
-                if (this.q) {
-                    this.move(this.motX * 0.800000011920929D, this.motY * 0.800000011920929D, this.motZ * 0.800000011920929D);
-                } else {
-                    this.move(this.motX, this.motY, this.motZ);
-                }
+		Vec3D vec3d2 = Vec3D.create(this.motX, this.motY, this.motZ).b();
+		float f8 = (float) (vec3d2.a(vec3d1) + 1.0D) / 2.0F;
 
-                Vec3D vec3d2 = Vec3D.create(this.motX, this.motY, this.motZ).b();
-                float f8 = (float) (vec3d2.a(vec3d1) + 1.0D) / 2.0F;
+		f8 = 0.8F + 0.15F * f8;
+		this.motX *= f8;
+		this.motZ *= f8;
+		this.motY *= 0.91;
 
-                f8 = 0.8F + 0.15F * f8;
-                this.motX *= (double) f8;
-                this.motZ *= (double) f8;
-                this.motY *= 0.9100000262260437D;
-            }
+		this.V = this.yaw;
+		this.g.width = this.g.length = 3.0F;
+		this.i.width = this.i.length = 2.0F;
+		this.j.width = this.j.length = 2.0F;
+		this.k.width = this.k.length = 2.0F;
+		this.h.length = 3.0F;
+		this.h.width = 5.0F;
+		this.l.length = 2.0F;
+		this.l.width = 4.0F;
+		this.m.length = 3.0F;
+		this.m.width = 4.0F;
+		d05 = (this.a(5, 1.0F)[1] - this.a(10, 1.0F)[1]) * 10.0F / 180.0F
+				* Math.PI;
+		f1 = MathHelper.cos((float) d05);
+		float f9 = -MathHelper.sin((float) d05);
+		float f10 = this.yaw * 3.1415927F / 180.0F;
+		float f11 = MathHelper.sin(f10);
+		float f12 = MathHelper.cos(f10);
 
-            this.V = this.yaw;
-            this.g.width = this.g.length = 3.0F;
-            this.i.width = this.i.length = 2.0F;
-            this.j.width = this.j.length = 2.0F;
-            this.k.width = this.k.length = 2.0F;
-            this.h.length = 3.0F;
-            this.h.width = 5.0F;
-            this.l.length = 2.0F;
-            this.l.width = 4.0F;
-            this.m.length = 3.0F;
-            this.m.width = 4.0F;
-            d05 = (float) (this.a(5, 1.0F)[1] - this.a(10, 1.0F)[1]) * 10.0F / 180.0F * 3.1415927F;
-            f1 = MathHelper.cos(d05);
-            float f9 = -MathHelper.sin(d05);
-            float f10 = this.yaw * 3.1415927F / 180.0F;
-            float f11 = MathHelper.sin(f10);
-            float f12 = MathHelper.cos(f10);
+		this.h.F_();
+		this.h.setPositionRotation(this.locX + (f11 * 0.5F),
+				this.locY, this.locZ - (f12 * 0.5F), 0.0F, 0.0F);
+		this.l.F_();
+		this.l.setPositionRotation(this.locX + (f12 * 4.5F),
+				this.locY + 2.0D, this.locZ + (f11 * 4.5F), 0.0F, 0.0F);
+		this.m.F_();
+		this.m.setPositionRotation(this.locX - (f12 * 4.5F),
+				this.locY + 2.0D, this.locZ - (f11 * 4.5F), 0.0F, 0.0F);
 
-            this.h.F_();
-            this.h.setPositionRotation(this.locX + (double) (f11 * 0.5F), this.locY, this.locZ - (double) (f12 * 0.5F), 0.0F, 0.0F);
-            this.l.F_();
-            this.l.setPositionRotation(this.locX + (double) (f12 * 4.5F), this.locY + 2.0D, this.locZ + (double) (f11 * 4.5F), 0.0F, 0.0F);
-            this.m.F_();
-            this.m.setPositionRotation(this.locX - (double) (f12 * 4.5F), this.locY + 2.0D, this.locZ - (double) (f11 * 4.5F), 0.0F, 0.0F);
+		if (this.hurtTicks == 0) {
+			this.a(this.world.getEntities(
+					this,
+					this.l.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D,
+							0.0D)));
+			this.a(this.world.getEntities(
+					this,
+					this.m.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D,
+							0.0D)));
+			this.damageEntities(this.world.getEntities(this,
+					this.g.boundingBox.grow(1.0D, 1.0D, 1.0D)));
+		}
 
-            if (!this.world.isStatic && this.hurtTicks == 0) {
-                this.a(this.world.getEntities(this, this.l.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0.0D)));
-                this.a(this.world.getEntities(this, this.m.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0.0D)));
-                this.damageEntities(this.world.getEntities(this, this.g.boundingBox.grow(1.0D, 1.0D, 1.0D)));
-            }
-            
-            boolean fireFireBall = plugin.interactConfig().getConfig_dragonsSpitFireballs();
-            if(fireFireBall)
-            	checkSpitFireBall(false);
+		// LimitedEnderDragon - begin: Added FireBalls here!
+		boolean fireFireBall = plugin.interactConfig()
+				.getConfig_dragonsSpitFireballs();
+		if (fireFireBall)
+			checkSpitFireBall(false);
+		// LimitedEnderDragon - end
 
-            double[] adouble = this.a(5, 1.0F);
-            double[] adouble1 = this.a(0, 1.0F);
+		double[] adouble = this.a(5, 1.0F);
+		double[] adouble1 = this.a(0, 1.0F);
 
-            f3 = MathHelper.sin(this.yaw * 3.1415927F / 180.0F - this.aY * 0.01F);
-            float f13 = MathHelper.cos(this.yaw * (float)Math.PI / 180.0F - this.aY * 0.01F);
+		f3 = MathHelper.sin(this.yaw * 3.1415927F / 180.0F - this.aY * 0.01F);
+		float f13 = MathHelper.cos(this.yaw * (float) Math.PI / 180.0F
+				- this.aY * 0.01F);
 
-            this.g.F_();
-            this.g.setPositionRotation(this.locX + (double) (f3 * 5.5F * f1), this.locY + (adouble1[1] - adouble[1]) * 1.0D + (double) (f9 * 5.5F), this.locZ - (double) (f13 * 5.5F * f1), 0.0F, 0.0F);
+		this.g.F_();
+		this.g.setPositionRotation(this.locX + (f3 * 5.5F * f1),
+				this.locY + (adouble1[1] - adouble[1]) * 1.0D
+						+ (f9 * 5.5F), this.locZ
+						- (f13 * 5.5F * f1), 0.0F, 0.0F);
 
-            for (int j = 0; j < 3; ++j) {
-                EntityComplexPart entitycomplexpart = null;
+		for (int j = 0; j < 3; ++j) {
+			EntityComplexPart entitycomplexpart = null;
 
-                if (j == 0) {
-                    entitycomplexpart = this.i;
-                }
+			if (j == 0) {
+				entitycomplexpart = this.i;
+			}
 
-                if (j == 1) {
-                    entitycomplexpart = this.j;
-                }
+			if (j == 1) {
+				entitycomplexpart = this.j;
+			}
 
-                if (j == 2) {
-                    entitycomplexpart = this.k;
-                }
+			if (j == 2) {
+				entitycomplexpart = this.k;
+			}
 
-                double[] adouble2 = this.a(12 + j * 2, 1.0F);
-                float f14 = this.yaw * (float)Math.PI / 180.0F + this.normRotation(adouble2[0] - adouble[0]) * (float)Math.PI / 180.0F * 1.0F;
-                float f15 = MathHelper.sin(f14);
-                float f16 = MathHelper.cos(f14);
-                float f17 = 1.5F;
-                float f18 = (float) (j + 1) * 2.0F;
+			double[] adouble2 = this.a(12 + j * 2, 1.0F);
+			float f14 = this.yaw * (float) Math.PI / 180.0F
+					+ this.normRotation(adouble2[0] - adouble[0])
+					* (float) Math.PI / 180.0F * 1.0F;
+			float f15 = MathHelper.sin(f14);
+			float f16 = MathHelper.cos(f14);
+			float f17 = 1.5F;
+			float f18 = (j + 1) * 2.0F;
 
-                entitycomplexpart.F_();
-                entitycomplexpart.setPositionRotation(this.locX - (double) ((f11 * f17 + f15 * f18) * f1), this.locY + (adouble2[1] - adouble[1]) * 1.0D - (double) ((f18 + f17) * f9) + 1.5D, this.locZ + (double) ((f12 * f17 + f16 * f18) * f1), 0.0F, 0.0F);
-            }
+			entitycomplexpart.F_();
+			entitycomplexpart.setPositionRotation(this.locX - ((f11 * f17 + f15 * f18) * f1), 
+					this.locY + (adouble2[1] - adouble[1]) * 1.0D - ((f18 + f17) * f9) + 1.5D, 
+					this.locZ + ((f12 * f17 + f16 * f18) * f1), 0.0F, 0.0F);
+		}
 
-            if (!this.world.isStatic) {
-                this.q = this.a(this.g.boundingBox) | this.a(this.h.boundingBox);
-            }
-        }
-    }
-	
-	public boolean spitFireBallOnTarget(Entity target){
-		if(target == null)
+		this.q = this.checkHitBlocks(this.g.boundingBox)
+				| this.checkHitBlocks(this.h.boundingBox);
+	}
+
+	public boolean spitFireBallOnTarget(Entity target) {
+		if (target == null)
 			return false;
-		
+
 		Entity tempEntity = lastTarget;
-		lastTarget = target;		
+		lastTarget = target;
 		checkSpitFireBall(true);
 		lastTarget = tempEntity;
 		return true;
 	}
-	
-	private void checkSpitFireBall(boolean force){
+
+	private void checkSpitFireBall(boolean force) {
 		fireballTicks++;
-		int fireEveryX = plugin.interactConfig().getConfig_dragonSpitFireballsEvery();
-		
-		if(force || (fireballTicks > (fireEveryX * 20))){
+		int fireEveryX = plugin.interactConfig()
+				.getConfig_dragonSpitFireballsEvery();
+
+		if (force || (fireballTicks > (fireEveryX * 20))) {
 			fireballTicks = 0;
-			if(lastTarget == null || !lastTarget.isAlive()){
+			if (lastTarget == null || !lastTarget.isAlive()) {
 				lastTarget = null;
 				return;
 			}
-			
-			if(!force && u != null)
+
+			if (!force && u != null)
 				return;
-			
-			int maxDistance = plugin.interactConfig().getConfig_dragonsSpitFireballsRange();
-			if(!force && lastTarget.getBukkitEntity().getLocation().distance(this.getLocation()) > maxDistance)
+
+			int maxDistance = plugin.interactConfig()
+					.getConfig_dragonsSpitFireballsRange();
+			if (!force
+					&& lastTarget.getBukkitEntity().getLocation()
+							.distance(this.getLocation()) > maxDistance)
 				return;
+
+			Location loc = new Location(world.getWorld(), 
+					lastTarget.locX	- this.locX, 
+					lastTarget.locY - this.locY, 
+					lastTarget.locZ	- this.locZ);
+
+			EntityFireball fireBall = new EntityFireball(world, this,
+					loc.getBlockX(), 
+					loc.getBlockY(), 
+					loc.getBlockZ());
 			
-			Location loc = new Location(world.getWorld(), lastTarget.locX - this.locX, lastTarget.locY - this.locY, lastTarget.locZ - this.locZ);
-			
-			EntityFireball fireBall = new EntityFireball(world, this, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			fireBall.setDirection(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			world.addEntity(fireBall);
 		}
 	}
-	
+
 	private void a(List<?> list) {
-	    double d0 = (this.h.boundingBox.a + this.h.boundingBox.d) / 2.0D;
-	    double d1 = (this.h.boundingBox.c + this.h.boundingBox.f) / 2.0D;
-	    Iterator<?> iterator = list.iterator();
+		double d0 = (this.h.boundingBox.a + this.h.boundingBox.d) / 2.0D;
+		double d1 = (this.h.boundingBox.c + this.h.boundingBox.f) / 2.0D;
+		Iterator<?> iterator = list.iterator();
 
-	    while (iterator.hasNext()) {
-	        Entity entity = (Entity) iterator.next();
+		while (iterator.hasNext()) {
+			Entity entity = (Entity) iterator.next();
 
-	        if (entity instanceof EntityLiving) {
-	            double d2 = entity.locX - d0;
-	            double d3 = entity.locZ - d1;
-	            double d4 = d2 * d2 + d3 * d3;
+			if (entity instanceof EntityLiving) {
+				double d2 = entity.locX - d0;
+				double d3 = entity.locZ - d1;
+				double d4 = d2 * d2 + d3 * d3;
 
-	           entity.b_(d2 / d4 * 4, 0.2, d3 / d4 * 4.0D);
-	        }
-	    }
+				entity.b_(d2 / d4 * 4, 0.2, d3 / d4 * 4.0D);
+			}
+		}
 	}
 
 	private void damageEntities(List<Entity> list) {
-	    for (int i = 0; i < list.size(); ++i) {
-	        Entity entity = list.get(i);
+		for (int i = 0; i < list.size(); ++i) {
+			Entity entity = list.get(i);
 
-	        if (entity instanceof EntityLiving) {
-	            // CraftBukkit start - throw damage events when the dragon attacks
-	            // The EntityHuman case is handled in EntityHuman, so don't throw it here
-	            if (!(entity instanceof EntityHuman)) {
-	                org.bukkit.event.entity.EntityDamageByEntityEvent damageEvent = 
-	                		new org.bukkit.event.entity.EntityDamageByEntityEvent(this.getBukkitEntity(), 
-	            			entity.getBukkitEntity(), 
-	                		org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK, 
-	                		plugin.interactConfig().getConfig_dragonDamage());
-	                
-	                Bukkit.getPluginManager().callEvent(damageEvent);
+			if (entity instanceof EntityLiving) {
+				// CraftBukkit start - throw damage events when the dragon
+				// attacks
+				// The EntityHuman case is handled in EntityHuman, so don't
+				// throw it here
+				if (!(entity instanceof EntityHuman)) {
+					org.bukkit.event.entity.EntityDamageByEntityEvent damageEvent = new org.bukkit.event.entity.EntityDamageByEntityEvent(
+							this.getBukkitEntity(),
+							entity.getBukkitEntity(),
+							org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+							plugin.interactConfig().getConfig_dragonDamage());
 
-	                if (!damageEvent.isCancelled()) {
-	                    entity.damageEntity(DamageSource.mobAttack(this), damageEvent.getDamage());
-	                }
-	            } else {
-	                entity.damageEntity(DamageSource.mobAttack(this), plugin.interactConfig().getConfig_dragonDamage());
-	            }
-	                // CraftBukkit end
-	        }
-	    }
+					Bukkit.getPluginManager().callEvent(damageEvent);
+
+					if (!damageEvent.isCancelled()) {
+						entity.damageEntity(DamageSource.mobAttack(this),
+								damageEvent.getDamage());
+					}
+				} else {
+					entity.damageEntity(DamageSource.mobAttack(this), plugin
+							.interactConfig().getConfig_dragonDamage());
+				}
+				// CraftBukkit end
+			}
+		}
 	}
-	
-	private float normRotation(double d0) {
-        while (d0 >= 180.0D) {
-            d0 -= 360.0D;
-        }
 
-        while (d0 < -180.0D) {
-            d0 += 360.0D;
-        }
+	// original: a(double d0)
+	private float normRotation(double rotation) {
+		while (rotation >= 180) {
+			rotation -= 360;
+		}
 
-        return (float) d0;
-    }
-	
-	private boolean a(AxisAlignedBB axisalignedbb) {
-	        int i = MathHelper.floor(axisalignedbb.a);
-	        int j = MathHelper.floor(axisalignedbb.b);
-	        int k = MathHelper.floor(axisalignedbb.c);
-	        int l = MathHelper.floor(axisalignedbb.d);
-	        int i1 = MathHelper.floor(axisalignedbb.e);
-	        int j1 = MathHelper.floor(axisalignedbb.f);
-	        boolean flag = false;
-	        boolean flag1 = false;
+		while (rotation < -180) {
+			rotation += 360;
+		}
 
-	        // CraftBukkit start - create a list to hold all the destroyed blocks
-	        List<org.bukkit.block.Block> destroyedBlocks = new ArrayList<org.bukkit.block.Block>();
-	        org.bukkit.craftbukkit.CraftWorld craftWorld = this.world.getWorld();
-	        // CraftBukkit end
-	        for (int k1 = i; k1 <= l; ++k1) {
-	            for (int l1 = j; l1 <= i1; ++l1) {
-	                for (int i2 = k; i2 <= j1; ++i2) {
-	                    int j2 = this.world.getTypeId(k1, l1, i2);
+		return (float) rotation;
+	}
 
-	                    if (j2 != 0) {
-	                        if (j2 != Block.OBSIDIAN.id && j2 != Block.WHITESTONE.id && j2 != Block.BEDROCK.id) {
-	                            flag1 = true;
-	                            // CraftBukkit start - add blocks to list rather than destroying them
-	                            //this.world.setTypeId(k1, l1, i2, 0);
-	                            destroyedBlocks.add(craftWorld.getBlockAt(k1, l1, i2));
-	                            // CraftBukkit end
-	                        } else {
-	                            flag = true;
-	                        }
-	                    }
-	                }
-	            }
-	        }
+	@Override
+	protected void aB() {
+		ticksToDeath -= 1;
+		if ((ticksToDeath >= 0) && (ticksToDeath <= 20)) {
+			float f = (this.random.nextFloat() - 0.5F) * 8.0F;
+			float f1 = (this.random.nextFloat() - 0.5F) * 4.0F;
+			float f2 = (this.random.nextFloat() - 0.5F) * 8.0F;
 
-	        if (flag1) {
-	            // CraftBukkit start - set off an EntityExplodeEvent for the dragon exploding all these blocks
-	            org.bukkit.entity.Entity bukkitEntity = this.getBukkitEntity();
-	            org.bukkit.event.entity.EntityExplodeEvent event = new org.bukkit.event.entity.EntityExplodeEvent(bukkitEntity, bukkitEntity.getLocation(), destroyedBlocks, 0F);
-	            Bukkit.getPluginManager().callEvent(event);
-	            if (event.isCancelled()) {
-	                // this flag literally means 'Dragon hit something hard' (Obsidian, White Stone or Bedrock) and will cause the dragon to slow down.
-	                // We should consider adding an event extension for it, or perhaps returning true if the event is cancelled.
-	                return flag;
-	            } else {
-	                for (org.bukkit.block.Block block : event.blockList()) {
-	                    craftWorld.explodeBlock(block, event.getYield());
-	                }
-	            }
-	            // CraftBukkit end
-	            double d0 = axisalignedbb.a + (axisalignedbb.d - axisalignedbb.a) * (double) this.random.nextFloat();
-	            double d1 = axisalignedbb.b + (axisalignedbb.e - axisalignedbb.b) * (double) this.random.nextFloat();
-	            double d2 = axisalignedbb.c + (axisalignedbb.f - axisalignedbb.c) * (double) this.random.nextFloat();
+			this.world.a("hugeexplosion", this.locX + f, this.locY + 2.0D + f1,
+					this.locZ + f2, 0.0D, 0.0D, 0.0D);
+		}
 
-	            this.world.a("largeexplode", d0, d1, d2, 0.0D, 0.0D, 0.0D);
-	        }
-
-	        return flag;
-	    }
-	
-	@SuppressWarnings("unchecked")
-	public void changeTarget(boolean force){
-		try{
-		this.p = false;
-		boolean includeHeight = plugin.interactConfig().getConfig_includeHeight();
-		
-		int homeRange = plugin.interactConfig().getConfig_maxHomeDistance();
-		Location homeLocation = getHomeLocation();
-		
-		if(u != null){
-			lastTarget = u;
+		if ((ticksToDeath < 50) && (ticksToDeath % 5 == 0)) {
+			int i = this.getExpReward() / 20;
+			dropEXPOrbs(i);
 		}
 		
-		if(getVectorDistance(homeLocation, includeHeight) > homeRange)
-			plugin.getContainer().setFlyingHome(getUUID(), true);
-			
-		if(getFlyingHome() || forceGoTo != null) force = true;
-        if (!force && this.random.nextInt(2) == 0 && this.world.players.size() > 0) {
-        	List<Entity> list = this.world.players;
-        	List<Entity> targets = new LinkedList<Entity>();
-        	
-        	for(Entity player : list){
-        		if(plugin.interactConfig().getConfig_ignorePlayerGamemode1()){
-        			Player bukkitPlayer = (Player) player.getBukkitEntity();
-        			if(bukkitPlayer.getGameMode().getValue() == 1) continue;
-        		}
-        		
-        		int maxRange = plugin.interactConfig().getConfig_maxFollowDistance();
-        		if(getVectorDistance(player.locX, player.locY, player.locZ, includeHeight) < maxRange) targets.add(player);
-        	}
-        	if(targets.size() == 0){
-        		changeTarget(true);
-        		return;
-        	}
-        	
-        	Entity nextTarget = (Entity) targets.get(this.random.nextInt(this.world.players.size()));
-        	
-        	//fire bukkit event: Target change
-        	if(plugin.interactConfig().getConfig_fireBukkitEvents()){
-        		if(!u.equals(nextTarget)){
-        			EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), (LivingEntity)nextTarget, TargetReason.RANDOM_TARGET);
-        			this.world.getServer().getPluginManager().callEvent(event);
-        			if(!event.isCancelled()){
-        				this.u = (Entity) event.getTarget();
-        			}else
-        				return;
-        		}
-        	}else
-        		this.u = nextTarget;
-           
-        } else 
-            setNewTarget(homeLocation, false);
-        
-		}catch(Exception e){
-			if(!plugin.interactConfig().getConfig_debugOutput()) return;
-			if(LimitedEnderDragon.broadcastedError != 10){
-				LimitedEnderDragon.broadcastedError ++;
+		move(0, 0.1, 0);
+		this.V = (this.yaw += 2);
+		if (ticksToDeath == 200) {
+			int i = this.getExpReward() - this.getExpReward() / 2;
+
+			while (i > 0) {
+				int j = EntityExperienceOrb.getOrbValue(i);
+				i -= j;
+				this.world.addEntity(new EntityExperienceOrb(this.world,
+						this.locX, this.locY, this.locZ, j));
+			}
+
+			a(MathHelper.floor(this.locX), MathHelper.floor(this.locZ));
+			aH();
+			die();
+		}
+	}
+	
+	private void dropEXPOrbs(int totalAmount){
+		while (totalAmount > 0) {
+			int toSubtract = EntityExperienceOrb.getOrbValue(totalAmount);
+			totalAmount -= toSubtract;
+			this.world.addEntity(new EntityExperienceOrb(this.world,
+					this.locX, this.locY, this.locZ, toSubtract));
+		}
+	}
+
+	// Original: a(AxisAlignedBB axisalignedbb)
+	private boolean checkHitBlocks(AxisAlignedBB axisalignedbb) {
+		int pos1X = MathHelper.floor(axisalignedbb.a);
+		int pos1Y = MathHelper.floor(axisalignedbb.b);
+		int pos1Z = MathHelper.floor(axisalignedbb.c);
+
+		int pos2X = MathHelper.floor(axisalignedbb.d);
+		int pos2Y = MathHelper.floor(axisalignedbb.e);
+		int pos2Z = MathHelper.floor(axisalignedbb.f);
+
+		boolean hitSomethingHard = false;
+		boolean hitSomething = false;
+
+		// CraftBukkit start - create a list to hold all the destroyed blocks
+		List<org.bukkit.block.Block> destroyedBlocks = new ArrayList<org.bukkit.block.Block>();
+		org.bukkit.craftbukkit.CraftWorld craftWorld = this.world.getWorld();
+		// CraftBukkit end
+
+		for (int blockX = pos1X; blockX <= pos2X; ++blockX) {
+			for (int blockY = pos1Y; blockY <= pos2Y; ++blockY) {
+				for (int blockZ = pos1Z; blockZ <= pos2Z; ++blockZ) {
+					int blockType = this.world
+							.getTypeId(blockX, blockY, blockZ);
+
+					if (blockType != 0) {
+						if (blockType != Block.OBSIDIAN.id
+								&& blockType != Block.WHITESTONE.id
+								&& blockType != Block.BEDROCK.id) {
+							hitSomething = true;
+							// CraftBukkit start - add blocks to list rather
+							// than destroying them
+							// this.world.setTypeId(k1, l1, i2, 0);
+							destroyedBlocks.add(craftWorld.getBlockAt(blockX,
+									blockY, blockZ));
+							// CraftBukkit end
+						} else {
+							hitSomethingHard = true;
+						}
+					}
+				}
+			}
+		}
+
+		if (!hitSomething)
+			return hitSomethingHard;
+
+		// CraftBukkit start - set off an EntityExplodeEvent for the dragon
+		// exploding all these blocks
+		org.bukkit.entity.Entity bukkitEntity = this.getBukkitEntity();
+		org.bukkit.event.entity.EntityExplodeEvent event = new org.bukkit.event.entity.EntityExplodeEvent(
+				bukkitEntity, bukkitEntity.getLocation(), destroyedBlocks, 0F);
+		Bukkit.getPluginManager().callEvent(event);
+		if (event.isCancelled()) {
+			// this flag literally means 'Dragon hit something hard' (Obsidian,
+			// White Stone or Bedrock) and will cause the dragon to slow down.
+			// We should consider adding an event extension for it, or perhaps
+			// returning true if the event is cancelled.
+			return hitSomethingHard;
+		} else {
+			for (org.bukkit.block.Block block : event.blockList()) {
+				craftWorld.explodeBlock(block, event.getYield());
+			}
+		}
+		// CraftBukkit end
+
+		if (!plugin.interactConfig().getConfig_deactivateBlockExplosionEffect()) {
+			double posX = axisalignedbb.a + (axisalignedbb.d - axisalignedbb.a)
+					* this.random.nextFloat();
+			double posY = axisalignedbb.b + (axisalignedbb.e - axisalignedbb.b)
+					* this.random.nextFloat();
+			double posZ = axisalignedbb.c + (axisalignedbb.f - axisalignedbb.c)
+					* this.random.nextFloat();
+
+			this.world.a("largeexplode", posX, posY, posZ, 0, 0, 0);
+		}
+
+		return hitSomethingHard;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void changeTarget(boolean force) {
+		try {
+			this.p = false;
+			boolean includeHeight = plugin.interactConfig()
+					.getConfig_includeHeight();
+
+			int homeRange = plugin.interactConfig().getConfig_maxHomeDistance();
+			Location homeLocation = getHomeLocation();
+
+			if (u != null) {
+				lastTarget = u;
+			}
+
+			if (getVectorDistance(homeLocation, includeHeight) > homeRange)
+				plugin.getContainer().setFlyingHome(getUUID(), true);
+
+			if (getFlyingHome() || forceGoTo != null)
+				force = true;
+			if (!force && this.random.nextInt(2) == 0
+					&& this.world.players.size() > 0) {
+				List<Entity> list = this.world.players;
+				List<Entity> targets = new LinkedList<Entity>();
+
+				for (Entity player : list) {
+					if (plugin.interactConfig()
+							.getConfig_ignorePlayerGamemode1()) {
+						Player bukkitPlayer = (Player) player.getBukkitEntity();
+						if (bukkitPlayer.getGameMode().getValue() == 1)
+							continue;
+					}
+
+					int maxRange = plugin.interactConfig()
+							.getConfig_maxFollowDistance();
+					if (getVectorDistance(player.locX, player.locY,
+							player.locZ, includeHeight) < maxRange)
+						targets.add(player);
+				}
+				if (targets.size() == 0) {
+					changeTarget(true);
+					return;
+				}
+
+				Entity nextTarget = targets.get(this.random
+						.nextInt(this.world.players.size()));
+
+				// fire bukkit event: Target change
+				if (plugin.interactConfig().getConfig_fireBukkitEvents()) {
+					if (!u.equals(nextTarget)) {
+						EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(
+								this.getBukkitEntity(),
+								(LivingEntity) nextTarget,
+								TargetReason.RANDOM_TARGET);
+						this.world.getServer().getPluginManager()
+								.callEvent(event);
+						if (!event.isCancelled()) {
+							this.u = (Entity) event.getTarget();
+						} else
+							return;
+					}
+				} else
+					this.u = nextTarget;
+
+			} else
+				setNewTarget(homeLocation, false);
+
+		} catch (Exception e) {
+			if (!plugin.interactConfig().getConfig_debugOutput())
+				return;
+			if (LimitedEnderDragon.broadcastedError != 10) {
+				LimitedEnderDragon.broadcastedError++;
 				return;
 			}
-			
+
 			LimitedEnderDragon.broadcastedError = 0;
 			plugin.log("An Error has Accured. Tried to access to an illigel mob (function: changeTarget). Disabling ErrorMessage for massive Spaming!");
 			e.printStackTrace();
 			return;
 		}
 	}
-	
-	
-	private void setNewTarget(Location location, boolean lockTarget){
-		boolean includeHeight = plugin.interactConfig().getConfig_includeHeight();
-		
-		if(lockTarget)
-			forceGoTo = location;
-		
-		if(forceGoTo != null)
-			location = forceGoTo;
-        
-        if(getVectorDistance(location, includeHeight) < 30){
-        	plugin.getContainer().setFlyingHome(getUUID(), false);
-        	if(forceGoTo != null){
-        		forceGoTo = null;
-        		location = plugin.getContainer().getHomeByID(this.getUUID());
-        		return;
-        	}
-        }
-        
-        double vecDistance = 0;
-        do {
-	        this.a = location.getX();
-	        this.b = (double) (70.0F + this.random.nextFloat() * 50.0F);            
-	        this.c = location.getZ();
-	        if(forceGoTo == null){
-	        	this.a += (double) (this.random.nextFloat() * 120.0F - 60.0F);
-	        	this.c += (double) (this.random.nextFloat() * 120.0F - 60.0F);
-	        
-	            
-	        	double distanceX = this.locX - this.a;
-	        	double distanceY = this.locY - this.b;
-	        	double distanceZ = this.locZ - this.c;
-	        
-	        	vecDistance = distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ;
-	        }else{
-	        	this.b = location.getY();
-	        	vecDistance = 101;
-	        }
-	       
-	    } while (vecDistance < 100);
 
-        this.u = null;
+	private void setNewTarget(Location location, boolean lockTarget) {
+		boolean includeHeight = plugin.interactConfig()
+				.getConfig_includeHeight();
+
+		if (lockTarget)
+			forceGoTo = location;
+
+		if (forceGoTo != null)
+			location = forceGoTo;
+
+		if (getVectorDistance(location, includeHeight) < 30) {
+			plugin.getContainer().setFlyingHome(getUUID(), false);
+			if (forceGoTo != null) {
+				forceGoTo = null;
+				location = plugin.getContainer().getHomeByID(this.getUUID());
+				return;
+			}
+		}
+
+		double vecDistance = 0;
+		do {
+			this.a = location.getX();
+			this.b = (70.0F + this.random.nextFloat() * 50.0F);
+			this.c = location.getZ();
+			if (forceGoTo == null) {
+				this.a += (this.random.nextFloat() * 120.0F - 60.0F);
+				this.c += (this.random.nextFloat() * 120.0F - 60.0F);
+
+				double distanceX = this.locX - this.a;
+				double distanceY = this.locY - this.b;
+				double distanceZ = this.locZ - this.c;
+
+				vecDistance = distanceX * distanceX + distanceY * distanceY
+						+ distanceZ * distanceZ;
+			} else {
+				this.b = location.getY();
+				vecDistance = 101;
+			}
+
+		} while (vecDistance < 100);
+
+		this.u = null;
 	}
-	
-	
-	public boolean isInRange(Location location, int range, boolean includeHeight){
-		if(range == 0) return true;
-		if(!this.getLocation().getWorld().equals(location.getWorld())) return false;
-		
+
+	public boolean isInRange(Location location, int range, boolean includeHeight) {
+		if (range == 0)
+			return true;
+		if (!this.getLocation().getWorld().equals(location.getWorld()))
+			return false;
+
 		double posX = location.getX();
 		double posY = location.getY();
 		double posZ = location.getZ();
-		
+
 		return (getVectorDistance(posX, posY, posZ, includeHeight) <= range);
 	}
-	
-	private double getVectorDistance(double x, double y, double z, boolean includeHeight){
+
+	private double getVectorDistance(double x, double y, double z,
+			boolean includeHeight) {
 		double deltaX = locX - x;
 		double deltaY = 0;
 		double deltaZ = locZ - z;
-		
-		if(includeHeight) deltaY = locY - y;
-		
+
+		if (includeHeight)
+			deltaY = locY - y;
+
 		deltaX *= deltaX;
 		deltaY *= deltaY;
 		deltaZ *= deltaZ;
-		
+
 		return Math.sqrt(deltaX + deltaY + deltaZ);
 	}
-	
-	private double getVectorDistance(Location location, boolean includeHeight){
+
+	private double getVectorDistance(Location location, boolean includeHeight) {
 		double x = location.getX();
 		double y = location.getY();
 		double z = location.getZ();
-		
+
 		return getVectorDistance(x, y, z, includeHeight);
 	}
-	
-	public void remove(){
+
+	public void remove() {
 		getBukkitEntity().remove();
 	}
-	
 
-	public String getName(){
+	public String getName() {
 		return "EnderDragon";
 	}
-	
+
 	@Override
-	public int getExpReward(){
+	public int getExpReward() {
 		return plugin.interactConfig().getConfig_dropEXP();
 	}
 
 	public Location getLocation() {
 		return getBukkitEntity().getLocation();
 	}
-	
-	public boolean spawn(boolean firstLoad){
+
+	public boolean spawn(boolean firstLoad) {
 		return spawnCraftBukkit(firstLoad);
 	}
-	
-	private boolean spawnCraftBukkit(boolean firstLoad){
+
+	private boolean spawnCraftBukkit(boolean firstLoad) {
 		World world = ((CraftWorld) getLocation().getWorld()).getHandle();
-		if(firstLoad) this.getLocation().getChunk().isLoaded();
-		if(!world.addEntity(this)) return false;
+		if (firstLoad)
+			this.getLocation().getChunk().isLoaded();
+		if (!world.addEntity(this))
+			return false;
 		setPosition(locX, locY, locZ);
 		return true;
 	}
-	
-	public boolean saveToPath(){
-		String path = plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon." + getUUID();
+
+	public boolean saveToPath() {
+		String path = plugin.getDataFolder() + File.separator + "tempDragons"
+				+ File.separator + "dragon." + getUUID();
 		File file = new File(path);
-		if(file.exists())
+		if (file.exists())
 			file.delete();
-		
+
 		Location homeLocation = plugin.getContainer().getHomeByID(getUUID());
 		YamlConfiguration config = new YamlConfiguration();
 		config.createSection("homeLocation");
@@ -748,22 +858,22 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		config.set("homeLocation.y", homeLocation.getY());
 		config.set("homeLocation.z", homeLocation.getZ());
 		config.set("homeLocation.world", homeLocation.getWorld().getName());
-		
+
 		config.set("actualPosition.x", locX);
 		config.set("actualPosition.y", locY);
 		config.set("actualPosition.z", locZ);
-		
+
 		config.set("uuid", getUUID() + "");
-		
-		if(forceGoTo != null){
+
+		if (forceGoTo != null) {
 			config.set("forceTarget.x", forceGoTo.getX());
 			config.set("forceTarget.y", forceGoTo.getY());
 			config.set("forceTarget.z", forceGoTo.getZ());
 			config.set("forceTarget.world", forceGoTo.getWorld().getName());
 		}
-		
+
 		config.set("flyingHome", getFlyingHome());
-		
+
 		config.set("health", this.getHealth());
 		try {
 			config.save(path);
@@ -774,136 +884,151 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 		return true;
 	}
-	
-	public static LimitedEnderDragon loadFromFile(String path){
+
+	public static LimitedEnderDragon loadFromFile(String path) {
 		File file = new File(path);
-		if(!file.exists()){
-			EnderdragonsPlus.getPlugin().log("Could not find dragon at: " + path);
+		if (!file.exists()) {
+			EnderdragonsPlus.getPlugin().log(
+					"Could not find dragon at: " + path);
 			return null;
 		}
-		
+
 		YamlConfiguration config = new YamlConfiguration();
-		try{
+		try {
 			config.load(path);
-		}catch(Exception e){
+		} catch (Exception e) {
 			EnderdragonsPlus.getPlugin().log("Loading Dragon failed.");
 			return null;
 		}
-		
+
 		UUID uid = UUID.fromString(config.getString("uuid"));
-		
+
 		double x = config.getDouble("homeLocation.x");
 		double y = config.getDouble("homeLocation.y");
 		double z = config.getDouble("homeLocation.z");
 		String worldName = config.getString("homeLocation.world");
-		
+
 		double actX = config.getDouble("actualPosition.x");
 		double actY = config.getDouble("actualPosition.y");
 		double actZ = config.getDouble("actualPosition.z");
 		World world = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
-		
-		Location location = new Location(Bukkit.getWorld(worldName) , x, y, z);
-		
+
+		Location location = new Location(Bukkit.getWorld(worldName), x, y, z);
+
 		int health = config.getInt("health");
 		boolean flyingHome = config.getBoolean("flyingHome");
-		
+
 		Location forceLocation = null;
-		
-		if(config.isString("forceTarget.world")){
+
+		if (config.isString("forceTarget.world")) {
 			double forceLocationX = config.getDouble("forceTarget.x");
 			double forceLocationY = config.getDouble("forceTarget.y");
 			double forceLocationZ = config.getDouble("forceTarget.z");
 			String forceLocationWorld = config.getString("forceTarget.world");
-			
+
 			org.bukkit.World forceWorld = Bukkit.getWorld(forceLocationWorld);
-			forceLocation = new Location(forceWorld, forceLocationX, forceLocationY, forceLocationZ);
+			forceLocation = new Location(forceWorld, forceLocationX,
+					forceLocationY, forceLocationZ);
 		}
-		
-		if(EnderdragonsPlus.getPlugin().interactConfig().getConfig_pluginHandleLoads()){
-			LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uid);
-			
+
+		if (EnderdragonsPlus.getPlugin().interactConfig()
+				.getConfig_pluginHandleLoads()) {
+			LimitedEnderDragon dragon = new LimitedEnderDragon(location, world,
+					uid);
+
 			dragon.locX = actX;
 			dragon.locY = actY;
 			dragon.locZ = actZ;
-			
-			
-			if(forceLocation!=  null)
+
+			if (forceLocation != null)
 				dragon.goToLocation(forceLocation);
-			
+
 			dragon.setHealth(health);
-			
-			EnderdragonsPlus.getPlugin().getContainer().setFlyingHome(dragon.getUUID(), flyingHome);
+
+			EnderdragonsPlus.getPlugin().getContainer()
+					.setFlyingHome(dragon.getUUID(), flyingHome);
 			file.delete();
 			return dragon;
-			
-		}else{
-			List<org.bukkit.entity.Entity> list = location.getWorld().getEntities();
-			
+
+		} else {
+			List<org.bukkit.entity.Entity> list = location.getWorld()
+					.getEntities();
+
 			org.bukkit.entity.Entity dragon = null;
-			for(org.bukkit.entity.Entity entity : list){
-				if(entity.getUniqueId().equals(uid)){
+			for (org.bukkit.entity.Entity entity : list) {
+				if (entity.getUniqueId().equals(uid)) {
 					dragon = entity;
 					break;
 				}
 			}
-			
-			if(dragon == null)
+
+			if (dragon == null)
 				return null;
-			
-			LimitedEnderDragon dragonEntity = (LimitedEnderDragon) ((CraftEntity)dragon).getHandle();
-			EnderdragonsPlus.getPlugin().getContainer().setHomeID(uid, location, location, flyingHome, dragonEntity);
-			EnderdragonsPlus.getPlugin().getContainer().setFlyingHome(uid, flyingHome);
+
+			LimitedEnderDragon dragonEntity = (LimitedEnderDragon) ((CraftEntity) dragon)
+					.getHandle();
+			EnderdragonsPlus
+					.getPlugin()
+					.getContainer()
+					.setHomeID(uid, location, location, flyingHome,
+							dragonEntity);
+			EnderdragonsPlus.getPlugin().getContainer()
+					.setFlyingHome(uid, flyingHome);
 			file.delete();
 			return null;
 		}
 	}
-	
-	public Location getHomeLocation(){
+
+	public Location getHomeLocation() {
 		return plugin.getContainer().getHomeByID(getUUID());
 	}
-	
-	public int getID(){
+
+	public int getID() {
 		return getBukkitEntity().getEntityId();
 	}
-	
-	private boolean getFlyingHome(){
+
+	private boolean getFlyingHome() {
 		return plugin.getContainer().getFlyingHome(getUUID());
 	}
-	
-	public void setTarget(LivingEntity entity){
-		Entity nextTarget = ((org.bukkit.craftbukkit.entity.CraftEntity)entity).getHandle();
-		//fire bukkit event: Target change
-    	if(plugin.interactConfig().getConfig_fireBukkitEvents()){
-    		if(!u.equals(nextTarget)){
-    			EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), (LivingEntity)nextTarget, TargetReason.RANDOM_TARGET);
-    			this.world.getServer().getPluginManager().callEvent(event);
-    			if(!event.isCancelled())
-    				this.u = nextTarget;
-    		}
-    	}else
-    		this.u = nextTarget;
+
+	public void setTarget(LivingEntity entity) {
+		Entity nextTarget = ((org.bukkit.craftbukkit.entity.CraftEntity) entity)
+				.getHandle();
+		// fire bukkit event: Target change
+		if (plugin.interactConfig().getConfig_fireBukkitEvents()) {
+			if (!u.equals(nextTarget)) {
+				EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(
+						this.getBukkitEntity(), (LivingEntity) nextTarget,
+						TargetReason.RANDOM_TARGET);
+				this.world.getServer().getPluginManager().callEvent(event);
+				if (!event.isCancelled())
+					this.u = nextTarget;
+			}
+		} else
+			this.u = nextTarget;
 	}
-	
-	public org.bukkit.entity.Entity getTarget(){
-		if(u == null) return null;
+
+	public org.bukkit.entity.Entity getTarget() {
+		if (u == null)
+			return null;
 		return this.u.getBukkitEntity();
 	}
-	
-	public int getLogicCalls(){
+
+	public int getLogicCalls() {
 		int calls = logicCall;
 		logicCall = 0;
 		return calls;
 	}
-	
-	public void goToLocation(Location location){
+
+	public void goToLocation(Location location) {
 		setNewTarget(location, true);
 	}
-	
-	public void changeUUID(UUID uID){
+
+	public void changeUUID(UUID uID) {
 		this.uniqueId = UUID.fromString(uID.toString());
 	}
-	
-	public UUID getUUID(){
+
+	public UUID getUUID() {
 		return this.getBukkitEntity().getUniqueId();
 	}
 }

@@ -36,6 +36,7 @@
 	private int config_dragonsSpitFireballsRange;
 	
 	private boolean config_replaceOnTheFly;
+	private boolean config_deactivateBlockExplosionEffect;
 
 	private boolean config_informPlayerDamageDone;
 	private boolean config_informPlayerDamageTaken;
@@ -70,6 +71,7 @@
 		plugin.getConfig().addDefault("dragonsSpitFireballsEveryXSeconds", 7);
 		plugin.getConfig().addDefault("dragonsSpitFireballsRange", 100);
 		plugin.getConfig().addDefault("anounceDragonSpawning", true);
+		plugin.getConfig().addDefault("deactivateBlockExplodeEffect", false);
 		
 		plugin.getConfig().options().copyDefaults(true);
 	}
@@ -102,6 +104,7 @@
 		config_dragonSpitFireballsEvery = plugin.getConfig().getInt("dragonsSpitFireballsEveryXSeconds", 7);
 		config_dragonsSpitFireballsRange = plugin.getConfig().getInt("dragonsSpitFireballsRange", 100);
 		config_anounceDragonSpawning = plugin.getConfig().getBoolean("anounceDragonSpawning", true);
+		config_deactivateBlockExplosionEffect = plugin.getConfig().getBoolean("deactivateBlockExplodeEffect");
 		
 		//stay compatible to old versions
 		if(plugin.getConfig().getInt("maxHomeDisatance", -1) != -1)
@@ -202,6 +205,10 @@
 	
 	public int getConfig_dragonsSpitFireballsRange(){
 		return config_dragonsSpitFireballsRange;
+	}
+
+	public boolean getConfig_deactivateBlockExplosionEffect() {
+		return config_deactivateBlockExplosionEffect;
 	}
 
 }
