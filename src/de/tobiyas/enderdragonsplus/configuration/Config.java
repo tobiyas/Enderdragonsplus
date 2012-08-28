@@ -1,5 +1,5 @@
 /*
- * StopEnderdragonPortals - by tobiyas
+ * EnderdragonsPlus - by tobiyas
  * http://
  *
  * powered by Kickstarter
@@ -17,9 +17,10 @@
 	private EnderdragonsPlus plugin;
 
 	private boolean config_deactivateDragonTemples;
-	private boolean config_includeHeight;
 	private int config_maxFollowDistance;
+	private int config_maxFollowDistanceSquared;	
 	private int config_maxHomeDistance;
+	private int config_maxHomeDistanceSquared;
 	private int config_dropEXP;
 	private boolean config_replaceAllDragons;
 	private boolean config_debugOutput;
@@ -31,9 +32,20 @@
 	private int config_ticksWhenOutOfRange;
 	private boolean config_pluginHandleLoads;
 	private int config_dragonMaxHealth;
+	@SuppressWarnings("unused") //TODO remove when found solution
+	private boolean config_disableDragonHealthBar;
+	
 	private boolean config_dragonsSpitFireballs;
 	private int config_dragonSpitFireballsEvery;
 	private int config_dragonsSpitFireballsRange;
+	private boolean config_disableFireballWorldDamage;
+	
+	private int config_fireballEntityDamage;
+	private int config_fireballExplosionRadius;
+	private int config_maxFireballTargets;
+	private int config_fireballSetOnFireChance;
+	private int config_fireballBurnTime;
+	
 	
 	private boolean config_replaceOnTheFly;
 	private boolean config_deactivateBlockExplosionEffect;
@@ -41,6 +53,10 @@
 	private boolean config_informPlayerDamageDone;
 	private boolean config_informPlayerDamageTaken;
 	private boolean config_anounceDragonSpawning;
+	private String config_dragonSpawnMessage;
+	
+	private int config_dragonUntargeting;
+	private boolean config_dragonsAreHostile;
 
 	public Config(EnderdragonsPlus plugin){
 		this.plugin = plugin;
@@ -71,7 +87,17 @@
 		plugin.getConfig().addDefault("dragonsSpitFireballsEveryXSeconds", 7);
 		plugin.getConfig().addDefault("dragonsSpitFireballsRange", 100);
 		plugin.getConfig().addDefault("anounceDragonSpawning", true);
+		plugin.getConfig().addDefault("dragonSpawnMessage", "&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.");
 		plugin.getConfig().addDefault("deactivateBlockExplodeEffect", false);
+		plugin.getConfig().addDefault("disableFireballWorldDamage", true);
+		plugin.getConfig().addDefault("fireballEntityDamage", 4);
+		plugin.getConfig().addDefault("fireballExplosionRadius", 5);
+		plugin.getConfig().addDefault("maxFireballTargets", 2);
+		plugin.getConfig().addDefault("fireballSetOnFireChance", 50);
+		plugin.getConfig().addDefault("fireballBurnTime", 5);
+		plugin.getConfig().addDefault("disableDragonHealthBar", false);
+		plugin.getConfig().addDefault("dragonUntargeting", 60);
+		plugin.getConfig().addDefault("dragonsAreHostile", "false");
 		
 		plugin.getConfig().options().copyDefaults(true);
 	}
@@ -84,7 +110,6 @@
 		config_deactivateDragonTemples = plugin.getConfig().getBoolean("deactivateDragonTemples", true);
 		config_maxFollowDistance = plugin.getConfig().getInt("maxPlayerFollowDistance", 100);
 		config_maxHomeDistance = plugin.getConfig().getInt("maxHomeDistance", 500);
-		config_includeHeight = plugin.getConfig().getBoolean("includeHeight", false);
 		config_dropEXP = plugin.getConfig().getInt("dropEXP", 2000);
 		config_debugOutput = plugin.getConfig().getBoolean("debugOutputs", false);
 		config_replaceAllDragons = plugin.getConfig().getBoolean("replaceAllDragons", true);
@@ -104,11 +129,28 @@
 		config_dragonSpitFireballsEvery = plugin.getConfig().getInt("dragonsSpitFireballsEveryXSeconds", 7);
 		config_dragonsSpitFireballsRange = plugin.getConfig().getInt("dragonsSpitFireballsRange", 100);
 		config_anounceDragonSpawning = plugin.getConfig().getBoolean("anounceDragonSpawning", true);
-		config_deactivateBlockExplosionEffect = plugin.getConfig().getBoolean("deactivateBlockExplodeEffect");
+		config_deactivateBlockExplosionEffect = plugin.getConfig().getBoolean("deactivateBlockExplodeEffect", false);
+		config_dragonSpawnMessage = plugin.getConfig().getString("dragonSpawnMessage", "&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.");
+		config_disableFireballWorldDamage = plugin.getConfig().getBoolean("disableFireballWorldDamage", true);
+		
+		config_fireballEntityDamage = plugin.getConfig().getInt("fireballEntityDamage", 4);
+		config_fireballExplosionRadius = plugin.getConfig().getInt("fireballExplosionRadius", 5);
+		config_maxFireballTargets = plugin.getConfig().getInt("maxFireballTargets", 2);
+		config_fireballSetOnFireChance = plugin.getConfig().getInt("fireballSetOnFireChance", 50);
+		config_fireballBurnTime = plugin.getConfig().getInt("fireballBurnTime", 5);
+		
+		config_disableDragonHealthBar = plugin.getConfig().getBoolean("disableDragonHealthBar", false);
+		
+		config_dragonUntargeting = plugin.getConfig().getInt("dragonUntargeting", 60);
+		config_dragonsAreHostile = plugin.getConfig().getBoolean("dragonsAreHostile", false);
 		
 		//stay compatible to old versions
 		if(plugin.getConfig().getInt("maxHomeDisatance", -1) != -1)
 			config_maxHomeDistance = plugin.getConfig().getInt("maxHomeDisatance", 500);
+	
+		//Square Cals
+		config_maxFollowDistanceSquared = config_maxFollowDistance * config_maxFollowDistance;
+		config_maxHomeDistanceSquared = config_maxHomeDistance * config_maxHomeDistance;
 	}
 	
 	public void reload(){
@@ -123,12 +165,16 @@
 		return config_maxFollowDistance;
 	}
 	
+	public int getConfig_maxFollowDistanceSquared(){
+		return config_maxFollowDistanceSquared;
+	}
+	
 	public int getConfig_maxHomeDistance(){
 		return config_maxHomeDistance;
 	}
 	
-	public boolean getConfig_includeHeight(){
-		return config_includeHeight;
+	public int getConfig_maxHomeDistanceSquared(){
+		return config_maxHomeDistanceSquared;
 	}
 	
 	public int getConfig_dropEXP(){
@@ -210,5 +256,45 @@
 	public boolean getConfig_deactivateBlockExplosionEffect() {
 		return config_deactivateBlockExplosionEffect;
 	}
+	
+	public String getConfig_dragonSpawnMessage(){
+		return config_dragonSpawnMessage;
+	}
+	
+	public boolean getConfig_disableFireballWorldDamage(){
+		return config_disableFireballWorldDamage;
+	}
+	
+	public int getConfig_fireballEntityDamage(){
+		return config_fireballEntityDamage;
+	}
+	
+	public int getConfig_fireballExplosionRadius(){
+		return config_fireballExplosionRadius;
+	}
+	
+	public int getConfig_fireballSetOnFire(){
+		return config_fireballSetOnFireChance;
+	}
+	
+	public int getConfig_fireballBurnTime(){
+		return config_fireballBurnTime;
+	}
+	
+	public int getConfig_maxFireballTargets(){
+		return config_maxFireballTargets;
+	}
 
+	public boolean getConfig_disableDragonHealthBar() {
+		//return config_disableDragonHealthBar;
+		return false; //TODO try implementing!
+	}
+	
+	public int getConfig_dragonUntargeting(){
+		return config_dragonUntargeting;
+	}
+	
+	public boolean getConfig_dragonsAreHostile(){
+		return config_dragonsAreHostile;
+	}
 }

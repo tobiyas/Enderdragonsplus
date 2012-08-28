@@ -10,6 +10,7 @@ package de.tobiyas.enderdragonsplus.listeners;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import net.minecraft.server.World;
 
@@ -32,9 +33,8 @@ import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
 
 
 public class Listener_Entity implements Listener {
@@ -113,12 +113,29 @@ public class Listener_Entity implements Listener {
 	
 	private void announceDragon(Entity entity){
 		Location loc = entity.getLocation();
+		
+		int x = loc.getBlockX();
+		int y = loc.getBlockY();
+		int z = loc.getBlockZ();
+		String world = loc.getWorld().getName();
+		
+		String message = plugin.interactConfig().getConfig_dragonSpawnMessage();
+		message = message.replaceAll(Pattern.quote("{x}"), ChatColor.LIGHT_PURPLE + "" + x + ChatColor.GREEN);
+		message = message.replaceAll(Pattern.quote("{y}"), ChatColor.LIGHT_PURPLE + "" + y + ChatColor.GREEN);
+		message = message.replaceAll(Pattern.quote("{z}"), ChatColor.LIGHT_PURPLE + "" + z + ChatColor.GREEN);
+		
+		message = message.replaceAll(Pattern.quote("{world}"), ChatColor.LIGHT_PURPLE + world + ChatColor.GREEN);
+		
 		for(Player player : Bukkit.getOnlinePlayers()){
-			player.sendMessage(ChatColor.GREEN + "A new Dragon has spawned at: " + ChatColor.LIGHT_PURPLE + loc.getBlockX() +
-								ChatColor.GREEN + ", " + ChatColor.LIGHT_PURPLE + loc.getBlockZ() + ChatColor.GREEN + 
-								" on world: " + ChatColor.LIGHT_PURPLE + loc.getWorld().getName());
+			player.sendMessage(decodeColor(message));
 		}
 	}
+	
+	private String decodeColor(String message){
+		return message.replaceAll("(&([a-f0-9]))", "§$2");
+	}
+	
+	
 	
 	@EventHandler
 	public void onEnderDragonExplode(EntityExplodeEvent event) {
@@ -159,9 +176,12 @@ public class Listener_Entity implements Listener {
 			if(damager instanceof Player){
 				Player player = (Player) damager;
 				UUID uid = event.getEntity().getUniqueId();
-				LimitedEnderDragon dragon = plugin.getContainer().getDragonById(uid);
+				LimitedEnderDragonV131 dragon = plugin.getContainer().getDragonById(uid);
 				if(dragon == null)
 					return;
+
+				dragon.addEnemy(damager);
+				if(event.getDamage() == 0) return;
 				
 				int actualLife = dragon.getHealth() - event.getDamage();
 				int maxLife = dragon.getMaxHealth();
@@ -185,11 +205,11 @@ public class Listener_Entity implements Listener {
 		return ChatColor.GREEN + "" + actual + "/" + max;
 	}
 	
-	private LimitedEnderDragon spawnLimitedEnderDragon(Location location, String uid){
+	private LimitedEnderDragonV131 spawnLimitedEnderDragon(Location location, String uid){
 		World world = ((CraftWorld)location.getWorld()).getHandle();
 		
 		UUID uuid = UUID.fromString(uid);
-		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
+		LimitedEnderDragonV131 dragon = new LimitedEnderDragonV131(location, world, uuid);
 		dragon.spawn(false);
 		dragon.setHealth(plugin.interactConfig().getConfig_dragonHealth());
 		return dragon;

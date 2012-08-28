@@ -3,6 +3,7 @@ package de.tobiyas.enderdragonsplus.permissions;
 public class PermissionNode {
 	private final static String pluginPre = "edplus.";
 	
+	//Command Permissions
 	public final static String createEnderDragon = pluginPre + "create";
 	public final static String killEnderDragons = pluginPre + "kill";
 	public final static String commandBack = pluginPre + "commandback";
@@ -19,4 +20,7 @@ public class PermissionNode {
 	public final static String debugRespawners = pluginPre + "respawner.debug";
 	public final static String seeRespawners = pluginPre + "respawner.see";
 	public final static String portRespawner = pluginPre + "respawner.port";
+
+	//Targeting Permissions
+	public final static String getIgnored = pluginPre + "targeting.ignore";
 }

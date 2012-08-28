@@ -189,7 +189,7 @@ public class DragonSpawnerContainer {
 		for(Location loc : locations){
 			List<Player> players = loc.getWorld().getPlayers();
 			for(Player player : players){
-				if(player.getLocation().distance(loc) < 100){
+				if(player.getWorld() == loc.getWorld() && player.getLocation().distance(loc) < 100){
 					boolean hasPermission = plugin.getPermissionManager().checkPermissionsSilent(player, PermissionNode.seeRespawners);
 					boolean isInList = hidingBlock.containsKey(player.getName());
 					if(!hasPermission && !isInList){
@@ -239,7 +239,7 @@ public class DragonSpawnerContainer {
 		}
 			
 		for(Location spawnLoc : locations){
-			if(loc.distance(spawnLoc) < 2){
+			if(loc.getWorld() == spawnLoc.getWorld() && loc.distance(spawnLoc) < 2){
 				locations.remove(spawnLoc);
 				spawnLoc.getBlock().setType(Material.AIR);
 				break;
@@ -262,7 +262,7 @@ public class DragonSpawnerContainer {
 
 	public boolean isNear(Location otherLoc) {
 		for(Location loc : locations)
-			if(loc.distance(otherLoc) <= 1) 
+			if(loc.getWorld() == otherLoc.getWorld() && loc.distance(otherLoc) <= 1) 
 				return true;
 		
 		return false;

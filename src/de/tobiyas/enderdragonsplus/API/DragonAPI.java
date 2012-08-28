@@ -12,7 +12,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
 
 public class DragonAPI {
 
@@ -25,7 +25,7 @@ public class DragonAPI {
 	public static boolean setTarget(LivingEntity dragon, LivingEntity target){
 		if(!(dragon.getType() == EntityType.ENDER_DRAGON)) return false;
 		
-		LimitedEnderDragon lDragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragonV131 lDragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(lDragon == null) return false;
 		lDragon.setTarget(target);
 		
@@ -47,7 +47,7 @@ public class DragonAPI {
 	 * @return boolean if it worked
 	 */
 	public static boolean setTarget(LivingEntity dragon, Location location){
-		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragonV131 LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(LEdragon == null)
 			return false;
 		
@@ -99,7 +99,7 @@ public class DragonAPI {
 	 */
 	public static LivingEntity spawnNewEnderdragon(Location location){
 		World world = ((CraftWorld)location.getWorld()).getHandle();
-		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world);
+		LimitedEnderDragonV131 dragon = new LimitedEnderDragonV131(location, world);
 		dragon.spawn(false);
 		
 		if(dragon.getBukkitEntity() == null)
@@ -116,7 +116,7 @@ public class DragonAPI {
 	 * @return boolean if it worked
 	 */
 	public static boolean setPropertyToDragon(LivingEntity dragon, String property, Object value){
-		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragonV131 LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(LEdragon == null)
 			return false;
 		
@@ -131,7 +131,7 @@ public class DragonAPI {
 	 * @return Object found by property
 	 */
 	public static Object getPropertyToDragon(LivingEntity dragon, String property){
-		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragonV131 LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(LEdragon == null)
 			return null;
 		
@@ -147,7 +147,7 @@ public class DragonAPI {
 	 * @return if it worked
 	 */
 	public static boolean spitFireballOnTarget(LivingEntity dragon, Entity target){
-		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragonV131 LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(LEdragon == null)
 			return false;
 		

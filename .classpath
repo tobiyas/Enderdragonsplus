@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Utils"/>
-	<classpathentry kind="lib" path="D:/Dropbox/ECLIPSE/Libaries/bukkit/craftbukkit.jar"/>
+	<classpathentry kind="lib" path="D:/Dropbox/ECLIPSE/Libaries/bukkit/craftbukkit.jar" sourcepath="D:/Dropbox/ECLIPSE/Craftbukkit"/>
 	<classpathentry kind="lib" path="D:/Dropbox/ECLIPSE/Libaries/Misc/DragonTravel.jar"/>
 	<classpathentry kind="lib" path="D:/Dropbox/ECLIPSE/Libaries/Misc/RideThaDragon.jar"/>
 	<classpathentry kind="output" path="bin"/>

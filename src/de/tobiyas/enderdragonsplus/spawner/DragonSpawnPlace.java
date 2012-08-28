@@ -9,7 +9,7 @@ import org.bukkit.entity.LivingEntity;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.API.DragonAPI;
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
 public class DragonSpawnPlace {
@@ -83,7 +83,7 @@ public class DragonSpawnPlace {
 
 	public void remove() {
 		if(dragonID != null){
-			LimitedEnderDragon dragon = plugin.getContainer().getDragonById(dragonID);
+			LimitedEnderDragonV131 dragon = plugin.getContainer().getDragonById(dragonID);
 			dragon.remove();
 		}
 	}

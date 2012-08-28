@@ -4,11 +4,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
+import de.tobiyas.enderdragonsplus.API.DragonAPI;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
 
 
@@ -37,7 +37,7 @@ public class CommandSpawnEnderDragon implements CommandExecutor {
 		if(!(plugin.getPermissionManager().checkPermissions(player, PermissionNode.createEnderDragon)))
 			return true;
 		
-		LivingEntity entity = player.getLocation().getWorld().spawnCreature(player.getLocation(), EntityType.ENDER_DRAGON);
+		LivingEntity entity = DragonAPI.spawnNewEnderdragon(player.getLocation());
 		
 		if(entity == null){
 			player.sendMessage(ChatColor.RED + "ENTITY = NULL!!!");

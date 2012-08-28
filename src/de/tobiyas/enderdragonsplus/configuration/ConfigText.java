@@ -36,6 +36,15 @@ public class ConfigText {
 		text += "#default: true\n";
 		text += "anounceDragonSpawning: true\n\n";
 		
+		text += "#If announce is activated, this is the message.\n";
+		text += "#{x} is the X position. {y} is the y position. {z} is the z position. {world} is the world\n";
+		text += "#default: '&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'\n";
+		text += "dragonSpawnMessage: '&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'\n\n";
+		
+		text += "#If the dragon healthbar should be hidden (Not working Yet!!!)\n";
+		text += "#default: false\n";
+		text += "disableDragonHealthBar: false\n\n";
+		
 		
 		text += "#SUBREGION: EnderDragons.Fireballs\n";
 		text += "#Defines if the dragon can spit FireBalls\n";
@@ -49,6 +58,30 @@ public class ConfigText {
 		text += "#The maximum distance the enderdragon can spit Fireballs\n";
 		text += "#default: 100\n";
 		text += "dragonsSpitFireballsRange: 100\n\n";
+		
+		text += "#when a Fireball explodes, damage to the World is prevented\n";
+		text += "#default: true\n";
+		text += "disableFireballWorldDamage: true\n\n";
+		
+		text += "#The damage a fireball does, when it hits an Entity\n";
+		text += "#default: 4\n";
+		text += "fireballEntityDamage: 4\n\n";
+		
+		text += "#The radius a Fireball will explode in\n";
+		text += "#default: 8\n";
+		text += "fireballExplosionRadius: 8\n\n";
+		
+		text += "#The maximum amount of Fireballs a Dragon can spit at once.\n";
+		text += "#default: 2\n";
+		text += "maxFireballTargets: 2\n\n";
+		
+		text += "#When a Fireball explodes, it sets all entities with a % chance on fire\n";
+		text += "#default: 50\n";
+		text += "fireballSetOnFireChance: 50\n\n";
+		
+		text += "#When a Fireball sets a Player on fire, it burns this time (in seconds)\n";
+		text += "#default: 5\n";
+		text += "fireballBurnTime: 5\n\n";
 		
 		text += "#  /SUBREGION: EnderDragons.Fireballs\n";
 		text += "#	/REGION: EnderDragons\n\n\n";
@@ -96,6 +129,13 @@ public class ConfigText {
 
 
 		text += "#	REGION: PlayerInteraction\n";
+		
+		text += "#SUBREGION: EnderDragons.Targeting\n";
+		text += "#This value defines every x seconds the dragon searches a new Target.\n";
+		text += "#If set to a very low value (exp: 0-20) the Dragon will always be around the player and not fly off again.";
+		text += "#default: 60\n";
+		text += "dragonUntargeting: 60\n\n";		
+		
 		text += "#At which distance the EnderDragon should not target a player any more\n";
 		text += "#default: 100\n";
 		text += "maxPlayerFollowDistance: 100\n\n";
@@ -103,6 +143,13 @@ public class ConfigText {
 		text += "#if a Dragon should ignore player in Creative mode\n";
 		text += "#default: true\n";
 		text += "ignorePlayerGamemode1: true\n\n";
+		
+		text += "#if a Dragon should ONLY attack Players attacking him\n";
+		text += "#or he attacks everyone in range. (true = everyone, false = only attackers)\n";
+		text += "#default: false\n";
+		text += "dragonsAreHostile: false\n\n";
+		
+		text += "#   /SUBREGION: EnderDragons.Targeting\n\n\n";
 
 		text += "#Informes the Player how much damage he has done to an EnderDragon\n";
 		text += "#default: true\n";
@@ -112,12 +159,6 @@ public class ConfigText {
 		text += "#default: true\n";
 		text += "informPlayerDamageTaken: true\n";
 		text += "#	/REGION: PlayerInteraction\n\n\n";
-
-		text += "#	REGION: Calculation\n";
-		text += "#Includes the height at calculations\n";
-		text += "#default: false\n";
-		text += "includeHeight: false\n";
-		text += "#	/REGION: Calculation\n\n\n";
 
 		text += "#	REGION: Debug&API layer\n";
 		text += "#Gives Debug informations for Developers\n";

@@ -61,6 +61,7 @@ public class CommandRespawner implements CommandExecutor {
 			return true;
 		}
 		
+		//porting to respawners
 		if(cmd.equalsIgnoreCase("port")){
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.portRespawner)) return true;
 			if(!(args.length == 2 || args.length == 3)){
@@ -68,17 +69,14 @@ public class CommandRespawner implements CommandExecutor {
 				return true;
 			}
 				
-				
 			String respawner = args[1];
-			
 			ArrayList<Location> locs = plugin.getDragonSpawnerManager().getLocationOfRespawner(respawner);
-			
 			if(locs == null){
 				player.sendMessage(ChatColor.RED + "Respawner: " + ChatColor.LIGHT_PURPLE + respawner + ChatColor.RED + " could not be found.");
 				return true;
 			}
 			
-			int number = 0;
+			int number = 1;
 			if(args.length == 3){
 				try{
 					number = Integer.parseInt(args[2]);
@@ -87,6 +85,8 @@ public class CommandRespawner implements CommandExecutor {
 				}catch(NumberFormatException e){
 					player.sendMessage(ChatColor.RED + "3rd. Argument must be a number and between 1 and " + locs.size());
 					return true;
+				}catch(ArrayIndexOutOfBoundsException e){
+					number = 1;
 				}
 			}
 			
@@ -97,6 +97,7 @@ public class CommandRespawner implements CommandExecutor {
 		}
 		
 		
+		//Linking respawners
 		if(cmd.equalsIgnoreCase("link")){
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.createRespawner)) return true;
 			if(args.length != 2){
@@ -118,8 +119,8 @@ public class CommandRespawner implements CommandExecutor {
 		if(cmd.equalsIgnoreCase("create")){
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.createRespawner)) return true;
 			
-			if(args.length == 0){
-				player.sendMessage(ChatColor.RED + "Wrong usage. Use the command like this: /epdrespawner <spawnerName> [respawntime] [maxDragons]");
+			if(args.length <= 1){
+				player.sendMessage(ChatColor.RED + "Wrong usage. Use the command like this: /epdrespawner create <spawnerName> [respawntime] [maxDragons]");
 				return true;
 			}
 			
@@ -159,7 +160,8 @@ public class CommandRespawner implements CommandExecutor {
 	}
 	
 	private void postHelp(Player player){
-		player.sendMessage(ChatColor.RED + "Command not recognized! Use /edprespawner <create,port,info,clear,debugsigns>");
+		player.sendMessage(ChatColor.RED + "Command not recognized! Use " + ChatColor.GREEN + "/edprespawner" + ChatColor.YELLOW + 
+							" <create,port,info,clear,debugsigns>");
 	}
 
 }

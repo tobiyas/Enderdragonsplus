@@ -1,229 +1,6 @@
-package de.tobiyas.enderdragonsplus.entity;
+Old Enderdragon:
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-
-import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-
-import net.minecraft.server.AxisAlignedBB;
-import net.minecraft.server.Block;
-import net.minecraft.server.DamageSource;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityComplexPart;
-import net.minecraft.server.EntityEnderCrystal;
-import net.minecraft.server.EntityEnderDragon;
-import net.minecraft.server.EntityExperienceOrb;
-import net.minecraft.server.EntityFireball;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.LocaleI18n;
-import net.minecraft.server.MathHelper;
-import net.minecraft.server.Vec3D;
-import net.minecraft.server.World;
-
-public class LimitedEnderDragon extends EntityEnderDragon {
-
-	private Entity u;
-	private int ticksToDeath = 200;
-	
-	private Entity lastTarget = null;
-	private EnderdragonsPlus plugin;
-	public static int broadcastedError = 0;
-
-	private Location forceGoTo;
-
-	private int logicCall = 0;
-	private int fireballTicks = 0;
-
-	public LimitedEnderDragon(Location location, World world) {
-		super(world);
-
-		plugin = EnderdragonsPlus.getPlugin();
-		plugin.getContainer().setHomeID(getUUID(), location, location, false,
-				this);
-
-		int maxHealth = plugin.interactConfig().getConfig_dragonMaxHealth();
-		if (maxHealth > 0)
-			this.t = maxHealth;
-		setPosition(location.getX(), location.getY(), location.getZ());
-		this.expToDrop = plugin.interactConfig().getConfig_dropEXP();
-	}
-
-	public LimitedEnderDragon(Location location, World world, UUID uid) {
-		super(world);
-
-		plugin = EnderdragonsPlus.getPlugin();
-		changeUUID(uid);
-		plugin.getContainer().setHomeID(getUUID(), location, location, false,
-				this);
-
-		setPosition(location.getX(), location.getY(), location.getZ());
-		int maxHealth = plugin.interactConfig().getConfig_dragonMaxHealth();
-		if (maxHealth > 0)
-			this.datawatcher.watch(16, Integer.valueOf(this.health));
-		this.expToDrop = plugin.interactConfig().getConfig_dropEXP();
-	}
-
-	public LimitedEnderDragon(World world) {
-		super(world);
-
-		plugin = EnderdragonsPlus.getPlugin();
-		if (plugin.interactConfig().getConfig_pluginHandleLoads()) {
-			remove();
-			return;
-		} else
-			this.expToDrop = plugin.interactConfig().getConfig_dropEXP();
-
-		if (!plugin.getContainer().containsID(this.getUUID()))
-			remove();
-	}
-
-	private void checkRegainHealth() {
-		if (this.s != null) {
-			if (this.s.dead) {
-				this.a(this.g, DamageSource.EXPLOSION, 10);
-				this.s = null;
-			} else if (this.ticksLived % 10 == 0 && this.health < this.t) {
-				// CraftBukkit start
-				org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(
-						this.getBukkitEntity(),
-						1,
-						org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL);
-				this.world.getServer().getPluginManager().callEvent(event);
-
-				if (!event.isCancelled()) {
-					this.health += event.getAmount();
-				}
-				// CraftBukkit end
-			}
-		}
-
-		if (this.random.nextInt(10) == 0) {
-			float f = 32.0F;
-			List<?> list = this.world.a(EntityEnderCrystal.class,
-					this.boundingBox.grow(f, f, f));
-			EntityEnderCrystal entityendercrystal = null;
-			double d0 = Double.MAX_VALUE;
-			Iterator<?> iterator = list.iterator();
-
-			while (iterator.hasNext()) {
-				Entity entity = (Entity) iterator.next();
-				double d1 = entity.j(this);
-
-				if (d1 < d0) {
-					d0 = d1;
-					entityendercrystal = (EntityEnderCrystal) entity;
-				}
-			}
-
-			this.s = entityendercrystal;
-		}
-	}
-
-	@Override
-	public String getLocalizedName() {
-		return LocaleI18n.get("entity.EnderDragon.name");
-	}
-
-	@Override
-	public boolean damageEntity(DamageSource source, int amount) {
-		if (health <= 0)
-			return false;
-
-		if (this.noDamageTicks > 0)
-			return false;
-
-		if (source != DamageSource.GENERIC)
-			return false;
-
-		if (source.k())
-			return false;
-
-		this.setHealth(health - amount);
-		if (this.health <= 0) {
-			die(source);
-		}
-		return true;
-	}
-
-	// Logic call. All Dragon log on tick
-	@SuppressWarnings("unchecked")
-	@Override
-	public void e() {
-		logicCall++;
-		this.n = this.o;
-
-		this.datawatcher.watch(16, Integer.valueOf(this.health));
-
-		float f;
-		float f1;
-		double d05;
-
-		if (this.health <= 0)
-			return;
-
-		this.checkRegainHealth();
-		f = 0.2F / (MathHelper.sqrt(this.motX * this.motX + this.motZ
-				* this.motZ) * 10.0F + 1.0F);
-		f *= (float) Math.pow(2.0D, this.motY);
-		if (this.q) {
-			this.o += f * 0.5F;
-		} else {
-			this.o += f;
-		}
-
-		while (this.yaw >= 180.0F) {
-			this.yaw -= 360.0F;
-		}
-
-		while (this.yaw < -180.0F) {
-			this.yaw += 360.0F;
-		}
-
-		if (this.e < 0) {
-			for (int i = 0; i < this.d.length; ++i) {
-				this.d[i][0] = this.yaw;
-				this.d[i][1] = this.locY;
-			}
-		}
-
-		if (++this.e == this.d.length) {
-			this.e = 0;
-		}
-
-		this.d[this.e][0] = this.yaw;
-		this.d[this.e][1] = this.locY;
-		double d0;
-		double d1;
-		double d2;
-		double d3;
-		float f3;
-
-		d0 = this.a - this.locX;
-		d1 = this.b - this.locY;
-		d2 = this.c - this.locZ;
-		d3 = d0 * d0 + d1 * d1 + d2 * d2;
-		if (this.u != null) {
-			this.a = this.u.locX;
-			this.c = this.u.locZ;
-			double d4 = this.a - this.locX;
-			double d5 = this.c - this.locZ;
-			double d6 = Math.sqrt(d4 * d4 + d5 * d5);
+double d6 = Math.sqrt(d4 * d4 + d5 * d5);
 			double d7 = 0.4 + d6 / 80.0D - 1.0D;
 
 			if (d7 > 10.0D) {
@@ -460,7 +237,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 					loc.getBlockX(), 
 					loc.getBlockY(), 
 					loc.getBlockZ());
-			
+
 			fireBall.setDirection(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			world.addEntity(fireBall);
 		}
@@ -544,7 +321,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			int i = this.getExpReward() / 20;
 			dropEXPOrbs(i);
 		}
-		
+
 		move(0, 0.1, 0);
 		this.V = (this.yaw += 2);
 		if (ticksToDeath == 200) {
@@ -562,7 +339,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			die();
 		}
 	}
-	
+
 	private void dropEXPOrbs(int totalAmount){
 		while (totalAmount > 0) {
 			int toSubtract = EntityExperienceOrb.getOrbValue(totalAmount);

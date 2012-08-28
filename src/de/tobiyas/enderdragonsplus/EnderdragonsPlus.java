@@ -33,8 +33,9 @@ import de.tobiyas.enderdragonsplus.configuration.ConfigTemplate;
 import de.tobiyas.enderdragonsplus.datacontainer.Container;
 import de.tobiyas.enderdragonsplus.datacontainer.DragonLogicTicker;
 import de.tobiyas.enderdragonsplus.datacontainer.OnTheFlyReplacer;
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Entity;
+import de.tobiyas.enderdragonsplus.listeners.Listener_Fireball;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Sign;
 import de.tobiyas.enderdragonsplus.listeners.Listener_World;
@@ -96,7 +97,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 	      method.setAccessible(true);
 	      method.invoke(
 	    		  EntityTypes.class, new Object[] { 
-	    	  		LimitedEnderDragon.class, 
+	    	  		LimitedEnderDragonV131.class, 
 	    	  		"LimitedEnderDragon", 
 	    	  		Integer.valueOf(63) 
 	    	  	});
@@ -130,6 +131,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 		new Listener_World();
 		new Listener_Plugins();
 		new Listener_Sign();
+		new Listener_Fireball();
 	}
 	
 	private void registerCommands(){

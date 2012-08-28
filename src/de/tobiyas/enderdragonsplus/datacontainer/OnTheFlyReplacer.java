@@ -11,7 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
 
 public class OnTheFlyReplacer implements Runnable {
 
@@ -44,10 +44,10 @@ public class OnTheFlyReplacer implements Runnable {
 		}
 	}
 	
-	private LimitedEnderDragon spawnLimitedEnderDragon(Location location, UUID uuid){
+	private LimitedEnderDragonV131 spawnLimitedEnderDragon(Location location, UUID uuid){
 		net.minecraft.server.World world = ((CraftWorld)location.getWorld()).getHandle();
 		
-		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
+		LimitedEnderDragonV131 dragon = new LimitedEnderDragonV131(location, world, uuid);
 		dragon.spawn(false);
 		dragon.setHealth(plugin.interactConfig().getConfig_dragonHealth());
 		return dragon;
