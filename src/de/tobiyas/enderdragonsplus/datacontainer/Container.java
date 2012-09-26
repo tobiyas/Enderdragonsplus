@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import net.minecraft.server.DamageSource;
+
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.DragonStore;
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.DragonStore;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
 
 public class Container {
 
@@ -54,12 +56,13 @@ public class Container {
 		for(UUID dragonID : homeList.keySet()){
 			DragonInfoContainer container = homeList.get(dragonID);
 			if(container.isLoaded){
-				if(container.dragon != null && container.dragon.isInRange(location, range)){
+				if(container.dragon != null && (range == 0 ||container.dragon.isInRange(location, range))){
 					toRemove.add(dragonID);
-					container.dragon.remove();
+					//container.dragon.remove();
+					container.dragon.dealDamage(DamageSource.EXPLOSION, 1000);
 				}
 			}else{
-				//handle unloaded dragons
+				//TODO handle unloaded dragons
 			}
 		}
 		

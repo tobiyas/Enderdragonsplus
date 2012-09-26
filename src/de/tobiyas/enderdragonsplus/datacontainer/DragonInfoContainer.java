@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
 
 public class DragonInfoContainer {
 

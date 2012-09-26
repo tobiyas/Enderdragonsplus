@@ -39,7 +39,7 @@ public class ConfigText {
 		text += "#If announce is activated, this is the message.\n";
 		text += "#{x} is the X position. {y} is the y position. {z} is the z position. {world} is the world\n";
 		text += "#default: '&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'\n";
-		text += "dragonSpawnMessage: '&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'\n\n";
+		text += "dragonSpawnMessage: &aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.\n\n";
 		
 		text += "#If the dragon healthbar should be hidden (Not working Yet!!!)\n";
 		text += "#default: false\n";
@@ -53,7 +53,7 @@ public class ConfigText {
 		
 		text += "#The time the enderdragon can spit Fireballs (every X seconds)\n";
 		text += "#default: 7\n";
-		text += "dragonsSpitFireballsEveryXSeconds: true\n\n";
+		text += "dragonsSpitFireballsEveryXSeconds: 7\n\n";
 		
 		text += "#The maximum distance the enderdragon can spit Fireballs\n";
 		text += "#default: 100\n";
@@ -82,6 +82,16 @@ public class ConfigText {
 		text += "#When a Fireball sets a Player on fire, it burns this time (in seconds)\n";
 		text += "#default: 5\n";
 		text += "fireballBurnTime: 5\n\n";
+		
+		text += "#Disables rebounce, when Fireball is hit by Something\n";
+		text += "#default: false\n";
+		text += "disableFireballRebounce: false\n\n";
+		
+		text += "#Varies the speedup of the fireballs. > 1 is faster, < 1 is slower\n";
+		text += "#CAUTION!!! only vary by small values (like 1.05, 1.10, 0.95, ....)\n";
+		text += "#If you vary to much it is impossible to evade!\n";
+		text += "#default: 1.00\n";
+		text += "fireBallSpeedUp: 1.00\n";
 		
 		text += "#  /SUBREGION: EnderDragons.Fireballs\n";
 		text += "#	/REGION: EnderDragons\n\n\n";
@@ -143,6 +153,10 @@ public class ConfigText {
 		text += "#if a Dragon should ignore player in Creative mode\n";
 		text += "#default: true\n";
 		text += "ignorePlayerGamemode1: true\n\n";
+		
+		text += "#Disables targeting imunity through Permission: 'edplus.targeting.ignore'\n";
+		text += "#default: false\n";
+		text += "disableTargetImun: false\n\n";
 		
 		text += "#if a Dragon should ONLY attack Players attacking him\n";
 		text += "#or he attacks everyone in range. (true = everyone, false = only attackers)\n";

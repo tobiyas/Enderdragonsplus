@@ -66,10 +66,7 @@ public class ConfigTemplate {
 		if(!line.contains(":"))
 			return line;
 		
-		String[] nodes = line.split(":");
-		if(nodes.length != 2) 
-			return "#" + line;
-		
+		String[] nodes = line.split(":");		
 		String node = nodes[0];
 		Object obj = plugin.getConfig().get(node);
 		if(obj == null)

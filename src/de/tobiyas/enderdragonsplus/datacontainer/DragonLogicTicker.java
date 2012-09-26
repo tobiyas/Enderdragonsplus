@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
 
 public class DragonLogicTicker implements Runnable {
 

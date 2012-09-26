@@ -30,10 +30,11 @@ import de.tobiyas.enderdragonsplus.commands.CommandSpawnEnderDragon;
 import de.tobiyas.enderdragonsplus.commands.CommandUnloadAll;
 import de.tobiyas.enderdragonsplus.configuration.Config;
 import de.tobiyas.enderdragonsplus.configuration.ConfigTemplate;
+import de.tobiyas.enderdragonsplus.damagewhisperer.EntityDamageWhisperController;
 import de.tobiyas.enderdragonsplus.datacontainer.Container;
 import de.tobiyas.enderdragonsplus.datacontainer.DragonLogicTicker;
 import de.tobiyas.enderdragonsplus.datacontainer.OnTheFlyReplacer;
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Entity;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Fireball;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
@@ -58,6 +59,8 @@ public class EnderdragonsPlus extends JavaPlugin{
 	
 	private BridgeController bridgeController;
 	private DragonSpawnerManager dragonSpawnerManager;
+	
+	private EntityDamageWhisperController damageWhisperController;
 	
 	private static EnderdragonsPlus plugin;
 
@@ -155,6 +158,8 @@ public class EnderdragonsPlus extends JavaPlugin{
 	private void registerManagers(){
 		dragonSpawnerManager = new DragonSpawnerManager();
 		dragonSpawnerManager.init();
+		
+		damageWhisperController = new EntityDamageWhisperController();
 	}
 
 
@@ -196,6 +201,10 @@ public class EnderdragonsPlus extends JavaPlugin{
 	
 	public DebugLogger getDebugLogger(){
 		return debugLogger;
+	}
+	
+	public EntityDamageWhisperController getDamageWhisperController(){
+		return damageWhisperController;
 	}
 
 }

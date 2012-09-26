@@ -34,7 +34,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
 
 
 public class Listener_Entity implements Listener {
@@ -157,7 +157,7 @@ public class Listener_Entity implements Listener {
 		if(!(event.getEntity() instanceof Player)) return;
 		if(plugin.interactConfig().getConfig_informPlayerDamageTaken()){
 			Player player = (Player) event.getEntity();
-			player.sendMessage(ChatColor.YELLOW + "The Dragon has done " + ChatColor.LIGHT_PURPLE + event.getDamage() + ChatColor.YELLOW + " damage to you.");
+			plugin.getDamageWhisperController().playerGotDamage(player);
 		}
 	}
 	
@@ -181,29 +181,12 @@ public class Listener_Entity implements Listener {
 					return;
 
 				dragon.addEnemy(damager);
-				if(event.getDamage() == 0) return;
-				
-				int actualLife = dragon.getHealth() - event.getDamage();
-				int maxLife = dragon.getMaxHealth();
-				
-				String midLifeString = parsePersentageLife(actualLife, maxLife);
-				player.sendMessage(ChatColor.YELLOW + "The Dragon has " + midLifeString + ChatColor.YELLOW + " health left. You did " + 
-						ChatColor.LIGHT_PURPLE + event.getDamage() + ChatColor.YELLOW + " damage.");
+				plugin.getDamageWhisperController().dragonGotDamage((EnderDragon)dragon.getBukkitEntity(), player);
 			}
 		}
 	}
 	
-	private String parsePersentageLife(int actual, int max){
-		float currentPercentage = actual / max;
-		
-		if(currentPercentage < 0.2)
-			return ChatColor.RED + "" + actual + "/" + max;
-		
-		if(currentPercentage < 0.5)
-			return ChatColor.YELLOW + "" + actual + "/" + max;
-		
-		return ChatColor.GREEN + "" + actual + "/" + max;
-	}
+	
 	
 	private LimitedEnderDragonV131 spawnLimitedEnderDragon(Location location, String uid){
 		World world = ((CraftWorld)location.getWorld()).getHandle();
