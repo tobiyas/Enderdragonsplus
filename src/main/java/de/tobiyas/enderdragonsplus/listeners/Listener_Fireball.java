@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_4_5.event.CraftEventFactory;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -21,6 +22,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.fireball.FireballRebounceEvent;
+import de.tobiyas.enderdragonsplus.entity.fireball.LimitedFireball;
 
 public class Listener_Fireball implements Listener {
 
@@ -36,12 +38,12 @@ public class Listener_Fireball implements Listener {
 	
 	@EventHandler
 	public void HandleFireballHit(ExplosionPrimeEvent event){
-		if(event.getEntityType() != EntityType.FIREBALL) return;
+		if(!(event.getEntity() instanceof LimitedFireball)) return; //No fireball -> not interesting for us.
 		Projectile fireball = (Projectile) event.getEntity();
 		if(fireball.getShooter() == null || !(fireball.getShooter() instanceof EnderDragon))
 			return;
 		
-		if(fireball.getTicksLived() < 40){
+		if(fireball.getTicksLived() < 30){
 			event.setCancelled(true);
 			return;
 		}
@@ -94,7 +96,7 @@ public class Listener_Fireball implements Listener {
 	
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent event){
-		if(!(event.getEntityType() == EntityType.FIREBALL)) return;
+		if(event.getEntity() == null || !(event.getEntity() instanceof LargeFireball)) return;
 		if(!(event.getEntity().getShooter() instanceof EnderDragon)) return;
 		
 		if(plugin.interactConfig().getConfig_disableFireballWorldDamage())

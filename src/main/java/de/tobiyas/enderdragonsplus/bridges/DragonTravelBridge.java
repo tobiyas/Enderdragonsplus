@@ -1,11 +1,13 @@
 package de.tobiyas.enderdragonsplus.bridges;
 
-import net.minecraft.server.EntityEnderDragon;
+/*
+import net.minecraft.server.v1_4_5.EntityEnderDragon;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftEnderDragon;
+import com.xemsdoom.dt.XemDragon;
+*/
 
-import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
-import com.xemsdoom.dt.XemDragon;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 
 public class DragonTravelBridge implements SpecialDragonBridge{
@@ -20,16 +22,6 @@ public class DragonTravelBridge implements SpecialDragonBridge{
 		dtEnabled = (otherPlugin != null  && otherPlugin.isEnabled());
 		if(dtEnabled)
 			plugin.log("DragonTravel found and hooked.");
-	}
-	
-	public boolean isXemDragon(LivingEntity entity){
-		if(!dtEnabled) return false;
-		try{
-			EntityEnderDragon dragon = ((CraftEnderDragon) entity).getHandle();
-			return dragon instanceof XemDragon;
-		}catch(Exception e){
-			return false;
-		}
 	}
 
 	@Override
@@ -46,8 +38,11 @@ public class DragonTravelBridge implements SpecialDragonBridge{
 	public boolean isSpecialDragon(LivingEntity entity) {
 		if(!dtEnabled) return false;
 		try{
-			EntityEnderDragon dragon = ((CraftEnderDragon) entity).getHandle();
-			return dragon instanceof XemDragon;
+			//Include when DragonTravel is working again!
+			/*EntityEnderDragon dragon = ((CraftEnderDragon) entity).getHandle();
+			return false; //dragon instanceof XemDragon;
+			*/
+			return false;
 		}catch(Exception e){
 			return false;
 		}

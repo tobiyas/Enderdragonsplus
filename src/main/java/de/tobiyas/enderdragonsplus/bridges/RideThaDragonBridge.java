@@ -1,12 +1,15 @@
 package de.tobiyas.enderdragonsplus.bridges;
 
-import net.minecraft.server.EntityEnderDragon;
+/*
+import net.minecraft.server.v1_4_5.EntityEnderDragon;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftEnderDragon;
+import de.V10lator.RideThaDragon.V10Dragon;
+*/
 
-import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 
-import de.V10lator.RideThaDragon.V10Dragon;
+
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 
 public class RideThaDragonBridge implements SpecialDragonBridge{
@@ -37,8 +40,12 @@ public class RideThaDragonBridge implements SpecialDragonBridge{
 	public boolean isSpecialDragon(LivingEntity entity) {
 		if(!RTDEnabled) return false;
 		try{
+			//Include if RideThaDragon is working again.
+			/*
 			EntityEnderDragon dragon = ((CraftEnderDragon) entity).getHandle();
 			return dragon instanceof V10Dragon;
+			*/
+			return false;
 		}catch(Exception e){
 			return false;
 		}

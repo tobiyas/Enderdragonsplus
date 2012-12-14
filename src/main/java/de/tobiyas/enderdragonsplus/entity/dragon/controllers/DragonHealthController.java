@@ -8,11 +8,11 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
 //import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 
-import net.minecraft.server.DamageSource;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityEnderCrystal;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.EntityLiving;
+import net.minecraft.server.v1_4_5.DamageSource;
+import net.minecraft.server.v1_4_5.Entity;
+import net.minecraft.server.v1_4_5.EntityEnderCrystal;
+import net.minecraft.server.v1_4_5.EntityHuman;
+import net.minecraft.server.v1_4_5.EntityLiving;
 
 public class DragonHealthController {
 
@@ -37,10 +37,10 @@ public class DragonHealthController {
 	 * Checks if the Dragon is near a EnderDragonCrystal to regain health
 	 */
 	public void checkRegainHealth() {
-		if (dragon.bS != null) {
-			if (dragon.bS.dead) {
+		if (dragon.bQ != null) {
+			if (dragon.bQ.dead) {
 				dragon.a(dragon.g, DamageSource.EXPLOSION, 10);
-				dragon.bS = null;
+				dragon.bQ = null;
 			} else if (dragon.ticksLived % 10 == 0 && dragon.getHealth() < dragon.getMaxHealth()) {
 				// CraftBukkit start
 				org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(
@@ -75,7 +75,7 @@ public class DragonHealthController {
 				}
 			}
 
-			dragon.bS = entityendercrystal;
+			dragon.bQ = entityendercrystal;
 		}
 	}
 	

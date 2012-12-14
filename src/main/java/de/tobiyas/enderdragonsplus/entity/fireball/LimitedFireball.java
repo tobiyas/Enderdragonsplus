@@ -1,23 +1,23 @@
 package de.tobiyas.enderdragonsplus.entity.fireball;
 
-import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_4_5.event.CraftEventFactory;
 import org.bukkit.entity.Fireball;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
 import de.tobiyas.enderdragonsplus.entity.fireball.FireballRebounceEvent.RebounceReason;
-import net.minecraft.server.DamageSource;
-import net.minecraft.server.EntityLargeFireball;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.MovingObjectPosition;
-import net.minecraft.server.Vec3D;
-import net.minecraft.server.World;
+import net.minecraft.server.v1_4_5.DamageSource;
+import net.minecraft.server.v1_4_5.EntityLargeFireball;
+import net.minecraft.server.v1_4_5.EntityLiving;
+import net.minecraft.server.v1_4_5.MovingObjectPosition;
+import net.minecraft.server.v1_4_5.Vec3D;
+import net.minecraft.server.v1_4_5.World;
 
 public class LimitedFireball extends EntityLargeFireball {
 
 	private double speedup = 1;
-	private int maxSurvivalCounter = 20 * 3; //20 ticks per sec * 3 seconds
+	private int maxSurvivalCounter = 20 * 5; //20 ticks per sec * 5 seconds
 	
 	public LimitedFireball(World world) {
 		super(world);
@@ -98,7 +98,7 @@ public class LimitedFireball extends EntityLargeFireball {
 		 }
 
 		 // CraftBukkit start
-		 ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.entity.CraftEntity.getEntity(this.world.getServer(), this));
+		 ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity.getEntity(this.world.getServer(), this));
 		 this.world.getServer().getPluginManager().callEvent(event);
 	
 		 if (!event.isCancelled()) {

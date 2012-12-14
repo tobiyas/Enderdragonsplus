@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.server.World;
+import net.minecraft.server.v1_4_5.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 

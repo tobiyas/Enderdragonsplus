@@ -12,12 +12,12 @@ import java.lang.reflect.Field;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import net.minecraft.server.World;
+import net.minecraft.server.v1_4_5.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
