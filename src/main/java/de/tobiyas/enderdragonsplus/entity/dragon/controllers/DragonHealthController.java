@@ -1,6 +1,8 @@
 package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -8,11 +10,12 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
 //import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 
-import net.minecraft.server.v1_4_5.DamageSource;
-import net.minecraft.server.v1_4_5.Entity;
-import net.minecraft.server.v1_4_5.EntityEnderCrystal;
-import net.minecraft.server.v1_4_5.EntityHuman;
-import net.minecraft.server.v1_4_5.EntityLiving;
+import net.minecraft.server.v1_4_6.DamageSource;
+import net.minecraft.server.v1_4_6.Entity;
+import net.minecraft.server.v1_4_6.EntityEnderCrystal;
+import net.minecraft.server.v1_4_6.EntityHuman;
+import net.minecraft.server.v1_4_6.EntityLiving;
+import net.minecraft.server.v1_4_6.EntityPlayer;
 
 public class DragonHealthController {
 
@@ -22,6 +25,9 @@ public class DragonHealthController {
 	
 	private int maxHealth;
 	
+	private HashMap<String, Integer> damageDoneByPlayer;
+	private String lastPlayerAttacked = "";
+	
 	//private AgeContainer ageContainer;
 	
 	public DragonHealthController(LimitedEnderDragonV131 dragon){
@@ -30,6 +36,7 @@ public class DragonHealthController {
 		random = new Random();
 		
 		this.maxHealth = EnderdragonsPlus.getPlugin().interactConfig().getConfig_dragonMaxHealth();
+		damageDoneByPlayer = new HashMap<String, Integer>();
 	}
 	
 	
@@ -37,10 +44,10 @@ public class DragonHealthController {
 	 * Checks if the Dragon is near a EnderDragonCrystal to regain health
 	 */
 	public void checkRegainHealth() {
-		if (dragon.bQ != null) {
-			if (dragon.bQ.dead) {
+		if (dragon.bR != null) {
+			if (dragon.bR.dead) {
 				dragon.a(dragon.g, DamageSource.EXPLOSION, 10);
-				dragon.bQ = null;
+				dragon.bR = null;
 			} else if (dragon.ticksLived % 10 == 0 && dragon.getHealth() < dragon.getMaxHealth()) {
 				// CraftBukkit start
 				org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(
@@ -75,7 +82,7 @@ public class DragonHealthController {
 				}
 			}
 
-			dragon.bQ = entityendercrystal;
+			dragon.bR = entityendercrystal;
 		}
 	}
 	
@@ -133,6 +140,39 @@ public class DragonHealthController {
 	
 	public int getMaxHealth(){
 		return maxHealth;
+	}
+	
+	public void rememberDamage(DamageSource source, int damage){
+		if(source.getEntity() instanceof EntityPlayer){
+			EntityPlayer player = (EntityPlayer) source.getEntity();
+			rememberDamage(player.getName(), damage);
+		}
+	}
+	
+	public void rememberDamage(String player, int damage){
+		int newDmg = damage;	
+		if(damageDoneByPlayer.containsKey(player))
+			newDmg += damageDoneByPlayer.get(player);
+		
+		damageDoneByPlayer.put(player, newDmg);
+		lastPlayerAttacked = player;
+	}
+	
+	public Map<String, Integer> getPlayerDamage(){
+		return damageDoneByPlayer;
+	}
+
+
+	public String getLastPlayerAttacked() {
+		return lastPlayerAttacked;
+	}
+
+
+	public int getDamageByPlayer(String player) {
+		if(damageDoneByPlayer.containsKey(player))
+			return damageDoneByPlayer.get(player);
+		
+		return 0;
 	}
 	
 }

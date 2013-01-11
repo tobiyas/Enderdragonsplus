@@ -2,10 +2,10 @@ package de.tobiyas.enderdragonsplus.API;
 
 import java.util.UUID;
 
-import net.minecraft.server.v1_4_5.World;
+import net.minecraft.server.v1_4_6.World;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -151,6 +151,6 @@ public class DragonAPI {
 		if(LEdragon == null)
 			return false;
 		
-		return LEdragon.spitFireBallOnTarget((net.minecraft.server.v1_4_5.Entity) target);
+		return LEdragon.spitFireBallOnTarget((net.minecraft.server.v1_4_6.Entity) target);
 	}
 }

@@ -1,12 +1,17 @@
 package de.tobiyas.enderdragonsplus.entity.dragon;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_6.event.CraftEventFactory;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.ItemStack;
+
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonHealthController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonMoveController;
@@ -14,15 +19,15 @@ import de.tobiyas.enderdragonsplus.entity.dragon.controllers.FireballController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.ItemLootController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.TargetController;
 
-import net.minecraft.server.v1_4_5.DamageSource;
-import net.minecraft.server.v1_4_5.Entity;
-import net.minecraft.server.v1_4_5.EntityComplexPart;
-import net.minecraft.server.v1_4_5.EntityEnderDragon;
-import net.minecraft.server.v1_4_5.EntityLiving;
-import net.minecraft.server.v1_4_5.LocaleI18n;
-import net.minecraft.server.v1_4_5.MathHelper;
-import net.minecraft.server.v1_4_5.Vec3D;
-import net.minecraft.server.v1_4_5.World;
+import net.minecraft.server.v1_4_6.DamageSource;
+import net.minecraft.server.v1_4_6.Entity;
+import net.minecraft.server.v1_4_6.EntityComplexPart;
+import net.minecraft.server.v1_4_6.EntityEnderDragon;
+import net.minecraft.server.v1_4_6.EntityLiving;
+import net.minecraft.server.v1_4_6.LocaleI18n;
+import net.minecraft.server.v1_4_6.MathHelper;
+import net.minecraft.server.v1_4_6.Vec3D;
+import net.minecraft.server.v1_4_6.World;
 
 public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	
@@ -93,7 +98,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	}
 	
 	/** This method sets the Life of the EnderDragon
-	 * @see net.minecraft.server.EntityEnderDragon#a()
+	 * @see net.minecraft.server.v1_4_6.EntityEnderDragon#a()
 	 */
 	@Override
 	protected void a() {
@@ -103,6 +108,15 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		this.datawatcher.a(9, Byte.valueOf(0));
 		this.datawatcher.a(16, new Integer(this.getMaxHealth()));*/
 	}
+	
+	@Override
+	protected void dropDeathLoot(boolean flag, int i) {
+		// CraftBukkit start - whole method
+		List<ItemStack> loot = itemController.getItemDrops();
+
+        CraftEventFactory.callEntityDeathEvent(this, loot); // raise event even for those times when the entity does not drop loot
+        // CraftBukkit end
+    }
 
 	
 
@@ -126,6 +140,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 			return false;
 
 		this.setHealth(health - amount);
+		dragonHealthController.rememberDamage(source, amount);
 		if (this.health <= 0) {
 			die(source);
 		}				
@@ -135,7 +150,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 
 	/**
 	 *  Logic call. All Dragon logic on tick
-	 * @see net.minecraft.server.Enderdragon#
+	 * @see net.minecraft.server.v1_4_6.Enderdragon#
 	 */
 	@Override
 	public void c(){
@@ -150,7 +165,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	@SuppressWarnings("unchecked")
 	public void internalLogicTick(){
 		logicCall++;
-		this.bL = this.bM;
+		this.bM = this.bN;
 
 		int mappedHealth = dragonHealthController.mapHealth();
 		boolean shouldSitDown = false;
@@ -172,9 +187,9 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		f *= (float) Math.pow(2.0D, this.motY);
 		
 		if (this.bO) {
-			this.bM += f * 0.5F;
+			this.bN += f * 0.5F;
 		} else {
-			this.bM += f;
+			this.bN += f;
 		}
 
 		this.yaw = MathHelper.g(this.yaw);
@@ -235,7 +250,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 			
 		}
 
-		if (this.bN || d3 < 100.0D || d3 > 22500D || this.positionChanged
+		if (this.bO || (d3 < 100.0D) || d3 > 22500D || this.positionChanged
 				|| this.G) {
 			targetController.changeTarget(false);
 		}
@@ -282,7 +297,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 			f4 = 0.0F;
 		}
 
-		this.bF *= 0.8F;
+		this.bE *= 0.8F;
 		float f5 = MathHelper.sqrt(this.motX * this.motX + this.motZ
 				* this.motZ) + 1;
 		double d10 = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ) + 1.0D;
@@ -291,14 +306,14 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 			d10 = 40.0D;
 		}
 
-		this.bF = (float) (this.bF + d9 * (0.7 / d10 / f5));
-		this.yaw += this.bF * 0.1;
+		this.bE = (float) (this.bE + d9 * (0.7 / d10 / f5));
+		this.yaw += this.bE * 0.1;
 		directionDegree = this.yaw * Math.PI / 180.0F; //recalculation
 		float f6 = (float) (2.0D / (d10 + 1.0D));
 		float f7 = 0.06F;
 
 		this.a(0, -1.0F, f7 * (f4 * f6 + (1.0F - f6)));
-		if (this.bO) {
+		if (this.bP) {
 			this.move(this.motX * 0.8, this.motY * 0.8, this.motZ * 0.8);
 		} else {
 			this.move(this.motX, this.motY, this.motZ);
@@ -312,17 +327,17 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		this.motZ *= f8;
 		this.motY *= 0.91;
 
-		this.aw = this.yaw;
+		this.ax = this.yaw;
         this.g.width = this.g.length = 3.0F;
         this.i.width = this.i.length = 2.0F;
         this.j.width = this.j.length = 2.0F;
-        this.bK.width = this.bK.length = 2.0F;
+        this.bJ.width = this.bK.length = 2.0F;
         this.h.length = 3.0F;
         this.h.width = 5.0F;
-        this.bI.length = 2.0F;
-        this.bI.width = 4.0F;
-        this.bJ.length = 3.0F;
-        this.bJ.width = 4.0F;
+        this.bK.length = 2.0F;
+        this.bK.width = 4.0F;
+        this.bL.length = 3.0F;
+        this.bL.width = 4.0F;
 		d05 = (this.a(5, 1.0F)[1] - this.a(10, 1.0F)[1]) * 10.0F / 180.0F
 				* Math.PI;
 		f1 = MathHelper.cos((float) d05);
@@ -332,18 +347,18 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		float f12 = MathHelper.cos(f10);
 
 		this.h.j_();
-		this.i.setPositionRotation(this.locX + (f11 * 0.5F),
+		this.h.setPositionRotation(this.locX + (f11 * 0.5F),
 				this.locY, this.locZ - (f12 * 0.5F), 0.0F, 0.0F);
-		this.bI.j_();
-		this.bI.setPositionRotation(this.locX + (f12 * 4.5F),
+		this.bK.j_();
+		this.bK.setPositionRotation(this.locX + (f12 * 4.5F),
 				this.locY + 2.0D, this.locZ + (f11 * 4.5F), 0.0F, 0.0F);
-		this.bJ.j_();
-		this.bJ.setPositionRotation(this.locX - (f12 * 4.5F),
+		this.bL.j_();
+		this.bL.setPositionRotation(this.locX - (f12 * 4.5F),
 				this.locY + 2.0D, this.locZ - (f11 * 4.5F), 0.0F, 0.0F);
 
 		if (this.hurtTicks == 0 && attackingMode) {
-			dragonMoveController.knockbackNearbyEntities(this.world.getEntities(this, this.bI.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0)));
-			dragonMoveController.knockbackNearbyEntities(this.world.getEntities(this, this.bJ.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0)));
+			dragonMoveController.knockbackNearbyEntities(this.world.getEntities(this, this.bK.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0)));
+			dragonMoveController.knockbackNearbyEntities(this.world.getEntities(this, this.bL.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0)));
 			dragonHealthController.damageEntities(this.world.getEntities(this, this.g.boundingBox.grow(1.0D, 1.0D, 1.0D)));
 		}
 
@@ -354,9 +369,9 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		double[] adouble = this.a(5, 1.0F);
 		double[] adouble1 = this.a(0, 1.0F);
 
-		f3 = MathHelper.sin((float) (directionDegree - this.bF * 0.01F));
+		f3 = MathHelper.sin((float) (directionDegree - this.bE * 0.01F));
 		float f13 = MathHelper.cos((float)directionDegree
-				- this.bF * 0.01F);
+				- this.bE * 0.01F);
 
 		this.g.j_();
 		this.g.setPositionRotation(this.locX + (f3 * 5.5F * f1),
@@ -376,7 +391,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 			}
 
 			if (j == 2) {
-				entitycomplexpart = this.bK;
+				entitycomplexpart = this.bJ;
 			}
 
 			double[] adouble2 = this.a(12 + j * 2, 1F);
@@ -406,10 +421,10 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 
 	/** 
 	 * Function to drop the EXP if a Dragon is dead
-	 * ORIGINAL: aO()
+	 * ORIGINAL: aP()
 	 * Moved to: ItemLootController
 	 * 
-	 * @see net.minecraft.server.EntityEnderDragon#aO()
+	 * @see net.minecraft.server.v1_4_6.EntityEnderDragon#aO()
 	 */
 	@Override
 	protected void aP() {
@@ -502,5 +517,17 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	
 	public boolean isInRange(Location loc, double range){
 		return targetController.isInRange(loc, range);
+	}
+	
+	public Map<String, Integer> getPlayerDamageDone(){
+		return dragonHealthController.getPlayerDamage();
+	}
+	
+	public String getLastPlayerAttacked(){
+		return dragonHealthController.getLastPlayerAttacked();
+	}
+
+	public int getDamageByPlayer(String player) {
+		return dragonHealthController.getDamageByPlayer(player);
 	}
 }

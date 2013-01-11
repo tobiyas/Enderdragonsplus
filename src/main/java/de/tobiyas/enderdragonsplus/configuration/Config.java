@@ -15,8 +15,6 @@ public class Config
   private int config_dragonDamage;
   private int config_maxHomeDistance;
   private int config_maxHomeDistanceSquared; //easier calculation
-  private boolean config_anounceDragonSpawning;
-  private String config_dragonSpawnMessage;
   @SuppressWarnings("unused")
   private boolean config_disableDragonHealthBar;
   private boolean config_dragonsSitDownIfInactive;
@@ -59,6 +57,13 @@ public class Config
   private boolean config_informPlayerDamageDone;
   private boolean config_informPlayerDamageTaken;
   
+  //Anouncements
+  private boolean config_anounceDragonKill;
+  private String config_dragonKillMessage;
+  private String config_dragonKillMessageToWorlds;
+  private boolean config_anounceDragonSpawning;
+  private String config_dragonSpawnMessage;
+  
   //Debug + API layer
   private boolean config_debugOutput;
   private boolean config_fireBukkitEvents;
@@ -97,6 +102,9 @@ public class Config
 	config.addDefault("dragonsSpitFireballsRange", Integer.valueOf(100));
 	config.addDefault("anounceDragonSpawning", Boolean.valueOf(true));
 	config.addDefault("dragonSpawnMessage", "'&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'");
+	config.addDefault("dragonKillMessage", "'&aPlayer &b{player_kill} &ahas killed a dragon! (done &1{player_kill_dmg} &adamage)'");
+	config.addDefault("anounceDragonKill", true);
+	config.addDefault("dragonKillMessageToWorlds", "{all}");
 	config.addDefault("deactivateBlockExplodeEffect", Boolean.valueOf(false));
 	config.addDefault("disableFireballWorldDamage", Boolean.valueOf(true));
 	config.addDefault("fireballEntityDamage", Integer.valueOf(4));
@@ -145,6 +153,9 @@ public class Config
     this.config_anounceDragonSpawning = this.plugin.getConfig().getBoolean("anounceDragonSpawning", true);
     this.config_deactivateBlockExplosionEffect = this.plugin.getConfig().getBoolean("deactivateBlockExplodeEffect", false);
     this.config_dragonSpawnMessage = this.plugin.getConfig().getString("dragonSpawnMessage", "'&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'");
+    this.config_dragonKillMessage = this.plugin.getConfig().getString("dragonKillMessage", "'&aPlayer &b{player_kill} &ahas killed a dragon! (done &1{player_kill_dmg} &adamage)'");   
+    this.config_anounceDragonKill = this.plugin.getConfig().getBoolean("anounceDragonKill", true);
+    this.config_dragonKillMessageToWorlds = this.plugin.getConfig().getString("dragonKillMessageToWorlds", "{all}");    
     this.config_disableFireballWorldDamage = this.plugin.getConfig().getBoolean("disableFireballWorldDamage", true);
     this.config_dragonTempleFile = this.plugin.getConfig().getString("dragonTempleFile", "STDTemple.schematic");
 
@@ -303,8 +314,7 @@ public class Config
     return this.config_maxFireballTargets;
   }
 
-  public boolean getConfig_disableDragonHealthBar()
-  {
+  public boolean getConfig_disableDragonHealthBar() {
 	//TODO think how to disable it.
     return false;
   }
@@ -329,11 +339,23 @@ public class Config
     return this.config_fireBallSpeedUp;
   }
 
-public String getConfig_dragonTempleFile() {
-	return config_dragonTempleFile;
-}
-
-public boolean getConfig_dragonsSitDownIfInactive() {
-	return config_dragonsSitDownIfInactive;
-}
+	public String getConfig_dragonTempleFile() {
+		return config_dragonTempleFile;
+	}
+	
+	public boolean getConfig_dragonsSitDownIfInactive() {
+		return config_dragonsSitDownIfInactive;
+	}
+	
+	public boolean getConfig_anounceDragonKill() {
+		return config_anounceDragonKill;
+	}
+	
+	public String getConfig_dragonKillMessage(){
+		return config_dragonKillMessage;
+	}
+	
+	public String getConfig_dragonKillMessageToWorlds(){
+		return config_dragonKillMessageToWorlds;
+	}
 }

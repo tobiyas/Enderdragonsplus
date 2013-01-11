@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import net.minecraft.server.v1_4_5.DamageSource;
+import net.minecraft.server.v1_4_6.DamageSource;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;

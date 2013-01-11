@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_5.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_4_6.event.CraftEventFactory;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;

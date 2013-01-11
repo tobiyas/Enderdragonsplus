@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.Collections;
 
-import net.minecraft.server.v1_4_5.Block;
-import net.minecraft.server.v1_4_5.BlockEnderPortal;
-import net.minecraft.server.v1_4_5.EntityExperienceOrb;
-import net.minecraft.server.v1_4_5.MathHelper;
+import net.minecraft.server.v1_4_6.Block;
+import net.minecraft.server.v1_4_6.BlockEnderPortal;
+import net.minecraft.server.v1_4_6.EntityExperienceOrb;
+import net.minecraft.server.v1_4_6.MathHelper;
 
 import org.bukkit.Location;
 import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_4_5.util.BlockStateListPopulator;
+import org.bukkit.craftbukkit.v1_4_6.util.BlockStateListPopulator;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -47,7 +47,7 @@ public class ItemLootController {
 	//PRIVATES
 	private ItemStack generateRandomItem(){
 		//TODO generate Items
-		return new ItemStack(0);
+		return new ItemStack(1, 2);
 	}
 	
 	
@@ -66,22 +66,8 @@ public class ItemLootController {
 	
 	}
 	
-	/**
-	 * Drops the next Item from the list
-	 */
-	public void dropItemsAtDragonLocation(){
-		if(itemsToDrop.isEmpty()) 
-			return;
-		
-		Location dropLocation = dragon.getLocation();
-		World world = dropLocation.getWorld();
-		
-		ItemStack item = itemsToDrop.get(0);
-		ItemStack itemClone = item.clone();
-		
-		itemsToDrop.remove(item);
-		
-		world.dropItemNaturally(dropLocation, itemClone);
+	public List<ItemStack> getItemDrops(){
+		return itemsToDrop;
 	}
 	
 	public void deathTick(){

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.tobiyas</groupId>
   <artifactId>EnderdragonsPlus</artifactId>
-  <version>1.8.3-SNAPSHOT</version>
+  <version>1.8.5.J6-SNAPSHOT</version>
   <name>EnderdragonsPlus</name>
   <url>http://dev.bukkit.org/server-mods/enderdragonsplus/</url>
     
@@ -41,14 +41,14 @@
   	<dependency>
   		<groupId>org.bukkit</groupId>
   		<artifactId>craftbukkit</artifactId>
-  		<version>1.4.5-R0.3-SNAPSHOT</version>
+  		<version>1.4.6-R0.2-SNAPSHOT</version>
   		<optional>true</optional>
   	</dependency>
   	
   	<dependency>
   		<groupId>org.bukkit</groupId>
   		<artifactId>bukkit</artifactId>
-  		<version>1.4.5-R0.3-SNAPSHOT</version>
+  		<version>1.4.6-R0.2-SNAPSHOT</version>
   		<optional>true</optional>
   	</dependency>
   	
@@ -56,7 +56,7 @@
   	<dependency>
   		<groupId>de.tobiyas</groupId>
   		<artifactId>Utils</artifactId>
-  		<version>1.0.0-SNAPSHOT</version>
+  		<version>1.0.6-SNAPSHOT</version>
   	</dependency>
   	
   	<!-- Jar-File System Dependency -->
@@ -83,15 +83,15 @@
   
  <build>
     <sourceDirectory>src/main/java</sourceDirectory>
-    <testSourceDirectory>tests/main/java</testSourceDirectory>
+    <testSourceDirectory>test/main/java</testSourceDirectory>
     <plugins>
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
         <configuration>
-        	<source>1.7</source>
-        	<target>1.7</target>
+        	<source>1.6</source>
+        	<target>1.6</target>
         </configuration>
       </plugin>
       

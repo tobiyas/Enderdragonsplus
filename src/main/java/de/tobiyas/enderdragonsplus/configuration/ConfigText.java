@@ -32,15 +32,6 @@ public class ConfigText {
 		text += "#default: 500\n";
 		text += "maxHomeDistance: 500\n\n";
 		
-		text += "#Defines if it is anounces publicaly if a dragon spawns\n";
-		text += "#default: true\n";
-		text += "anounceDragonSpawning: true\n\n";
-		
-		text += "#If announce is activated, this is the message.\n";
-		text += "#{x} is the X position. {y} is the y position. {z} is the z position. {world} is the world\n";
-		text += "#default: '&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'\n";
-		text += "dragonSpawnMessage: &aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.\n\n";
-		
 		text += "#If the dragon healthbar should be hidden (Not working Yet!!!)\n";
 		text += "#default: false\n";
 		text += "disableDragonHealthBar: false\n\n";
@@ -97,7 +88,37 @@ public class ConfigText {
 		text += "#default: 1.00\n";
 		text += "fireBallSpeedUp: 1.00\n";
 		
-		text += "#  /SUBREGION: EnderDragons.Fireballs\n";
+		text += "#  /SUBREGION: EnderDragons.Fireballs\n\n";
+		
+		text += "#SUBREGION: EnderDragons.Announcements\n";
+				
+		text += "#Defines if it is anounces publicaly if a dragon spawns\n";
+		text += "#default: true\n";
+		text += "anounceDragonSpawning: true\n\n";
+		
+		text += "#If Dragon Spawn announce is activated, this is the message.\n";
+		text += "#{x} is the X position. {y} is the y position. {z} is the z position. {world} is the world\n";
+		text += "#default: '&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'\n";
+		text += "dragonSpawnMessage: &aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.\n\n";
+
+		text += "#Defines if it is anounces publicaly if a dragon dies\n";
+		text += "#default: true\n";
+		text += "anounceDragonKill: true\n\n";
+		
+		text += "#If Dragon death announce is activated, this is the message.\n";
+		text += "#Keywords: {player_kill} = name of player who killed the dragon\n";
+		text += "# {player_kill_dmg} = total damage done by the player killing the dragon\n";
+		text += "#default: '&aPlayer &b{player_kill} &ahas killed a dragon! (done &1{player_kill_dmg} &adamage).'\n";
+		text += "dragonKillMessage: '&aPlayer &b{player_kill} &ahas killed a dragon! (done &1{player_kill_dmg} &adamage).'\n\n";
+		
+		text += "#To which worlds the Dragon kill message should be announced.\n";
+		text += "#Keywords: {current} = the current world of the dragon\n";
+		text += "# {all} = all worlds\n";
+		text += "#example: world,{current},gmworld\n";
+		text += "#default: {all}\n";
+		text += "dragonKillMessageToWorlds: {all}\n\n";
+		
+		text += "#	/SUBREGION: EnderDragons.Announcements\n";
 		text += "#	/REGION: EnderDragons\n\n\n";
 
 
