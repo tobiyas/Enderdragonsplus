@@ -54,6 +54,8 @@ public class DragonStore {
 			return null;
 		}
 		
+		String ageType = config.getString("age", "Normal");
+		
 		double x = config.getDouble("homeLocation.x");
 		double y = config.getDouble("homeLocation.y");
 		double z = config.getDouble("homeLocation.z");
@@ -84,7 +86,7 @@ public class DragonStore {
 		if (EnderdragonsPlus.getPlugin().interactConfig()
 				.getConfig_pluginHandleLoads()) {
 			LimitedEnderDragonV131 dragon = new LimitedEnderDragonV131(location, world,
-					uid);
+					uid, ageType);
 
 			dragon.locX = actX;
 			dragon.locY = actY;
@@ -142,6 +144,8 @@ public class DragonStore {
 
 		Location homeLocation = plugin.getContainer().getHomeByID(dragon.getUUID());
 		YamlConfiguration config = new YamlConfiguration();
+		config.set("age", dragon.getAgeName());
+		
 		config.createSection("homeLocation");
 		config.set("homeLocation.x", homeLocation.getX());
 		config.set("homeLocation.y", homeLocation.getY());

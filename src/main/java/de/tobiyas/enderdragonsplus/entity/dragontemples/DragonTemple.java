@@ -5,6 +5,7 @@ import java.io.File;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.util.Consts;
 
 public class DragonTemple {
@@ -13,8 +14,13 @@ public class DragonTemple {
 
 	public DragonTemple(File completeFile){
 		scematicPath = completeFile;
-		if(!scematicPath.exists())
-			scematicPath = new File(Consts.STDSchematicPath);
+		if(!scematicPath.exists()){
+			if(scematicPath.equals(new File(Consts.STDSchematicPath)))
+				return;
+				
+			EnderdragonsPlus.getPlugin().log("Tried to load invalid Dragon Temple File! File does not exist!" + 
+			scematicPath.getPath());
+		}
 	}
 	
 	public boolean buildAt(World world, int posX, int posY, int posZ){
@@ -23,11 +29,11 @@ public class DragonTemple {
 	
 	public boolean buildAt(Location location){
 		try {
-			DragonTempleStore.pasteScematic(scematicPath, location);
+			return DragonTempleStore.pasteScematic(scematicPath, location);
 		} catch (WorldEditNotFoundException exception) {
 			return false;
+		} catch (NoClassDefFoundError exp){
+			return false;
 		}
-		
-		return true;
 	}
 }

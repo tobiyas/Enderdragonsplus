@@ -23,8 +23,6 @@ public class DragonHealthController {
 	private LimitedEnderDragonV131 dragon;
 	private Random random;
 	
-	private int maxHealth;
-	
 	private HashMap<String, Integer> damageDoneByPlayer;
 	private String lastPlayerAttacked = "";
 	
@@ -35,7 +33,6 @@ public class DragonHealthController {
 		this.dragon = dragon;
 		random = new Random();
 		
-		this.maxHealth = EnderdragonsPlus.getPlugin().interactConfig().getConfig_dragonMaxHealth();
 		damageDoneByPlayer = new HashMap<String, Integer>();
 	}
 	
@@ -104,7 +101,7 @@ public class DragonHealthController {
 							dragon.getBukkitEntity(),
 							entity.getBukkitEntity(),
 							org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-							plugin.interactConfig().getConfig_dragonDamage());
+							dragon.getMeeleDamage());
 
 					Bukkit.getPluginManager().callEvent(damageEvent);
 
@@ -136,10 +133,6 @@ public class DragonHealthController {
 			mappedHealth = 0;
 	
 		return mappedHealth;
-	}
-	
-	public int getMaxHealth(){
-		return maxHealth;
 	}
 	
 	public void rememberDamage(DamageSource source, int damage){

@@ -37,10 +37,15 @@ public class CommandSpawnEnderDragon implements CommandExecutor {
 		if(!(plugin.getPermissionManager().checkPermissions(player, PermissionNode.createEnderDragon)))
 			return true;
 		
-		LivingEntity entity = DragonAPI.spawnNewEnderdragon(player.getLocation());
+		LivingEntity entity = null;
+		if(args.length ==1)
+			entity = DragonAPI.spawnNewEnderdragon(player.getLocation(), args[0]);
+		
+		if(args.length == 0)
+			entity = DragonAPI.spawnNewEnderdragon(player.getLocation());
 		
 		if(entity == null){
-			player.sendMessage(ChatColor.RED + "ENTITY = NULL!!!");
+			player.sendMessage(ChatColor.RED + "Please give use the command as followed: /sedp [ageName]");
 			return true;
 		}
 		

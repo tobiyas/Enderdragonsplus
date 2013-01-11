@@ -35,6 +35,7 @@ import de.tobiyas.enderdragonsplus.datacontainer.Container;
 import de.tobiyas.enderdragonsplus.datacontainer.DragonLogicTicker;
 import de.tobiyas.enderdragonsplus.datacontainer.OnTheFlyReplacer;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.STDAgeContainer;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Entity;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Fireball;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
@@ -78,6 +79,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 		permissionManager = new PermissionManager(this);
 		
 		setupConfiguration();
+		setupAgeContainer();
 		container = new Container();
 		
 		checkDepends();
@@ -168,6 +170,10 @@ public class EnderdragonsPlus extends JavaPlugin{
 		ConfigTemplate template = new ConfigTemplate();
 		if(template.isOldConfigVersion())
 			template.writeTemplate();
+	}
+	
+	private void setupAgeContainer(){
+		STDAgeContainer.generateSTDAgeContainer();
 	}
 	
 	private void initMetrics(){

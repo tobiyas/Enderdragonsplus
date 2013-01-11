@@ -97,9 +97,11 @@ public class ConfigText {
 		text += "anounceDragonSpawning: true\n\n";
 		
 		text += "#If Dragon Spawn announce is activated, this is the message.\n";
-		text += "#{x} is the X position. {y} is the y position. {z} is the z position. {world} is the world\n";
-		text += "#default: '&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'\n";
-		text += "dragonSpawnMessage: &aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.\n\n";
+		text += "#Keywords: {x} is the X position. {y} is the y position.\n";
+		text += "#{z} is the z position. {world} is the world\n";
+		text += "#{age} is the age Name of the dragon";
+		text += "#default: '&aA new {age} Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'\n";
+		text += "dragonSpawnMessage: &aA new {age} Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.\n\n";
 
 		text += "#Defines if it is anounces publicaly if a dragon dies\n";
 		text += "#default: true\n";
@@ -108,8 +110,9 @@ public class ConfigText {
 		text += "#If Dragon death announce is activated, this is the message.\n";
 		text += "#Keywords: {player_kill} = name of player who killed the dragon\n";
 		text += "# {player_kill_dmg} = total damage done by the player killing the dragon\n";
-		text += "#default: '&aPlayer &b{player_kill} &ahas killed a dragon! (done &1{player_kill_dmg} &adamage).'\n";
-		text += "dragonKillMessage: '&aPlayer &b{player_kill} &ahas killed a dragon! (done &1{player_kill_dmg} &adamage).'\n\n";
+		text += "# {age} the age name of the Dragon\n";
+		text += "#default: '&aPlayer &b{player_kill} &ahas killed a {age} dragon! (done &1{player_kill_dmg} &adamage).'\n";
+		text += "dragonKillMessage: '&aPlayer &b{player_kill} &ahas killed a {age} dragon! (done &1{player_kill_dmg} &adamage).'\n\n";
 		
 		text += "#To which worlds the Dragon kill message should be announced.\n";
 		text += "#Keywords: {current} = the current world of the dragon\n";

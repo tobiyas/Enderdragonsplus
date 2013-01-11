@@ -13,6 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonHealthController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonMoveController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.FireballController;
@@ -41,20 +42,27 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	private ItemLootController itemController;
 	private DragonHealthController dragonHealthController;
 	private DragonMoveController dragonMoveController;
+	private AgeContainer ageContainer;
 
 	public LimitedEnderDragonV131(Location location, World world) {
-		super(world);
+		this(location, world, "Normal");
+	}
 
+	public LimitedEnderDragonV131(Location location, World world, String ageType){
+		super(world);
 		plugin = EnderdragonsPlus.getPlugin();
 		plugin.getContainer().setHomeID(getUUID(), location, location, false,
 				this);
 		
 		setPosition(location.getX(), location.getY(), location.getZ());
-		this.expToDrop = plugin.interactConfig().getConfig_dropEXP();
-		createAllControllers();
+		createAllControllers(ageType);
 	}
-
+	
 	public LimitedEnderDragonV131(Location location, World world, UUID uid) {
+		this(location, world, uid, "Normal");
+	}
+	
+	public LimitedEnderDragonV131(Location location, World world, UUID uid, String ageType) {
 		super(world);
 
 		plugin = EnderdragonsPlus.getPlugin();
@@ -64,8 +72,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 
 		setPosition(location.getX(), location.getY(), location.getZ());
 		
-		this.expToDrop = plugin.interactConfig().getConfig_dropEXP();
-		createAllControllers();
+		createAllControllers(ageType);
 	}
 
 	public LimitedEnderDragonV131(World world) {
@@ -75,26 +82,34 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		if (plugin.interactConfig().getConfig_pluginHandleLoads()) {
 			remove();
 			return;
-		} else
-			this.expToDrop = plugin.interactConfig().getConfig_dropEXP();
+		}
 
 		if (!plugin.getContainer().containsID(this.getUUID()))
 			remove();
 	}
 	
-	private void createAllControllers(){
+	private void createAllControllers(String ageType){
 		boolean hostile = plugin.interactConfig().getConfig_dragonsAreHostile();
+		ageContainer = new AgeContainer(ageType);
 		targetController = new TargetController(getHomeLocation(), this, hostile);
 		fireballController = new FireballController(targetController);
 		itemController = new ItemLootController(this);
 		dragonHealthController = new DragonHealthController(this);
 		dragonMoveController = new DragonMoveController(this);
+		
+		initStats();
+	}
+	
+	private void initStats(){
+		expToDrop = ageContainer.getExp();
+		setHealth(ageContainer.getSpawnHealth());
+		maxHealth = ageContainer.getMaxHealth();
 	}
 	
 	@Override
 	public int getMaxHealth(){
-		if(dragonHealthController == null) return 200; //Dirty and bad hack :(
-		return dragonHealthController.getMaxHealth();
+		if(ageContainer == null) return 200; //Dirty and bad hack :(
+		return ageContainer.getMaxHealth();
 	}
 	
 	/** This method sets the Life of the EnderDragon
@@ -112,7 +127,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	@Override
 	protected void dropDeathLoot(boolean flag, int i) {
 		// CraftBukkit start - whole method
-		List<ItemStack> loot = itemController.getItemDrops();
+		List<ItemStack> loot = generateLoot();
 
         CraftEventFactory.callEntityDeathEvent(this, loot); // raise event even for those times when the entity does not drop loot
         // CraftBukkit end
@@ -125,27 +140,11 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		return LocaleI18n.get("entity.EnderDragon.name");
 	}
 
+	
 	@Override
-	public boolean damageEntity(DamageSource source, int amount) {
-		if (health <= 0)
-			return false;
-
-		if (this.noDamageTicks > 0)
-			return false;
-
-		if (source != DamageSource.GENERIC)
-			return false;
-
-		if (source.k())
-			return false;
-
-		this.setHealth(health - amount);
-		dragonHealthController.rememberDamage(source, amount);
-		if (this.health <= 0) {
-			die(source);
-		}				
-			
-		return true;
+	public boolean dealDamage(DamageSource damagesource, int i) { // CraftBukkit - protected -> public
+		dragonHealthController.rememberDamage(damagesource, i);
+		return super.dealDamage(damagesource, i);
 	}
 
 	/**
@@ -529,5 +528,17 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 
 	public int getDamageByPlayer(String player) {
 		return dragonHealthController.getDamageByPlayer(player);
+	}
+
+	public int getMeeleDamage() {
+		return ageContainer.getDmg();
+	}
+	
+	public List<ItemStack> generateLoot(){
+		return itemController.getItemDrops(ageContainer.getDrops());
+	}
+	
+	public String getAgeName(){
+		return ageContainer.getAgeName();
 	}
 }

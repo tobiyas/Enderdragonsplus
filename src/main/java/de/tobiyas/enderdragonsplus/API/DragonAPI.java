@@ -98,8 +98,16 @@ public class DragonAPI {
 	 * @return
 	 */
 	public static LivingEntity spawnNewEnderdragon(Location location){
+		return spawnNewEnderdragon(location, "Normal");
+	}
+	
+	/**
+	 * @param location
+	 * @return
+	 */
+	public static LivingEntity spawnNewEnderdragon(Location location, String ageName){
 		World world = ((CraftWorld)location.getWorld()).getHandle();
-		LimitedEnderDragonV131 dragon = new LimitedEnderDragonV131(location, world);
+		LimitedEnderDragonV131 dragon = new LimitedEnderDragonV131(location, world, ageName);
 		dragon.spawn(false);
 		
 		if(dragon.getBukkitEntity() == null)

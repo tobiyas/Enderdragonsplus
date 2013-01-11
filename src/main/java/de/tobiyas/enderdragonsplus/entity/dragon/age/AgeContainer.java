@@ -17,33 +17,36 @@ public class AgeContainer {
 	private int spawnHealth;
 	private List<DropContainer> drops;
 	private int exp;
+	private int dmg;
 	
 	private int rank;
 	
 	//Constructor
 	public AgeContainer(String ageName){
 		plugin = EnderdragonsPlus.getPlugin();
-		this.ageName = ageName;
-		loadAgeContainer();
+		loadAgeContainer(ageName.toLowerCase());
 	}
 	
 	
 	
 	//Member Methodes
-	private void loadAgeContainer(){
-		YAMLConfigExtended config = new YAMLConfigExtended(Consts.AgeTablePath);
+	private void loadAgeContainer(String tempAgeName){
+		YAMLConfigExtended config = new YAMLConfigExtended(Consts.AgeTablePath).load();
 		if(!config.getValidLoad()){
 			plugin.getDebugLogger().logError("Could not load Age: " + ageName);
 			return;
 		}
 		
-		maxHealth = config.getInt(ageName + "." + "maxHealth", STDAge.STDmaxHealth);
-		spawnHealth = config.getInt(ageName + "." + "spawnHealth", maxHealth);
-		rank = config.getInt(ageName + "." + "rank", STDAge.STDrank);
+		maxHealth = config.getInt(tempAgeName + STDAgeContainer.maxHealthPath, plugin.interactConfig().getConfig_dragonMaxHealth());
+		spawnHealth = config.getInt(tempAgeName + STDAgeContainer.spawnHealthPath, maxHealth);
+		rank = config.getInt(tempAgeName + STDAgeContainer.rankPath, 0);
+		exp = config.getInt(tempAgeName + STDAgeContainer.expPath, plugin.interactConfig().getConfig_dropEXP());
+		dmg = config.getInt(tempAgeName + STDAgeContainer.dmgPath, plugin.interactConfig().getConfig_dragonDamage());
+		ageName = config.getString(tempAgeName + STDAgeContainer.ageNamePath, tempAgeName);
 		
 		drops = new LinkedList<DropContainer>();
-		for(String item : config.getYAMLChildren(ageName + "." + "loot")){
-			DropContainer container = config.getDropContainer(ageName + ".loot." + item);
+		for(String item : config.getYAMLChildren(tempAgeName + STDAgeContainer.lootPrefixPath)){
+			DropContainer container = config.getDropContainer(tempAgeName + STDAgeContainer.lootPrefixPath + "." + item);
 			if(container != null)
 				drops.add(container);
 		}
@@ -53,6 +56,12 @@ public class AgeContainer {
 	
 	//Public Methods
 	
+
+	public int getDmg() {
+		return dmg;
+	}
+
+
 
 	//Getter
 	public String getAgeName() {

@@ -14,7 +14,6 @@ import com.sk89q.worldedit.schematic.SchematicFormat;
 public class DragonTempleStore {
 	
 	public static boolean pasteScematic(File file, Location location) throws WorldEditNotFoundException{
-		//System.out.println("Location: " + location.getBlockX() + "#" + location.getBlockY() + "#" + location.getBlockZ());
 		if(!Bukkit.getPluginManager().isPluginEnabled("WorldEdit"))
 			throw new WorldEditNotFoundException();
 		
@@ -31,12 +30,10 @@ public class DragonTempleStore {
 			newOffset = newOffset.setY(0);
 			newOffset = newOffset.setZ(Math.floor(clipBoard.getLength() / 2));
 			
-			//System.out.println("Offset: " + newOffset.getBlockX() + "#" + newOffset.getBlockY() + "#" + newOffset.getBlockZ());
 			clipBoard.setOffset(newOffset);
 			
 			clipBoard.paste(session, vector, true);
 		} catch (Exception exception) {
-			exception.printStackTrace();
 			return false;
 		}
 

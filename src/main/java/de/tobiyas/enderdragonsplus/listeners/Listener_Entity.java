@@ -22,6 +22,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -117,7 +118,10 @@ public class Listener_Entity implements Listener {
 	}
 	
 	private void announceDragon(Entity entity){
-		Location loc = entity.getLocation();
+		LimitedEnderDragonV131 dragon = (LimitedEnderDragonV131)((CraftEnderDragon) entity).getHandle();
+		String ageName = dragon.getAgeName();
+		
+		Location loc = dragon.getLocation();
 		
 		int x = loc.getBlockX();
 		int y = loc.getBlockY();
@@ -128,6 +132,7 @@ public class Listener_Entity implements Listener {
 		message = message.replaceAll(Pattern.quote("{x}"), ChatColor.LIGHT_PURPLE + "" + x + ChatColor.GREEN);
 		message = message.replaceAll(Pattern.quote("{y}"), ChatColor.LIGHT_PURPLE + "" + y + ChatColor.GREEN);
 		message = message.replaceAll(Pattern.quote("{z}"), ChatColor.LIGHT_PURPLE + "" + z + ChatColor.GREEN);
+		message = message.replaceAll(Pattern.quote("{age}"), ChatColor.RED + ageName + ChatColor.GREEN);
 		
 		message = message.replaceAll(Pattern.quote("{world}"), ChatColor.LIGHT_PURPLE + world + ChatColor.GREEN);
 		
@@ -137,7 +142,7 @@ public class Listener_Entity implements Listener {
 	}
 	
 	private String decodeColor(String message){
-		return message.replaceAll("(&([a-f0-9]))", "§2");
+		return message.replaceAll("(&([a-f0-9]))", "§$2");
 	}
 	
 	
@@ -205,36 +210,34 @@ public class Listener_Entity implements Listener {
 	
 	@EventHandler
 	public void callDeath(EntityDeathEvent event){
-		System.out.println("point 1");
 		if(!plugin.interactConfig().getConfig_anounceDragonKill())
 			return;
-		
-		System.out.println("point 2");
-		UUID id = event.getEntity().getUniqueId();
-		if(!plugin.getContainer().containsID(id))
+
+		if(!(((CraftEntity)event.getEntity()).getHandle() instanceof LimitedEnderDragonV131))
 			return;
 		
-		System.out.println("point 3");
 		LimitedEnderDragonV131 dragon = (LimitedEnderDragonV131) ((CraftEnderDragon)event.getEntity()).getHandle();
 		String lastPlayerAttacked = dragon.getLastPlayerAttacked();
 		if(lastPlayerAttacked.equals(""))
 			return;
-		System.out.println("point 4");
-		int dmg = dragon.getDamageByPlayer(lastPlayerAttacked);		
-		parseDragonDeath(lastPlayerAttacked, dmg, event.getEntity().getWorld());
+
+		parseDragonDeath(dragon, event.getEntity().getWorld());
 	}
 	
-	private void parseDragonDeath(String lastPlayerAttacked, int dmg, org.bukkit.World dragonDeathWorld){
+	private void parseDragonDeath(LimitedEnderDragonV131 dragon,org.bukkit.World dragonDeathWorld){
 		String message = plugin.interactConfig().getConfig_dragonKillMessage();
+		int damage = dragon.getDamageByPlayer(dragon.getLastPlayerAttacked());
 		
 		message =
-		message.replace("{player_kill}", lastPlayerAttacked)
-				.replace("{player_kill_dmg}", dmg + "");
+		message.replaceAll(Pattern.quote("{player_kill}"), dragon.getLastPlayerAttacked())
+				.replaceAll(Pattern.quote("{player_kill_dmg}"), damage + "")
+				.replaceAll(Pattern.quote("{age}"), dragon.getAgeName())
+				.replaceAll("(&([a-f0-9]))", "§$2");
 		
 		List<org.bukkit.World> toWorlds = decodeWorlds(dragonDeathWorld);
 		announceToWorlds(message, toWorlds);
 	}
-
+	
 	private List<org.bukkit.World> decodeWorlds(org.bukkit.World dragonDeathWorld) {
 		String worldString = plugin.interactConfig().getConfig_dragonKillMessageToWorlds();
 		List<org.bukkit.World> worldList = new LinkedList<org.bukkit.World>();

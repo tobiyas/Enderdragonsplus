@@ -24,12 +24,12 @@ import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
 import de.tobiyas.enderdragonsplus.entity.dragontemples.DragonTemple;
 import de.tobiyas.enderdragonsplus.entity.dragontemples.DragonTempleStore;
 import de.tobiyas.enderdragonsplus.util.Consts;
+import de.tobiyas.util.config.returncontainer.DropContainer;
 
 @SuppressWarnings("unused")
 public class ItemLootController {
 
 	private LimitedEnderDragonV131 dragon;
-	private List<ItemStack> itemsToDrop;
 	private Random random;
 	
 	private int ticksToDespawn = 200;
@@ -38,37 +38,9 @@ public class ItemLootController {
 	public ItemLootController(LimitedEnderDragonV131 dragon){
 		random = new Random();
 		this.dragon = dragon;
-		itemsToDrop = new LinkedList<ItemStack>();
-		
-		gambleRandomItems();
-	}
-	
-	
-	//PRIVATES
-	private ItemStack generateRandomItem(){
-		//TODO generate Items
-		return new ItemStack(1, 2);
-	}
-	
+	}	
 	
 	//GETTER AND SETTER
-	
-	/**
-	 * generates a new list of items to drop
-	 */
-	public void gambleRandomItems(){
-		itemsToDrop.clear();
-		
-		for(int i = 0; i < 5; i++){
-			ItemStack stack = generateRandomItem();
-			itemsToDrop.add(stack);
-		}
-	
-	}
-	
-	public List<ItemStack> getItemDrops(){
-		return itemsToDrop;
-	}
 	
 	public void deathTick(){
 		ticksToDespawn -= 1;
@@ -121,8 +93,6 @@ public class ItemLootController {
 		String fileName = EnderdragonsPlus.getPlugin().interactConfig().getConfig_dragonTempleFile();
 		
 		File completeFile = new File(prePath, fileName);
-		if(!completeFile.exists())
-			completeFile = new File(Consts.STDSchematicPath);
 		
 		DragonTemple temple = new DragonTemple(completeFile);
 		if(!temple.buildAt(dragon.getLocation().getWorld(), posX, spawnHeight, posZ))
@@ -198,6 +168,15 @@ public class ItemLootController {
         }
 
 		BlockEnderPortal.a = false;
+	}
+
+	public List<ItemStack> getItemDrops(List<DropContainer> list) {
+		List<ItemStack> stacks = new LinkedList<ItemStack>();
+		for(DropContainer container : list){
+			stacks.add(container.generateItem());
+		}
+		
+		return stacks;		
 	}
 	
 }
