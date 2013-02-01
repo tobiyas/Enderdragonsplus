@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
 public class DragonLogicTicker implements Runnable {
 
@@ -33,7 +33,7 @@ public class DragonLogicTicker implements Runnable {
 				Set<UUID> ids = plugin.getContainer().getAllIDs();
 				for(UUID id : ids){
 					//plugin.log("Handling Dragon id: " + id);
-					LimitedEnderDragonV131 dragon = plugin.getContainer().getDragonById(id);
+					LimitedEnderDragon dragon = plugin.getContainer().getDragonById(id);
 					
 					if(dragon == null || !plugin.getContainer().isLoaded(id)){
 						locs.remove(id);

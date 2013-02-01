@@ -18,12 +18,14 @@ public class AgeContainer {
 	private List<DropContainer> drops;
 	private int exp;
 	private int dmg;
+	private boolean isHostile;
 	
 	private int rank;
 	
 	//Constructor
 	public AgeContainer(String ageName){
 		plugin = EnderdragonsPlus.getPlugin();
+		this.ageName = ageName;
 		loadAgeContainer(ageName.toLowerCase());
 	}
 	
@@ -43,6 +45,7 @@ public class AgeContainer {
 		exp = config.getInt(tempAgeName + STDAgeContainer.expPath, plugin.interactConfig().getConfig_dropEXP());
 		dmg = config.getInt(tempAgeName + STDAgeContainer.dmgPath, plugin.interactConfig().getConfig_dragonDamage());
 		ageName = config.getString(tempAgeName + STDAgeContainer.ageNamePath, tempAgeName);
+		isHostile = config.getBoolean(tempAgeName + STDAgeContainer.ageIsHostilePath, plugin.interactConfig().getConfig_dragonsAreHostile());
 		
 		drops = new LinkedList<DropContainer>();
 		for(String item : config.getYAMLChildren(tempAgeName + STDAgeContainer.lootPrefixPath)){
@@ -60,8 +63,6 @@ public class AgeContainer {
 	public int getDmg() {
 		return dmg;
 	}
-
-
 
 	//Getter
 	public String getAgeName() {
@@ -91,6 +92,12 @@ public class AgeContainer {
 
 	public int getRank() {
 		return rank;
+	}
+
+
+
+	public boolean isHostile() {
+		return isHostile;
 	}
 	
 	

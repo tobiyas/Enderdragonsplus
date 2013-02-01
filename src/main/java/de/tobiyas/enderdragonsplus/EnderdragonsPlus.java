@@ -8,7 +8,7 @@
 package de.tobiyas.enderdragonsplus;
 
 
-import net.minecraft.server.v1_4_6.EntityTypes;
+import net.minecraft.server.v1_4_R1.EntityTypes;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +34,7 @@ import de.tobiyas.enderdragonsplus.damagewhisperer.EntityDamageWhisperController
 import de.tobiyas.enderdragonsplus.datacontainer.Container;
 import de.tobiyas.enderdragonsplus.datacontainer.DragonLogicTicker;
 import de.tobiyas.enderdragonsplus.datacontainer.OnTheFlyReplacer;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.STDAgeContainer;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Entity;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Fireball;
@@ -96,13 +96,12 @@ public class EnderdragonsPlus extends JavaPlugin{
 	}
 	
 	private void injectDragon(){
-		try
-	    {
+		try{
 	      Method method = EntityTypes.class.getDeclaredMethod("a", new Class[] { Class.class, String.class, Integer.TYPE });
 	      method.setAccessible(true);
 	      method.invoke(
 	    		  EntityTypes.class, new Object[] { 
-	    	  		LimitedEnderDragonV131.class, 
+	    	  		LimitedEnderDragon.class, 
 	    	  		"LimitedEnderDragon", 
 	    	  		Integer.valueOf(63) 
 	    	  	});

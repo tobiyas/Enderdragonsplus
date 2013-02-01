@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.Random;
 import java.util.Collections;
 
-import net.minecraft.server.v1_4_6.Block;
-import net.minecraft.server.v1_4_6.BlockEnderPortal;
-import net.minecraft.server.v1_4_6.EntityExperienceOrb;
-import net.minecraft.server.v1_4_6.MathHelper;
+import net.minecraft.server.v1_4_R1.Block;
+import net.minecraft.server.v1_4_R1.BlockEnderPortal;
+import net.minecraft.server.v1_4_R1.EntityExperienceOrb;
+import net.minecraft.server.v1_4_R1.MathHelper;
 
 import org.bukkit.Location;
 import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_4_6.util.BlockStateListPopulator;
+import org.bukkit.craftbukkit.v1_4_R1.util.BlockStateListPopulator;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.entity.dragontemples.DragonTemple;
 import de.tobiyas.enderdragonsplus.entity.dragontemples.DragonTempleStore;
 import de.tobiyas.enderdragonsplus.util.Consts;
@@ -29,13 +29,13 @@ import de.tobiyas.util.config.returncontainer.DropContainer;
 @SuppressWarnings("unused")
 public class ItemLootController {
 
-	private LimitedEnderDragonV131 dragon;
+	private LimitedEnderDragon dragon;
 	private Random random;
 	
 	private int ticksToDespawn = 200;
 	
 	
-	public ItemLootController(LimitedEnderDragonV131 dragon){
+	public ItemLootController(LimitedEnderDragon dragon){
 		random = new Random();
 		this.dragon = dragon;
 	}	

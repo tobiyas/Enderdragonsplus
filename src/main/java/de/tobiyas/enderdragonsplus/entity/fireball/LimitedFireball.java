@@ -1,18 +1,18 @@
 package de.tobiyas.enderdragonsplus.entity.fireball;
 
-import org.bukkit.craftbukkit.v1_4_6.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_4_R1.event.CraftEventFactory;
 import org.bukkit.entity.Fireball;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.entity.fireball.FireballRebounceEvent.RebounceReason;
-import net.minecraft.server.v1_4_6.DamageSource;
-import net.minecraft.server.v1_4_6.EntityLargeFireball;
-import net.minecraft.server.v1_4_6.EntityLiving;
-import net.minecraft.server.v1_4_6.MovingObjectPosition;
-import net.minecraft.server.v1_4_6.Vec3D;
-import net.minecraft.server.v1_4_6.World;
+import net.minecraft.server.v1_4_R1.DamageSource;
+import net.minecraft.server.v1_4_R1.EntityLargeFireball;
+import net.minecraft.server.v1_4_R1.EntityLiving;
+import net.minecraft.server.v1_4_R1.MovingObjectPosition;
+import net.minecraft.server.v1_4_R1.Vec3D;
+import net.minecraft.server.v1_4_R1.World;
 
 public class LimitedFireball extends EntityLargeFireball {
 
@@ -42,7 +42,7 @@ public class LimitedFireball extends EntityLargeFireball {
 		 
 		 K();
 		 if (damageSource.getEntity() != null) {
-			 if(damageSource.getEntity() instanceof LimitedEnderDragonV131) return false;
+			 if(damageSource.getEntity() instanceof LimitedEnderDragon) return false;
 			 Vec3D vec3d = damageSource.getEntity().Z();
 
 			 if (vec3d != null) {
@@ -98,7 +98,7 @@ public class LimitedFireball extends EntityLargeFireball {
 		 }
 
 		 // CraftBukkit start
-		 ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity.getEntity(this.world.getServer(), this));
+		 ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity.getEntity(this.world.getServer(), this));
 		 this.world.getServer().getPluginManager().callEvent(event);
 	
 		 if (!event.isCancelled()) {

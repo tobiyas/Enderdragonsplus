@@ -31,6 +31,7 @@ public class STDAgeContainer {
 	public static String expPath = ".exp";
 	public static String dmgPath = ".dmg";
 	public static String lootPrefixPath = ".loot";
+	public static String ageIsHostilePath = ".isHostile";
 	
 	public static void generateSTDAgeContainer(){
 		File ageFile = new File(Consts.AgeTablePath);

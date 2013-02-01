@@ -6,9 +6,9 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_4_6.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_R1.event.CraftEventFactory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,19 +18,22 @@ import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonHealthControl
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonMoveController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.FireballController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.ItemLootController;
+import de.tobiyas.enderdragonsplus.entity.dragon.controllers.NBTTagDragonStore;
+import de.tobiyas.enderdragonsplus.entity.dragon.controllers.NBTTagDragonStore.DragonNBTReturn;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.TargetController;
 
-import net.minecraft.server.v1_4_6.DamageSource;
-import net.minecraft.server.v1_4_6.Entity;
-import net.minecraft.server.v1_4_6.EntityComplexPart;
-import net.minecraft.server.v1_4_6.EntityEnderDragon;
-import net.minecraft.server.v1_4_6.EntityLiving;
-import net.minecraft.server.v1_4_6.LocaleI18n;
-import net.minecraft.server.v1_4_6.MathHelper;
-import net.minecraft.server.v1_4_6.Vec3D;
-import net.minecraft.server.v1_4_6.World;
+import net.minecraft.server.v1_4_R1.DamageSource;
+import net.minecraft.server.v1_4_R1.Entity;
+import net.minecraft.server.v1_4_R1.EntityComplexPart;
+import net.minecraft.server.v1_4_R1.EntityEnderDragon;
+import net.minecraft.server.v1_4_R1.EntityLiving;
+import net.minecraft.server.v1_4_R1.LocaleI18n;
+import net.minecraft.server.v1_4_R1.MathHelper;
+import net.minecraft.server.v1_4_R1.NBTTagCompound;
+import net.minecraft.server.v1_4_R1.Vec3D;
+import net.minecraft.server.v1_4_R1.World;
 
-public class LimitedEnderDragonV131 extends EntityEnderDragon {
+public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	private EnderdragonsPlus plugin;
 	public static int broadcastedError = 0;
@@ -44,11 +47,15 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	private DragonMoveController dragonMoveController;
 	private AgeContainer ageContainer;
 
-	public LimitedEnderDragonV131(Location location, World world) {
+	public LimitedEnderDragon(Location location, World world) {
 		this(location, world, "Normal");
 	}
 
-	public LimitedEnderDragonV131(Location location, World world, String ageType){
+	public LimitedEnderDragon(Location location, World world, UUID uid) {
+		this(location, world, uid, "Normal");
+	}
+
+	public LimitedEnderDragon(Location location, World world, String ageType){
 		super(world);
 		plugin = EnderdragonsPlus.getPlugin();
 		plugin.getContainer().setHomeID(getUUID(), location, location, false,
@@ -58,11 +65,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		createAllControllers(ageType);
 	}
 	
-	public LimitedEnderDragonV131(Location location, World world, UUID uid) {
-		this(location, world, uid, "Normal");
-	}
-	
-	public LimitedEnderDragonV131(Location location, World world, UUID uid, String ageType) {
+	public LimitedEnderDragon(Location location, World world, UUID uid, String ageType) {
 		super(world);
 
 		plugin = EnderdragonsPlus.getPlugin();
@@ -75,7 +78,12 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		createAllControllers(ageType);
 	}
 
-	public LimitedEnderDragonV131(World world) {
+	/**
+	 * This is the Craft Bukkit spawn
+	 * Controllers are set from the NBTTag
+	 * @param world
+	 */
+	public LimitedEnderDragon(World world) {
 		super(world);
 
 		plugin = EnderdragonsPlus.getPlugin();
@@ -84,13 +92,27 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 			return;
 		}
 
-		if (!plugin.getContainer().containsID(this.getUUID()))
-			remove();
+		//if (!plugin.getContainer().containsID(this.getUUID()))
+			//remove();
+	}
+	
+	private void createAllControllers(DragonNBTReturn returnContainer){
+		ageContainer = new AgeContainer(returnContainer.getAgeName());
+		
+		targetController = new TargetController(returnContainer.getHomeLocation(), this, ageContainer.isHostile());
+		fireballController = new FireballController(targetController);
+		itemController = new ItemLootController(this);
+		dragonHealthController = new DragonHealthController(this);
+		dragonMoveController = new DragonMoveController(this);
+		
+		initStats();
 	}
 	
 	private void createAllControllers(String ageType){
 		boolean hostile = plugin.interactConfig().getConfig_dragonsAreHostile();
-		ageContainer = new AgeContainer(ageType);
+		if(!ageType.equals(""))
+			ageContainer = new AgeContainer(ageType);
+		
 		targetController = new TargetController(getHomeLocation(), this, hostile);
 		fireballController = new FireballController(targetController);
 		itemController = new ItemLootController(this);
@@ -113,7 +135,7 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	}
 	
 	/** This method sets the Life of the EnderDragon
-	 * @see net.minecraft.server.v1_4_6.EntityEnderDragon#a()
+	 * @see net.minecraft.server.v1_4_R1.EntityEnderDragon#a()
 	 */
 	@Override
 	protected void a() {
@@ -146,10 +168,11 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 		dragonHealthController.rememberDamage(damagesource, i);
 		return super.dealDamage(damagesource, i);
 	}
+	
 
 	/**
 	 *  Logic call. All Dragon logic on tick
-	 * @see net.minecraft.server.v1_4_6.Enderdragon#
+	 * @see net.minecraft.server.v1_4_R1.Enderdragon#
 	 */
 	@Override
 	public void c(){
@@ -423,13 +446,30 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	 * ORIGINAL: aP()
 	 * Moved to: ItemLootController
 	 * 
-	 * @see net.minecraft.server.v1_4_6.EntityEnderDragon#aO()
+	 * @see net.minecraft.server.v1_4_R1.EntityEnderDragon#aO()
 	 */
 	@Override
 	protected void aP() {
 		itemController.deathTick();
 	}
 	
+	
+	@Override
+	public void a(NBTTagCompound compound){
+		super.a(compound);
+		DragonNBTReturn returnContainer = NBTTagDragonStore.loadFromNBT(this, compound);
+		createAllControllers(returnContainer);
+	}
+	
+	/**
+	 * Saving dragon data to NBT Compound
+	 * @see net.minecraft.server.v1_4_R1.EntityLiving#b(net.minecraft.server.v1_4_R1.NBTTagCompound)
+	 */
+	@Override
+	public void b(NBTTagCompound compound){
+		super.b(compound);
+		NBTTagDragonStore.saveToNBT(this, compound);
+	}
 
 	public void remove() {
 		getBukkitEntity().remove();
@@ -540,5 +580,9 @@ public class LimitedEnderDragonV131 extends EntityEnderDragon {
 	
 	public String getAgeName(){
 		return ageContainer.getAgeName();
+	}
+
+	public boolean isHostile() {
+		return ageContainer.isHostile();
 	}
 }

@@ -5,21 +5,21 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.server.v1_4_6.World;
+import net.minecraft.server.v1_4_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 
 public class DragonStore {
 	
-	public static LimitedEnderDragonV131 loadFromFile(String path){
+	public static LimitedEnderDragon loadFromFile(String path){
 		try{
-			LimitedEnderDragonV131 dragon = loadFromFileIntern(path);
+			LimitedEnderDragon dragon = loadFromFileIntern(path);
 			return dragon;
 		}catch(Exception e){
 			EnderdragonsPlus.getPlugin().log("Could not load dragon in path: " + path);
@@ -29,7 +29,7 @@ public class DragonStore {
 		}
 	}
 
-	private static LimitedEnderDragonV131 loadFromFileIntern(String path) {
+	private static LimitedEnderDragon loadFromFileIntern(String path) {
 		File file = new File(path);
 		if (!file.exists()) {
 			EnderdragonsPlus.getPlugin().log(
@@ -85,7 +85,7 @@ public class DragonStore {
 
 		if (EnderdragonsPlus.getPlugin().interactConfig()
 				.getConfig_pluginHandleLoads()) {
-			LimitedEnderDragonV131 dragon = new LimitedEnderDragonV131(location, world,
+			LimitedEnderDragon dragon = new LimitedEnderDragon(location, world,
 					uid, ageType);
 
 			dragon.locX = actX;
@@ -117,7 +117,7 @@ public class DragonStore {
 			if (dragon == null)
 				return null;
 
-			LimitedEnderDragonV131 dragonEntity = (LimitedEnderDragonV131) ((CraftEntity) dragon)
+			LimitedEnderDragon dragonEntity = (LimitedEnderDragon) ((CraftEntity) dragon)
 					.getHandle();
 			
 			EnderdragonsPlus
@@ -134,7 +134,7 @@ public class DragonStore {
 		}
 	}
 	
-	public static boolean saveToPath(LimitedEnderDragonV131 dragon) {
+	public static boolean saveToPath(LimitedEnderDragon dragon) {
 		EnderdragonsPlus plugin = EnderdragonsPlus.getPlugin();
 		String path = plugin.getDataFolder() + File.separator + "tempDragons"
 				+ File.separator + "dragon." + dragon.getUUID();

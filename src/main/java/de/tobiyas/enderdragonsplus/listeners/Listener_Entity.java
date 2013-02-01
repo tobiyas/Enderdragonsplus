@@ -15,14 +15,14 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 
-import net.minecraft.server.v1_4_6.World;
+import net.minecraft.server.v1_4_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -40,7 +40,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
 
 public class Listener_Entity implements Listener {
@@ -118,7 +118,7 @@ public class Listener_Entity implements Listener {
 	}
 	
 	private void announceDragon(Entity entity){
-		LimitedEnderDragonV131 dragon = (LimitedEnderDragonV131)((CraftEnderDragon) entity).getHandle();
+		LimitedEnderDragon dragon = (LimitedEnderDragon)((CraftEnderDragon) entity).getHandle();
 		String ageName = dragon.getAgeName();
 		
 		Location loc = dragon.getLocation();
@@ -186,7 +186,7 @@ public class Listener_Entity implements Listener {
 			if(damager instanceof Player){
 				Player player = (Player) damager;
 				UUID uid = event.getEntity().getUniqueId();
-				LimitedEnderDragonV131 dragon = plugin.getContainer().getDragonById(uid);
+				LimitedEnderDragon dragon = plugin.getContainer().getDragonById(uid);
 				if(dragon == null)
 					return;
 
@@ -198,11 +198,11 @@ public class Listener_Entity implements Listener {
 	
 	
 	
-	private LimitedEnderDragonV131 spawnLimitedEnderDragon(Location location, String uid){
+	private LimitedEnderDragon spawnLimitedEnderDragon(Location location, String uid){
 		World world = ((CraftWorld)location.getWorld()).getHandle();
 		
 		UUID uuid = UUID.fromString(uid);
-		LimitedEnderDragonV131 dragon = new LimitedEnderDragonV131(location, world, uuid);
+		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
 		dragon.spawn(false);
 		dragon.setHealth(plugin.interactConfig().getConfig_dragonHealth());
 		return dragon;
@@ -213,10 +213,10 @@ public class Listener_Entity implements Listener {
 		if(!plugin.interactConfig().getConfig_anounceDragonKill())
 			return;
 
-		if(!(((CraftEntity)event.getEntity()).getHandle() instanceof LimitedEnderDragonV131))
+		if(!(((CraftEntity)event.getEntity()).getHandle() instanceof LimitedEnderDragon))
 			return;
 		
-		LimitedEnderDragonV131 dragon = (LimitedEnderDragonV131) ((CraftEnderDragon)event.getEntity()).getHandle();
+		LimitedEnderDragon dragon = (LimitedEnderDragon) ((CraftEnderDragon)event.getEntity()).getHandle();
 		String lastPlayerAttacked = dragon.getLastPlayerAttacked();
 		if(lastPlayerAttacked.equals(""))
 			return;
@@ -224,7 +224,7 @@ public class Listener_Entity implements Listener {
 		parseDragonDeath(dragon, event.getEntity().getWorld());
 	}
 	
-	private void parseDragonDeath(LimitedEnderDragonV131 dragon,org.bukkit.World dragonDeathWorld){
+	private void parseDragonDeath(LimitedEnderDragon dragon,org.bukkit.World dragonDeathWorld){
 		String message = plugin.interactConfig().getConfig_dragonKillMessage();
 		int damage = dragon.getDamageByPlayer(dragon.getLastPlayerAttacked());
 		

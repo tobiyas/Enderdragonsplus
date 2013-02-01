@@ -7,20 +7,20 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 //import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 
-import net.minecraft.server.v1_4_6.DamageSource;
-import net.minecraft.server.v1_4_6.Entity;
-import net.minecraft.server.v1_4_6.EntityEnderCrystal;
-import net.minecraft.server.v1_4_6.EntityHuman;
-import net.minecraft.server.v1_4_6.EntityLiving;
-import net.minecraft.server.v1_4_6.EntityPlayer;
+import net.minecraft.server.v1_4_R1.DamageSource;
+import net.minecraft.server.v1_4_R1.Entity;
+import net.minecraft.server.v1_4_R1.EntityEnderCrystal;
+import net.minecraft.server.v1_4_R1.EntityHuman;
+import net.minecraft.server.v1_4_R1.EntityLiving;
+import net.minecraft.server.v1_4_R1.EntityPlayer;
 
 public class DragonHealthController {
 
 	private EnderdragonsPlus plugin;
-	private LimitedEnderDragonV131 dragon;
+	private LimitedEnderDragon dragon;
 	private Random random;
 	
 	private HashMap<String, Integer> damageDoneByPlayer;
@@ -28,7 +28,7 @@ public class DragonHealthController {
 	
 	//private AgeContainer ageContainer;
 	
-	public DragonHealthController(LimitedEnderDragonV131 dragon){
+	public DragonHealthController(LimitedEnderDragon dragon){
 		plugin = EnderdragonsPlus.getPlugin();
 		this.dragon = dragon;
 		random = new Random();

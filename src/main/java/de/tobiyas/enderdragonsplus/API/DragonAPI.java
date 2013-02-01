@@ -2,17 +2,17 @@ package de.tobiyas.enderdragonsplus.API;
 
 import java.util.UUID;
 
-import net.minecraft.server.v1_4_6.World;
+import net.minecraft.server.v1_4_R1.World;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
 public class DragonAPI {
 
@@ -25,7 +25,7 @@ public class DragonAPI {
 	public static boolean setTarget(LivingEntity dragon, LivingEntity target){
 		if(!(dragon.getType() == EntityType.ENDER_DRAGON)) return false;
 		
-		LimitedEnderDragonV131 lDragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragon lDragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(lDragon == null) return false;
 		lDragon.setTarget(target);
 		
@@ -47,7 +47,7 @@ public class DragonAPI {
 	 * @return boolean if it worked
 	 */
 	public static boolean setTarget(LivingEntity dragon, Location location){
-		LimitedEnderDragonV131 LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(LEdragon == null)
 			return false;
 		
@@ -107,7 +107,7 @@ public class DragonAPI {
 	 */
 	public static LivingEntity spawnNewEnderdragon(Location location, String ageName){
 		World world = ((CraftWorld)location.getWorld()).getHandle();
-		LimitedEnderDragonV131 dragon = new LimitedEnderDragonV131(location, world, ageName);
+		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, ageName);
 		dragon.spawn(false);
 		
 		if(dragon.getBukkitEntity() == null)
@@ -124,7 +124,7 @@ public class DragonAPI {
 	 * @return boolean if it worked
 	 */
 	public static boolean setPropertyToDragon(LivingEntity dragon, String property, Object value){
-		LimitedEnderDragonV131 LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(LEdragon == null)
 			return false;
 		
@@ -139,7 +139,7 @@ public class DragonAPI {
 	 * @return Object found by property
 	 */
 	public static Object getPropertyToDragon(LivingEntity dragon, String property){
-		LimitedEnderDragonV131 LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(LEdragon == null)
 			return null;
 		
@@ -155,10 +155,10 @@ public class DragonAPI {
 	 * @return if it worked
 	 */
 	public static boolean spitFireballOnTarget(LivingEntity dragon, Entity target){
-		LimitedEnderDragonV131 LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(LEdragon == null)
 			return false;
 		
-		return LEdragon.spitFireBallOnTarget((net.minecraft.server.v1_4_6.Entity) target);
+		return LEdragon.spitFireBallOnTarget((net.minecraft.server.v1_4_R1.Entity) target);
 	}
 }

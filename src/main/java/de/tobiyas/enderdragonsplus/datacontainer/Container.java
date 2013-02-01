@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import net.minecraft.server.v1_4_6.DamageSource;
+import net.minecraft.server.v1_4_R1.DamageSource;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.DragonStore;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
 public class Container {
 
@@ -87,7 +87,7 @@ public class Container {
 			DragonInfoContainer container = homeList.get(dragonID);
 			if(!DragonStore.saveToPath(container.dragon)) j++;
 			container.isLoaded = false;
-			container.dragon.remove();
+			//container.dragon.remove();
 			i++;
 		}
 		if(i != 0) plugin.log("Saved: " + (i-j) + " dragons of : " + i);
@@ -119,7 +119,7 @@ public class Container {
 		
 		int i = 0;
 		for(File child : children){
-			LimitedEnderDragonV131 dragon = DragonStore.loadFromFile(child.getPath());
+			LimitedEnderDragon dragon = DragonStore.loadFromFile(child.getPath());
 			if(dragon != null){
 				if(!dragon.spawn(false)){
 					homeList.get(dragon.uniqueId).isLoaded = false;
@@ -150,7 +150,7 @@ public class Container {
 		
 		int j = 0;
 		for(UUID id : toLoad){
-			LimitedEnderDragonV131 dragon = DragonStore.loadFromFile(dragonPath + id);
+			LimitedEnderDragon dragon = DragonStore.loadFromFile(dragonPath + id);
 			if(dragon == null) continue;
 			dragon.spawn(false);
 			j++;
@@ -182,7 +182,7 @@ public class Container {
 		return temp.homeLocation;
 	}
 
-	public void setHomeID(UUID entityId, Location homelocation, Location location, boolean flyingHome, LimitedEnderDragonV131 dragon){
+	public void setHomeID(UUID entityId, Location homelocation, Location location, boolean flyingHome, LimitedEnderDragon dragon){
 		if(plugin.interactConfig().getConfig_debugOutput()) 
 			plugin.log("set ID: " + entityId);
 		
@@ -212,7 +212,7 @@ public class Container {
 					plugin.log("loading: " + con.ID);
 				
 				String path = plugin.getDataFolder() + File.separator + "tempDragons" + File.separator + "dragon.";
-				LimitedEnderDragonV131 dragon = DragonStore.loadFromFile(path + con.ID);
+				LimitedEnderDragon dragon = DragonStore.loadFromFile(path + con.ID);
 				dragon.spawn(con.firstLoad);
 			}
 		}
@@ -240,7 +240,7 @@ public class Container {
 		return homeList.size();
 	}
 	
-	public LimitedEnderDragonV131 getDragonById(UUID id){
+	public LimitedEnderDragon getDragonById(UUID id){
 		DragonInfoContainer con = homeList.get(id);
 		if(con == null || !con.isLoaded) return null;
 		return con.dragon;

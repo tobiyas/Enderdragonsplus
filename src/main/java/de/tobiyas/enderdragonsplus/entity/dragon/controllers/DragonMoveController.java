@@ -5,22 +5,21 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
-
-import net.minecraft.server.v1_4_6.AxisAlignedBB;
-import net.minecraft.server.v1_4_6.Block;
-import net.minecraft.server.v1_4_6.Entity;
-import net.minecraft.server.v1_4_6.EntityLiving;
-import net.minecraft.server.v1_4_6.MathHelper;
+import net.minecraft.server.v1_4_R1.AxisAlignedBB;
+import net.minecraft.server.v1_4_R1.Block;
+import net.minecraft.server.v1_4_R1.Entity;
+import net.minecraft.server.v1_4_R1.EntityLiving;
+import net.minecraft.server.v1_4_R1.MathHelper;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonV131;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
 public class DragonMoveController {
 
-	private LimitedEnderDragonV131 dragon;
+	private LimitedEnderDragon dragon;
 	private Random random;
 	private EnderdragonsPlus plugin;
 	
-	public DragonMoveController(LimitedEnderDragonV131 dragon){
+	public DragonMoveController(LimitedEnderDragon dragon){
 		this.dragon = dragon;
 		random = new Random();
 		plugin = EnderdragonsPlus.getPlugin();
@@ -56,6 +55,7 @@ public class DragonMoveController {
 		}
 	}
 	
+	
 	// Original: a(AxisAlignedBB axisalignedbb)
 	public boolean checkHitBlocks(AxisAlignedBB axisalignedbb) {
 		int pos1X = MathHelper.floor(axisalignedbb.a);
@@ -71,7 +71,7 @@ public class DragonMoveController {
 
 		// CraftBukkit start - create a list to hold all the destroyed blocks
 		List<org.bukkit.block.Block> destroyedBlocks = new ArrayList<org.bukkit.block.Block>();
-		org.bukkit.craftbukkit.v1_4_6.CraftWorld craftWorld = dragon.world.getWorld();
+		org.bukkit.craftbukkit.v1_4_R1.CraftWorld craftWorld = dragon.world.getWorld();
 		// CraftBukkit end
 
 		for (int blockX = pos1X; blockX <= pos2X; ++blockX) {
@@ -144,9 +144,5 @@ public class DragonMoveController {
 		//TODO search for possible flight height.
 		return posX + posY + posZ == 0 ? 70 : 70;
 	}
-
-
-
-
 	
 }
