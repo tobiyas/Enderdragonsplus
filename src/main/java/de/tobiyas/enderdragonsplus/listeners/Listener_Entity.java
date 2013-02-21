@@ -203,7 +203,7 @@ public class Listener_Entity implements Listener {
 		
 		UUID uuid = UUID.fromString(uid);
 		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
-		dragon.spawn(false);
+		dragon.spawn();
 		dragon.setHealth(plugin.interactConfig().getConfig_dragonHealth());
 		return dragon;
 	}

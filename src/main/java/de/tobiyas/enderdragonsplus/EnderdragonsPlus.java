@@ -42,6 +42,7 @@ import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Sign;
 import de.tobiyas.enderdragonsplus.listeners.Listener_World;
 import de.tobiyas.enderdragonsplus.spawner.DragonSpawnerManager;
+import de.tobiyas.enderdragonsplus.util.Consts;
 import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
@@ -86,7 +87,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 		registerEvents();
 		registerCommands();
 		
-		container.loadContainer();
+		//container.loadContainer();
 		registerTasks();
 		
 		registerManagers();
@@ -106,11 +107,15 @@ public class EnderdragonsPlus extends JavaPlugin{
 	    	  		Integer.valueOf(63) 
 	    	  	});
 	            
-	    } catch (Exception e) {
-	      log("Could not inject LimitedEnderDragon. Disabling Plugin.");
-	      e.printStackTrace();
-	      Bukkit.getPluginManager().disablePlugin(this);
-	    }
+	    } catch (NoClassDefFoundError exp) {
+	    	log("Could not inject LimitedEnderDragon. Disabling Plugin.");
+	    	log("You are probably using the wrong Version. Your version: " + Bukkit.getVersion() + " supportet EnderDragonsPlusVersion: " + Consts.SupportetVersion);
+	    	exp.printStackTrace();
+	    	Bukkit.getPluginManager().disablePlugin(this);
+	    } catch (Exception exp) {
+			log("Something has gone wrong while injekting! Plugin will be disabled!");
+			Bukkit.getPluginManager().disablePlugin(this);
+		}
 	}
 	
 	private void checkDepends(){
@@ -119,7 +124,6 @@ public class EnderdragonsPlus extends JavaPlugin{
 	
 	@Override
 	public void onDisable(){
-		container.saveContainer();
 		dragonSpawnerManager.saveList();
 		debugLogger.shutDown();
 		log("disabled "+description.getFullName());
@@ -176,7 +180,11 @@ public class EnderdragonsPlus extends JavaPlugin{
 	}
 	
 	private void initMetrics(){
-		SendMetrics.sendMetrics(this, false);
+		if(interactConfig().getConfig_uploadMetrics())
+			SendMetrics.sendMetrics(this, false);
+		
+		boolean enableErrorReport = interactConfig().getConfig_uploadErrors();
+		debugLogger.enableUploads(enableErrorReport);
 	}
 
 	

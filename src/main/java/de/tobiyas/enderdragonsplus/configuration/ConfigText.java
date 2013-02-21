@@ -216,7 +216,15 @@ public class ConfigText {
 
 		text += "#If true it will fire Bukkit Events (as EntityChangeTarget)\n";
 		text += "#default: false\n";
-		text += "fireBukkitEvents: false\n";
+		text += "fireBukkitEvents: false\n\n";
+		
+		text += "#If true, the plugin will upload Stacktraces of errors to a database for easier debuging\n";
+		text += "#default: false\n";
+		text += "uploadErrors: false\n\n";
+		
+		text += "#If true, the plugin will upload Metrics to 'http://mcstats.org'\n";
+		text += "#default: true\n";
+		text += "uploadMetrics: true\n";
 		text += "#	/REGION: Debug&API layer";
 		
 		return text;

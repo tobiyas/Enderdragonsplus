@@ -67,6 +67,8 @@ public class Config
   //Debug + API layer
   private boolean config_debugOutput;
   private boolean config_fireBukkitEvents;
+  private boolean config_uploadMetrics;
+  private boolean config_uploadErrors;
   
  
 
@@ -120,6 +122,8 @@ public class Config
 	config.addDefault("fireBallSpeedUp", 1D);
 	config.addDefault("dragonTempleFile", "STDTemple.schematic");
 	config.addDefault("dragonsSitDownIfInactive", false);
+	config.addDefault("uploadMetrics", true);
+	config.addDefault("uploadErrors", false);	
 
 	config.options().copyDefaults(true);
   }
@@ -180,10 +184,12 @@ public class Config
 
     this.config_maxFollowDistanceSquared = (this.config_maxFollowDistance * this.config_maxFollowDistance);
     this.config_maxHomeDistanceSquared = (this.config_maxHomeDistance * this.config_maxHomeDistance);
+    this.config_uploadMetrics = this.plugin.getConfig().getBoolean("uploadMetrics");
+    this.config_uploadErrors = this.plugin.getConfig().getBoolean("uploadErrors");
   }
 
   public void reload() {
-    reloadConfiguration();
+	  reloadConfiguration();
   }
 
   public boolean getConfig_deactivateDragonTemples() {
@@ -357,5 +363,13 @@ public class Config
 	
 	public String getConfig_dragonKillMessageToWorlds(){
 		return config_dragonKillMessageToWorlds;
+	}
+	
+	public boolean getConfig_uploadMetrics() {
+		return config_uploadMetrics;
+	}
+
+	public boolean getConfig_uploadErrors() {
+		return config_uploadErrors;
 	}
 }

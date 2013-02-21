@@ -23,8 +23,8 @@ private EnderdragonsPlus plugin;
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.loadAll))
 			return true;
 		
-		String count = plugin.getContainer().loadDragonsInLoadedChunks();
-		sender.sendMessage(ChatColor.GREEN + "" + count + " dragons loaded.");
+		//String count = plugin.getContainer().loadDragonsInLoadedChunks();
+		sender.sendMessage(ChatColor.RED + "Funktion not needed any more.");//ChatColor.GREEN + "" + count + " dragons loaded.");
 		return true;
 	}	
 }

@@ -3,6 +3,7 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 import net.minecraft.server.v1_4_R1.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
 public class NBTTagDragonStore {
@@ -14,12 +15,34 @@ public class NBTTagDragonStore {
 		private Location forceTarget;
 		private String ageName;
 		private boolean flyingHome;
+		private NBTTagCompound properties;
 		
-		private DragonNBTReturn(Location homeLocation, Location forceTarget, String ageName, boolean flyingHome){
+		private DragonNBTReturn(){
+			homeLocation = new Location(Bukkit.getWorlds().get(0), 0d, 0d, 0d);
+			forceTarget = homeLocation.clone();
+			ageName = "Normal";
+			flyingHome = true;
+			properties = new NBTTagCompound();
+		}
+
+		public DragonNBTReturn setHomeLocation(Location homeLocation) {
 			this.homeLocation = homeLocation;
+			return this;
+		}
+
+		public DragonNBTReturn setForceTarget(Location forceTarget) {
 			this.forceTarget = forceTarget;
+			return this;
+		}
+
+		public DragonNBTReturn setAgeName(String ageName) {
 			this.ageName = ageName;
+			return this;
+		}
+
+		public DragonNBTReturn setFlyingHome(boolean flyingHome) {
 			this.flyingHome = flyingHome;
+			return this;
 		}
 
 		public String getAgeName() {
@@ -37,10 +60,18 @@ public class NBTTagDragonStore {
 		public boolean isFlyingHome() {
 			return flyingHome;
 		}
+
+		public NBTTagCompound getProperties() {
+			return properties;
+		}
+
+		public void setProperties(NBTTagCompound properties) {
+			this.properties = properties;
+		}
 	}
 	
 
-	public static void saveToNBT(LimitedEnderDragon dragon, NBTTagCompound compound) {
+	public static void saveToNBT(LimitedEnderDragon dragon, NBTTagCompound compound, NBTTagCompound propertiesCompound) {
 		compound.setString("age", dragon.getAgeName());
 		
 		Location homeLocation = dragon.getHomeLocation();
@@ -59,8 +90,11 @@ public class NBTTagDragonStore {
 
 		compound.setBoolean("flyingHome", dragon.isFlyingHome());
 		compound.setBoolean("isHostile", dragon.isHostile());
+		
+		compound.setCompound("properties", propertiesCompound);
 	}
 	
+
 	public static DragonNBTReturn loadFromNBT(LimitedEnderDragon dragon, NBTTagCompound compound){
 		String worldName = compound.getString("homeLocation.world");
 		String ageType = compound.getString("age");
@@ -84,9 +118,15 @@ public class NBTTagDragonStore {
 					forceLocationY, forceLocationZ);
 		}
 		
-		DragonNBTReturn returnValue = new DragonNBTReturn(homeLocation, forceTarget, ageType, flyingHome);
+		NBTTagCompound properties = compound.getCompound("properties");
+		
+		DragonNBTReturn returnValue = new DragonNBTReturn();
+		returnValue.setHomeLocation(homeLocation)
+					.setForceTarget(forceTarget)
+					.setAgeName(ageType)
+					.setFlyingHome(flyingHome)
+					.setProperties(properties);
 		return returnValue;
 	}
-	
 	
 }

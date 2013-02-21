@@ -23,8 +23,8 @@ public class CommandUnloadAll implements CommandExecutor{
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.unloadAll))
 			return true;
 		
-		int count = plugin.getContainer().saveAllLoaded();
-		sender.sendMessage(ChatColor.GREEN + "" + count + " dragons unloaded!");
+		//int count = plugin.getContainer().saveAllLoaded();
+		sender.sendMessage(ChatColor.RED + "This command does not exist any more.");//ChatColor.GREEN + "" + count + " dragons unloaded!");
 		return true;
 	}
 

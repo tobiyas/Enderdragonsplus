@@ -29,8 +29,9 @@ public class TargetController {
 	
 	private Location targetLocation;
 	private Location homeLocation;
-	
+
 	private boolean lockTarget;
+	private boolean isFlyingHome;
 	
 	private boolean isHostile;
 	
@@ -56,6 +57,7 @@ public class TargetController {
 		
 		this.unTargetTicksMax = plugin.interactConfig().getConfig_dragonUntargeting();
 		this.unTargetTick = unTargetTicksMax;
+		this.isFlyingHome = false;
 	}	
 	
 	public void addTarget(EntityLiving entity){
@@ -309,7 +311,7 @@ public class TargetController {
 	
 	//****//
 	//Original EnderDragon functions!
-	//TODO: Needs cleanup!
+	//
 	
 	public void changeTarget(boolean force) {
 		try {
@@ -319,7 +321,8 @@ public class TargetController {
 			Location homeLocation = dragon.getHomeLocation();
 
 			if (getVectorDistance(homeLocation) > homeRange)
-				plugin.getContainer().setFlyingHome(dragon.getUUID(), true);
+				isFlyingHome = true;
+			
 
 			if (dragon.isFlyingHome() || dragon.getForceLocation() != null)
 				force = true;
@@ -371,10 +374,10 @@ public class TargetController {
 			location = forceGoTo;
 
 		if (getVectorDistance(location) < 30) {
-			plugin.getContainer().setFlyingHome(dragon.getUUID(), false);
+			isFlyingHome = false;
 			if (forceGoTo != null) {
 				forceGoTo = null;
-				location = plugin.getContainer().getHomeByID(dragon.getUUID());
+				location = homeLocation;
 				return;
 			}
 		}
@@ -402,4 +405,20 @@ public class TargetController {
 		} while (vecDistance < 100);
 	}
 	
+	
+	public boolean isFlyingHome(){
+		return isFlyingHome;
+	}
+
+	public void forceFlyingHome(boolean flyingHome) {
+		isFlyingHome = flyingHome;
+	}
+
+	public Location getHomeLocation() {
+		return homeLocation;
+	}
+	
+	public void setHomeLocation(Location homeLocation) {
+		this.homeLocation = homeLocation;
+	}
 }

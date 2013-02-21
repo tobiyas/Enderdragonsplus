@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.naming.OperationNotSupportedException;
+
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
@@ -20,6 +23,7 @@ import de.tobiyas.enderdragonsplus.entity.dragon.controllers.FireballController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.ItemLootController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.NBTTagDragonStore;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.NBTTagDragonStore.DragonNBTReturn;
+import de.tobiyas.enderdragonsplus.entity.dragon.controllers.PropertyController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.TargetController;
 
 import net.minecraft.server.v1_4_R1.DamageSource;
@@ -35,7 +39,7 @@ import net.minecraft.server.v1_4_R1.World;
 
 public class LimitedEnderDragon extends EntityEnderDragon {
 	
-	private EnderdragonsPlus plugin;
+	private EnderdragonsPlus plugin = EnderdragonsPlus.getPlugin();
 	public static int broadcastedError = 0;
 
 	private int logicCall = 0;
@@ -46,6 +50,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	private DragonHealthController dragonHealthController;
 	private DragonMoveController dragonMoveController;
 	private AgeContainer ageContainer;
+	private PropertyController propertyController;
 
 	public LimitedEnderDragon(Location location, World world) {
 		this(location, world, "Normal");
@@ -57,25 +62,17 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 	public LimitedEnderDragon(Location location, World world, String ageType){
 		super(world);
-		plugin = EnderdragonsPlus.getPlugin();
-		plugin.getContainer().setHomeID(getUUID(), location, location, false,
-				this);
-		
+
 		setPosition(location.getX(), location.getY(), location.getZ());
-		createAllControllers(ageType);
+		createAllControllers(ageType, location);
 	}
 	
 	public LimitedEnderDragon(Location location, World world, UUID uid, String ageType) {
 		super(world);
-
-		plugin = EnderdragonsPlus.getPlugin();
 		changeUUID(uid);
-		plugin.getContainer().setHomeID(getUUID(), location, location, false,
-				this);
-
-		setPosition(location.getX(), location.getY(), location.getZ());
 		
-		createAllControllers(ageType);
+		setPosition(location.getX(), location.getY(), location.getZ());
+		createAllControllers(ageType, location);
 	}
 
 	/**
@@ -85,18 +82,10 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	 */
 	public LimitedEnderDragon(World world) {
 		super(world);
-
-		plugin = EnderdragonsPlus.getPlugin();
-		if (plugin.interactConfig().getConfig_pluginHandleLoads()) {
-			remove();
-			return;
-		}
-
-		//if (!plugin.getContainer().containsID(this.getUUID()))
-			//remove();
 	}
 	
 	private void createAllControllers(DragonNBTReturn returnContainer){
+		propertyController = new PropertyController(returnContainer);
 		ageContainer = new AgeContainer(returnContainer.getAgeName());
 		
 		targetController = new TargetController(returnContainer.getHomeLocation(), this, ageContainer.isHostile());
@@ -108,12 +97,13 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		initStats();
 	}
 	
-	private void createAllControllers(String ageType){
+	private void createAllControllers(String ageType, Location homeLocation){
 		boolean hostile = plugin.interactConfig().getConfig_dragonsAreHostile();
 		if(!ageType.equals(""))
 			ageContainer = new AgeContainer(ageType);
 		
-		targetController = new TargetController(getHomeLocation(), this, hostile);
+		propertyController = new PropertyController();
+		targetController = new TargetController(homeLocation, this, hostile);
 		fireballController = new FireballController(targetController);
 		itemController = new ItemLootController(this);
 		dragonHealthController = new DragonHealthController(this);
@@ -468,7 +458,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	@Override
 	public void b(NBTTagCompound compound){
 		super.b(compound);
-		NBTTagDragonStore.saveToNBT(this, compound);
+		NBTTagDragonStore.saveToNBT(this, compound, propertyController.getAllProperties());
 	}
 
 	public void remove() {
@@ -488,14 +478,16 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		return getBukkitEntity().getLocation();
 	}
 
-	public boolean spawn(boolean firstLoad) {
-		return spawnCraftBukkit(firstLoad);
+	public boolean spawn() {
+		return spawnCraftBukkit();
 	}
 
-	private boolean spawnCraftBukkit(boolean firstLoad) {
+	private boolean spawnCraftBukkit() {
 		World world = ((CraftWorld) getLocation().getWorld()).getHandle();
-		if (firstLoad)
-			this.getLocation().getChunk().isLoaded();
+		Chunk chunk = getLocation().getChunk();
+		if(!chunk.isLoaded())
+			this.getLocation().getChunk().load();
+		
 		if (!world.addEntity(this))
 			return false;
 		setPosition(locX, locY, locZ);
@@ -503,7 +495,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	}	
 
 	public Location getHomeLocation() {
-		return plugin.getContainer().getHomeByID(getUUID());
+		return targetController.getHomeLocation();
 	}
 
 	public int getID() {
@@ -511,7 +503,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	}
 
 	public boolean isFlyingHome() {
-		return plugin.getContainer().getFlyingHome(getUUID());
+		return targetController.isFlyingHome();
 	}
 
 	public void setTarget(LivingEntity entity) {
@@ -584,5 +576,21 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 	public boolean isHostile() {
 		return ageContainer.isHostile();
+	}
+
+	public void forceFlyHome(boolean flyingHome) {
+		targetController.forceFlyingHome(flyingHome);
+	}
+
+	public void setNewHome(Location newHomeLocation) {
+		targetController.setHomeLocation(newHomeLocation);
+	}
+
+	public void setProperty(String property, Object value) throws OperationNotSupportedException{
+		propertyController.addProperty(property, value);
+	}
+
+	public Object getProperty(String property) {
+		return propertyController.getProperty(property);
 	}
 }
