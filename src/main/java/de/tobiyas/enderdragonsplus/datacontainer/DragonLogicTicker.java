@@ -32,14 +32,12 @@ public class DragonLogicTicker implements Runnable {
 			if(limit != 0){
 				Set<UUID> ids = plugin.getContainer().getAllIDs();
 				for(UUID id : ids){
-					//plugin.log("Handling Dragon id: " + id);
 					LimitedEnderDragon dragon = plugin.getContainer().getDragonById(id);
 					
 					if(dragon == null || !plugin.getContainer().isLoaded(id)){
 						locs.remove(id);
 						continue;
 					}
-					//plugin.log("loaded and != null");
 					
 					Location lastDragonLoc = locs.get(id);
 					if(lastDragonLoc == null){
@@ -48,15 +46,12 @@ public class DragonLogicTicker implements Runnable {
 					}
 					
 					if(lastDragonLoc.equals(dragon.getLocation())){
-						//plugin.log("doing F_");
-						//plugin.log(dragon.getLocation().toString());
 						
 						for(int i = 0; i < limit; i++){
 							if(dragon == null) break;
-							dragon.j_();
+							dragon.l_();
 						}
 						
-						//plugin.log(dragon.getLocation().toString());
 					}
 					
 					locs.put(id, dragon.getLocation());

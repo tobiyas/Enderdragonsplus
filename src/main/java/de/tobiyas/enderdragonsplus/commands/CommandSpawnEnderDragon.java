@@ -1,6 +1,10 @@
 package de.tobiyas.enderdragonsplus.commands;
 
+import java.util.List;
+
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -37,12 +41,19 @@ public class CommandSpawnEnderDragon implements CommandExecutor {
 		if(!(plugin.getPermissionManager().checkPermissions(player, PermissionNode.createEnderDragon)))
 			return true;
 		
+		List<Block> sightList = player.getLineOfSight(null, 100);
+		Location spawnLocation;
+		if(sightList.size() == 0)
+			spawnLocation = player.getLocation();
+		else
+			spawnLocation = sightList.get(0).getLocation();
+		
 		LivingEntity entity = null;
 		if(args.length ==1)
-			entity = DragonAPI.spawnNewEnderdragon(player.getLocation(), args[0]);
+			entity = DragonAPI.spawnNewEnderdragon(spawnLocation, args[0]);
 		
 		if(args.length == 0)
-			entity = DragonAPI.spawnNewEnderdragon(player.getLocation());
+			entity = DragonAPI.spawnNewEnderdragon(spawnLocation);
 		
 		if(entity == null){
 			player.sendMessage(ChatColor.RED + "Please give use the command as followed: /sedp [ageName]");

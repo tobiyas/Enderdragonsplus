@@ -8,7 +8,7 @@
 package de.tobiyas.enderdragonsplus;
 
 
-import net.minecraft.server.v1_4_R1.EntityTypes;
+import net.minecraft.server.v1_5_R2.EntityTypes;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;

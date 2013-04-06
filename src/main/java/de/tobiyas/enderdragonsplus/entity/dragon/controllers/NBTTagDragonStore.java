@@ -1,6 +1,6 @@
 package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
-import net.minecraft.server.v1_4_R1.NBTTagCompound;
+import net.minecraft.server.v1_5_R2.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 

@@ -4,10 +4,10 @@ import java.util.UUID;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.minecraft.server.v1_4_R1.World;
+import net.minecraft.server.v1_5_R2.World;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_5_R2.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -161,7 +161,7 @@ public class DragonAPI {
 		if(LEdragon == null)
 			return false;
 		
-		return LEdragon.spitFireBallOnTarget((net.minecraft.server.v1_4_R1.Entity) target);
+		return LEdragon.spitFireBallOnTarget((net.minecraft.server.v1_5_R2.Entity) target);
 	}
 	
 	

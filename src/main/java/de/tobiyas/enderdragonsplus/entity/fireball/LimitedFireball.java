@@ -1,18 +1,18 @@
 package de.tobiyas.enderdragonsplus.entity.fireball;
 
-import org.bukkit.craftbukkit.v1_4_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_5_R2.event.CraftEventFactory;
 import org.bukkit.entity.Fireball;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.entity.fireball.FireballRebounceEvent.RebounceReason;
-import net.minecraft.server.v1_4_R1.DamageSource;
-import net.minecraft.server.v1_4_R1.EntityLargeFireball;
-import net.minecraft.server.v1_4_R1.EntityLiving;
-import net.minecraft.server.v1_4_R1.MovingObjectPosition;
-import net.minecraft.server.v1_4_R1.Vec3D;
-import net.minecraft.server.v1_4_R1.World;
+import net.minecraft.server.v1_5_R2.DamageSource;
+import net.minecraft.server.v1_5_R2.EntityLargeFireball;
+import net.minecraft.server.v1_5_R2.EntityLiving;
+import net.minecraft.server.v1_5_R2.MovingObjectPosition;
+import net.minecraft.server.v1_5_R2.Vec3D;
+import net.minecraft.server.v1_5_R2.World;
 
 public class LimitedFireball extends EntityLargeFireball {
 
@@ -43,7 +43,7 @@ public class LimitedFireball extends EntityLargeFireball {
 		 K();
 		 if (damageSource.getEntity() != null) {
 			 if(damageSource.getEntity() instanceof LimitedEnderDragon) return false;
-			 Vec3D vec3d = damageSource.getEntity().Z();
+			 Vec3D vec3d = damageSource.getEntity().Y();
 
 			 if (vec3d != null) {
 				 this.motX = vec3d.c;
@@ -67,13 +67,13 @@ public class LimitedFireball extends EntityLargeFireball {
 	 }
 	 
 	 @Override
-	 public void j_() {
+	 public void l_() {
 		 speedUp();
 		 if(--maxSurvivalCounter < 0){
 			 this.die();
 			 return;
 		 }
-		 super.j_();
+		 super.l_();
 	 }
 	 
 	 private void speedUp(){
@@ -98,7 +98,7 @@ public class LimitedFireball extends EntityLargeFireball {
 		 }
 
 		 // CraftBukkit start
-		 ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity.getEntity(this.world.getServer(), this));
+		 ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.v1_5_R2.entity.CraftEntity.getEntity(this.world.getServer(), this));
 		 this.world.getServer().getPluginManager().callEvent(event);
 	
 		 if (!event.isCancelled()) {

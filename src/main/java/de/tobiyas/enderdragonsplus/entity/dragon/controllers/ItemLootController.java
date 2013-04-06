@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.Collections;
 
-import net.minecraft.server.v1_4_R1.Block;
-import net.minecraft.server.v1_4_R1.BlockEnderPortal;
-import net.minecraft.server.v1_4_R1.EntityExperienceOrb;
-import net.minecraft.server.v1_4_R1.MathHelper;
+import net.minecraft.server.v1_5_R2.Block;
+import net.minecraft.server.v1_5_R2.BlockEnderPortal;
+import net.minecraft.server.v1_5_R2.EntityExperienceOrb;
+import net.minecraft.server.v1_5_R2.MathHelper;
 
 import org.bukkit.Location;
 import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_4_R1.util.BlockStateListPopulator;
+import org.bukkit.craftbukkit.v1_5_R2.util.BlockStateListPopulator;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.ItemStack;
 
