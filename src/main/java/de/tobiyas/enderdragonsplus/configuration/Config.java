@@ -159,9 +159,9 @@ public class Config
     this.config_dragonSpawnMessage = this.plugin.getConfig().getString("dragonSpawnMessage", "'&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'");
     this.config_dragonKillMessage = this.plugin.getConfig().getString("dragonKillMessage", "'&aPlayer &b{player_kill} &ahas killed a dragon! (done &1{player_kill_dmg} &adamage)'");   
     this.config_anounceDragonKill = this.plugin.getConfig().getBoolean("anounceDragonKill", true);
-    this.config_dragonKillMessageToWorlds = this.plugin.getConfig().getString("dragonKillMessageToWorlds", "{all}");    
+    this.config_dragonKillMessageToWorlds = this.plugin.getConfig().getString("dragonKillMessageToWorlds", "'{all}'");    
     this.config_disableFireballWorldDamage = this.plugin.getConfig().getBoolean("disableFireballWorldDamage", true);
-    this.config_dragonTempleFile = this.plugin.getConfig().getString("dragonTempleFile", "STDTemple.schematic");
+    this.config_dragonTempleFile = this.plugin.getConfig().getString("dragonTempleFile", "'STDTemple.schematic'");
 
     this.config_fireballEntityDamage = this.plugin.getConfig().getInt("fireballEntityDamage", 4);
     this.config_fireballExplosionRadius = this.plugin.getConfig().getInt("fireballExplosionRadius", 5);

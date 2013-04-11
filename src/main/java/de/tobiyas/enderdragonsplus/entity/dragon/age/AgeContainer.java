@@ -23,12 +23,99 @@ public class AgeContainer {
 	private int rank;
 	
 	//Constructor
-	public AgeContainer(String ageName){
+	public AgeContainer(String ageName) throws AgeNotFoundException{
 		plugin = EnderdragonsPlus.getPlugin();
 		this.ageName = ageName;
+
+		loadAgeContainer(ageName.toLowerCase());
+		
+		if(!areAllNeededFieldsSet()){
+			throw new AgeNotFoundException();
+		}
+		
+	}
+	
+	
+	//secure constructor with STD stuff
+	public AgeContainer() {
+		plugin = EnderdragonsPlus.getPlugin();
+		this.ageName = "Normal";
 		loadAgeContainer(ageName.toLowerCase());
 	}
 	
+	
+	//constructor withh ALL fields
+	public AgeContainer(String ageName, int maxHealth, int spawnHealth, int exp, int dmg, boolean isHostile, int rank, List<DropContainer> drops){
+		this.ageName = ageName;
+		this.maxHealth = maxHealth;
+		this.spawnHealth = spawnHealth;
+		this.exp = exp;
+		this.dmg = dmg;
+		this.isHostile = isHostile;
+		this.rank = rank;
+		this.drops = drops;
+	}
+
+
+	private boolean areAllNeededFieldsSet(){
+		String tempAgeName = ageName.toLowerCase();
+		
+		YAMLConfigExtended config = new YAMLConfigExtended(Consts.AgeTablePath).load();
+		if(!config.getValidLoad()){
+			plugin.getDebugLogger().logWarning("Age config could not be load correct.");
+			return false;
+		}
+		
+		if(!config.contains(tempAgeName + STDAgeContainer.maxHealthPath)){
+			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
+						STDAgeContainer.maxHealthPath + " not set/incorrect set.");
+			return false;
+		}
+		
+		if(!config.contains(tempAgeName + STDAgeContainer.spawnHealthPath)){
+			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
+					STDAgeContainer.spawnHealthPath + " not set/incorrect set.");
+			return false;
+		}
+		
+		if(!config.contains(tempAgeName + STDAgeContainer.rankPath)){
+			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
+					STDAgeContainer.rankPath + " not set/incorrect set.");
+			return false;
+		}
+		
+		if(!config.contains(tempAgeName + STDAgeContainer.expPath)){
+			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
+					STDAgeContainer.expPath + " not set/incorrect set.");
+			return false;
+		}
+		
+		if(!config.contains(tempAgeName + STDAgeContainer.dmgPath)){
+			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
+					STDAgeContainer.dmgPath + " not set/incorrect set.");
+			return false;
+		}
+		
+		if(!config.contains(tempAgeName + STDAgeContainer.ageNamePath)){
+			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
+					STDAgeContainer.ageNamePath + " not set/incorrect set.");
+			return false;
+		}
+		
+		if(!config.contains(tempAgeName + STDAgeContainer.ageIsHostilePath)){
+			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
+					STDAgeContainer.ageIsHostilePath + " not set/incorrect set.");
+			return false;
+		}
+		
+		if(!config.contains(tempAgeName + STDAgeContainer.lootPrefixPath)){
+			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
+					STDAgeContainer.lootPrefixPath + " not set / set incorrect.");
+			return false;
+		}
+		
+		return true;
+	}
 	
 	
 	//Member Methodes
@@ -48,7 +135,7 @@ public class AgeContainer {
 		isHostile = config.getBoolean(tempAgeName + STDAgeContainer.ageIsHostilePath, plugin.interactConfig().getConfig_dragonsAreHostile());
 		
 		drops = new LinkedList<DropContainer>();
-		for(String item : config.getYAMLChildren(tempAgeName + STDAgeContainer.lootPrefixPath)){
+		for(String item : config.getChildren(tempAgeName + STDAgeContainer.lootPrefixPath)){
 			DropContainer container = config.getDropContainer(tempAgeName + STDAgeContainer.lootPrefixPath + "." + item);
 			if(container != null)
 				drops.add(container);
@@ -100,5 +187,57 @@ public class AgeContainer {
 		return isHostile;
 	}
 	
+	/**
+	 * Checks if the age with that name is given in a config
+	 * 
+	 * @param ageName
+	 * @return
+	 */
+	public static boolean ageExists(String ageName){
+		try{
+			return new AgeContainer(ageName).areAllNeededFieldsSet();
+		}catch(AgeNotFoundException e){
+			return false;
+		}
+	}
 	
-}
+	/**
+	 * Gives all available ages as List
+	 * 
+	 * @return
+	 */
+	public static List<String> getAllAgeNames(){
+		List<String> ageNames = new LinkedList<String>();
+		
+		YAMLConfigExtended config = new YAMLConfigExtended(Consts.AgeTablePath).load();
+		if(!config.getValidLoad()){
+			return ageNames;
+		}
+		
+		ageNames.addAll(config.getRootChildren());
+		return ageNames;
+	}
+	
+	/**
+	 * Gives all available ages as List
+	 * The Agenames are checked if they are available and correct to load before
+	 * 
+	 * @return
+	 */
+	public static List<String> getAllCorrectAgeNames(){
+		List<String> ageNames = new LinkedList<String>();
+		
+		YAMLConfigExtended config = new YAMLConfigExtended(Consts.AgeTablePath).load();
+		if(!config.getValidLoad()){
+			return ageNames;
+		}
+		
+		for(String ageName : config.getRootChildren()){
+			if(ageExists(ageName)){
+				ageNames.add(ageName);
+			}
+		}
+		return ageNames;
+	}
+
+ }

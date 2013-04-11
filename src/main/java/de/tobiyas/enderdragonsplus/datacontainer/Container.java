@@ -2,6 +2,7 @@ package de.tobiyas.enderdragonsplus.datacontainer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -112,14 +113,24 @@ public class Container {
 
 	public boolean isLoaded(UUID id) {
 		LimitedEnderDragon dragon = dragonList.get(id);
-		return dragon != null;
+		
+		boolean isNotDeleted = dragon != null;
+		boolean isLoaded = false;
+		try{
+			isLoaded = dragon.getLocation().getChunk().isLoaded();
+		}catch(Exception exp){}
+		return isNotDeleted && isLoaded;
 	}
 	
-	public void registerDragon(UUID dragonId, LimitedEnderDragon dragon){
-		dragonList.put(dragonId, dragon);
+	public void registerDragon(LimitedEnderDragon dragon){
+		dragonList.put(dragon.getUUID(), dragon);
 	}
 	
 	public void unregisterDragon(UUID dragonId){
 		dragonList.remove(dragonId);
+	}
+
+	public List<LimitedEnderDragon> getAllDragons() {
+		return new LinkedList<LimitedEnderDragon>(dragonList.values());
 	}
 }

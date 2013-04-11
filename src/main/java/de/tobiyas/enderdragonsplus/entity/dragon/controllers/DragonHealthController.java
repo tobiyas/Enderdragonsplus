@@ -168,5 +168,15 @@ public class DragonHealthController {
 		
 		return 0;
 	}
+
+
+	public void recheckHealthNotOvercaped() {
+		int dragonMaxHealth = dragon.getMaxHealth();
+		int dragonCurrentHealth = dragon.getHealth();
+		
+		if(dragonCurrentHealth > dragonMaxHealth){
+			dragon.setHealth(dragonMaxHealth);
+		}
+	}
 	
 }

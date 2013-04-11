@@ -4,11 +4,16 @@ version: 1.9.0
 website: http://dev.bukkit.org/server-mods/enderdragonsplus/
 author: tobiyas
 depend:
-softdepend: [DragonTravel, RideThaDragon]
+softdepend: [DragonTravel,Vault]
 
 description: >
-             plugin to disable DragonPortals spawning and dont make them fly to spawn
+             plugin to handle Enderdragons better
 commands:
+  enderdragonsplus:
+    descroption: gives help for the Plugin
+    aliases: [edp,edphelp,edph]
+    usage: |
+           /edp
   killenderdragons:
     description: Kills all dragons in range (if range = 0, kills ALL dragons. Default is 100)
     aliases: [kedp]
@@ -18,7 +23,7 @@ commands:
     description: spawns a new LimitedEnderDragon to your position
     aliases: [sedp]
     usage: |
-           /spawnenderdragon
+           /spawnenderdragon [AgeName]
   edpreload:
     description: reloads the config of Enderdragons+
     aliases: [edprc]
@@ -34,16 +39,6 @@ commands:
     aliases: []
     usage: |
            /edpinfo
-  edpunload:
-    description: unloads all dragons
-    aliases: []
-    usage: |
-           /edpunload
-  edpload:
-    description: loads all dragons
-    aliases: []
-    usage: |
-           /edpload
   edprespawner:
     description: creates a dragon respawner
     aliases: []

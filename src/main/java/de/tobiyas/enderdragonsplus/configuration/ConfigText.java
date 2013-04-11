@@ -117,9 +117,10 @@ public class ConfigText {
 		text += "#To which worlds the Dragon kill message should be announced.\n";
 		text += "#Keywords: {current} = the current world of the dragon\n";
 		text += "# {all} = all worlds\n";
-		text += "#example: world,{current},gmworld\n";
-		text += "#default: {all}\n";
-		text += "dragonKillMessageToWorlds: {all}\n\n";
+		text += "# IMPORTANT!!!! The total String has to be in ' ' symbols or it will not load correct. (see example below)\n";
+		text += "#example: 'world,{current},gmworld'\n";
+		text += "#default: '{all}'\n";
+		text += "dragonKillMessageToWorlds: '{all}'\n\n";
 		
 		text += "#	/SUBREGION: EnderDragons.Announcements\n";
 		text += "#	/REGION: EnderDragons\n\n\n";
@@ -141,8 +142,9 @@ public class ConfigText {
 		text += "#This option is to replace the Dragon temple spawned at death. \n";
 		text += "#It only works with the Plugin: Worldedit. \n";
 		text += "#The Scematic has to be in plugins/EnderdragonsPlus/temples/ \n";
-		text += "#default: STDTemple.schematic\n";
-		text += "dragonTempleFile: STDTemple.schematic\n";
+		text += "# IMPORTANT!!!! The total String has to be in ' ' symbols or it will not load correct. (see default below)\n";
+		text += "#default: 'STDTemple.schematic'\n";
+		text += "dragonTempleFile: 'STDTemple.schematic'\n";
 		text += "#	/REGION: WorldDamage\n\n\n";
 
 

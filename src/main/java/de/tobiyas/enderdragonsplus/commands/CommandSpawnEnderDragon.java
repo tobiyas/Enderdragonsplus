@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -42,23 +43,34 @@ public class CommandSpawnEnderDragon implements CommandExecutor {
 			return true;
 		
 		List<Block> sightList = player.getLineOfSight(null, 100);
-		Location spawnLocation;
-		if(sightList.size() == 0)
-			spawnLocation = player.getLocation();
-		else
-			spawnLocation = sightList.get(0).getLocation();
+		Location spawnLocation = player.getLocation();
+		
+		for(Block block : sightList){
+			if(block.getType() != Material.AIR){
+				spawnLocation = block.getLocation();
+				break;
+			}
+		}
 		
 		LivingEntity entity = null;
-		if(args.length ==1)
+		if(args.length >= 1){
 			entity = DragonAPI.spawnNewEnderdragon(spawnLocation, args[0]);
-		
-		if(args.length == 0)
-			entity = DragonAPI.spawnNewEnderdragon(spawnLocation);
-		
-		if(entity == null){
-			player.sendMessage(ChatColor.RED + "Please give use the command as followed: /sedp [ageName]");
-			return true;
+			
+			if(entity == null){
+				player.sendMessage(ChatColor.RED + "Could not spawn " + args[0] + " dragon. It does not exist.");
+				return true;
+			}
 		}
+		
+		if(args.length == 0){
+			entity = DragonAPI.spawnNewEnderdragon(spawnLocation);
+			if(entity == null){
+				player.sendMessage(ChatColor.RED + "Could not spawn dragon. Something gone wrong...");
+				return true;
+			}
+		}
+			
+		
 		
 		player.sendMessage(ChatColor.GREEN + "Dragon spawned.");
 		return true;

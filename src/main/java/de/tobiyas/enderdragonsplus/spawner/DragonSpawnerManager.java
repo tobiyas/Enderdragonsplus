@@ -88,7 +88,7 @@ public class DragonSpawnerManager {
 			return;
 		}
 		
-		Set<String> spawnerStrings = config.getYAMLChildren("spawners");
+		Set<String> spawnerStrings = config.getChildren("spawners");
 		for(String spawner : spawnerStrings){
 			DragonSpawnerContainer container = DragonSpawnerContainer.createContainer(config, spawner);
 			if(container == null)

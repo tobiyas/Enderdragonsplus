@@ -5,6 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainerBuilder;
 
 public class NBTTagDragonStore {
 	
@@ -15,7 +17,9 @@ public class NBTTagDragonStore {
 		private Location forceTarget;
 		private String ageName;
 		private boolean flyingHome;
-		private NBTTagCompound properties;
+		private NBTTagCompound properties;		
+		private AgeContainer ageContainer;
+
 		
 		private DragonNBTReturn(){
 			homeLocation = new Location(Bukkit.getWorlds().get(0), 0d, 0d, 0d);
@@ -68,12 +72,19 @@ public class NBTTagDragonStore {
 		public void setProperties(NBTTagCompound properties) {
 			this.properties = properties;
 		}
+
+		public AgeContainer getAgeContainer() {
+			return ageContainer;
+		}
+
+		public DragonNBTReturn setAgeContainer(NBTTagCompound nbtTagCompound) {
+			ageContainer = AgeContainerBuilder.buildFromNBTTag(nbtTagCompound);
+			return this;
+		}
 	}
 	
 
 	public static void saveToNBT(LimitedEnderDragon dragon, NBTTagCompound compound, NBTTagCompound propertiesCompound) {
-		compound.setString("age", dragon.getAgeName());
-		
 		Location homeLocation = dragon.getHomeLocation();
 		compound.setDouble("homeLocation.x", homeLocation.getX());
 		compound.setDouble("homeLocation.y", homeLocation.getY());
@@ -92,12 +103,12 @@ public class NBTTagDragonStore {
 		compound.setBoolean("isHostile", dragon.isHostile());
 		
 		compound.setCompound("properties", propertiesCompound);
+		compound.setCompound("age", AgeContainerBuilder.saveToNBTTagCompound(dragon.getAgeContainer()));
 	}
 	
 
 	public static DragonNBTReturn loadFromNBT(LimitedEnderDragon dragon, NBTTagCompound compound){
 		String worldName = compound.getString("homeLocation.world");
-		String ageType = compound.getString("age");
 		
 		double x = compound.getDouble("homeLocation.x");
 		double y = compound.getDouble("homeLocation.y");
@@ -123,7 +134,7 @@ public class NBTTagDragonStore {
 		DragonNBTReturn returnValue = new DragonNBTReturn();
 		returnValue.setHomeLocation(homeLocation)
 					.setForceTarget(forceTarget)
-					.setAgeName(ageType)
+					.setAgeContainer(compound.getCompound("age"))
 					.setFlyingHome(flyingHome)
 					.setProperties(properties);
 		return returnValue;

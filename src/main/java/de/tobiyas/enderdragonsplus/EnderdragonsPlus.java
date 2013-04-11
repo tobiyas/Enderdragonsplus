@@ -19,15 +19,14 @@ import java.util.logging.Logger;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import de.tobiyas.enderdragonsplus.bridges.BridgeController;
+import de.tobiyas.enderdragonsplus.commands.CommandEDP;
 //import de.tobiyas.enderdragonsplus.commands.CommandDEBUGGOTO;
 import de.tobiyas.enderdragonsplus.commands.CommandGoHome;
 import de.tobiyas.enderdragonsplus.commands.CommandInfo;
 import de.tobiyas.enderdragonsplus.commands.CommandKillEnderDragon;
-import de.tobiyas.enderdragonsplus.commands.CommandLoadAll;
 import de.tobiyas.enderdragonsplus.commands.CommandReloadConfig;
 import de.tobiyas.enderdragonsplus.commands.CommandRespawner;
 import de.tobiyas.enderdragonsplus.commands.CommandSpawnEnderDragon;
-import de.tobiyas.enderdragonsplus.commands.CommandUnloadAll;
 import de.tobiyas.enderdragonsplus.configuration.Config;
 import de.tobiyas.enderdragonsplus.configuration.ConfigTemplate;
 import de.tobiyas.enderdragonsplus.damagewhisperer.EntityDamageWhisperController;
@@ -148,10 +147,8 @@ public class EnderdragonsPlus extends JavaPlugin{
 		new CommandReloadConfig();
 		new CommandGoHome();
 		new CommandInfo();
-		new CommandUnloadAll();
-		new CommandLoadAll();
 		new CommandRespawner();
-		
+		new CommandEDP();
 		//new CommandDEBUGGOTO();
 	}
 	

@@ -28,6 +28,7 @@ public class OnTheFlyReplacer implements Runnable {
 			for(World world : Bukkit.getWorlds()){
 				for(Entity entity : world.getEntities()){
 					if(entity.getType() != EntityType.ENDER_DRAGON) continue;
+					
 					UUID entityID = entity.getUniqueId();
 					if(plugin.interactBridgeController().isSpecialDragon((LivingEntity)entity)) continue;
 					if(entityID == null) continue;

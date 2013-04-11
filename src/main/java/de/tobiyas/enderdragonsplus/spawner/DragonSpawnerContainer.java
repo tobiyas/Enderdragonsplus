@@ -111,7 +111,7 @@ public class DragonSpawnerContainer {
 		int maxDragons = config.getInt("spawners." + id + ".maxDragons");
 		
 		ArrayList<Location> list = new ArrayList<Location>();
-		for(String posLoc : config.getYAMLChildren("spawners." + id + ".locs")){
+		for(String posLoc : config.getChildren("spawners." + id + ".locs")){
 			Location tempLoc = config.getLocation("spawners." + id + ".locs." + posLoc);
 			if(tempLoc != null)
 				list.add(tempLoc);

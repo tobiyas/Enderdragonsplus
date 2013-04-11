@@ -4,7 +4,6 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
@@ -27,23 +26,7 @@ public class Listener_World implements Listener{
 					event.setCancelled(true);
 					return;
 				}
-				/*if(plugin.interactConfig().getConfig_pluginHandleLoads()){
-					plugin.getContainer().saveDragon(entity.getUniqueId());
-					entity.remove();
-				}*/ //TODO check if works
 			}
-		}
-	}
-	
-	//@EventHandler
-	public void chunkLoad(ChunkLoadEvent event){
-		if(!plugin.interactConfig().getConfig_pluginHandleLoads()) return;
-		try{
-			//Chunk chunk = event.getChunk();
-			//plugin.getContainer().loadDragonsInChunk(chunk);
-		}catch(Exception e){
-			e.printStackTrace();
-			if(plugin.interactConfig().getConfig_debugOutput()) plugin.log("DEBUG: Dragon in Chunk load error.");
 		}
 	}
 }

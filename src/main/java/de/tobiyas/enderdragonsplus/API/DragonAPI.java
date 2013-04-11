@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 
 public class DragonAPI {
 
@@ -110,6 +111,10 @@ public class DragonAPI {
 	 * @return
 	 */
 	public static LivingEntity spawnNewEnderdragon(Location location, String ageName){
+		if(!AgeContainer.ageExists(ageName)){
+			return null;
+		}
+		
 		World world = ((CraftWorld)location.getWorld()).getHandle();
 		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, ageName);
 		dragon.spawn();

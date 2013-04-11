@@ -320,8 +320,13 @@ public class TargetController {
 			int homeRange = plugin.interactConfig().getConfig_maxHomeDistance();
 			Location homeLocation = dragon.getHomeLocation();
 
-			if (getVectorDistance(homeLocation) > homeRange)
+			if (getVectorDistance(homeLocation) > homeRange){
 				isFlyingHome = true;
+				forceGoTo = homeLocation;
+				currentTarget = null;
+				lockTarget = false;
+				targets.clear();
+			}
 			
 
 			if (dragon.isFlyingHome() || dragon.getForceLocation() != null)

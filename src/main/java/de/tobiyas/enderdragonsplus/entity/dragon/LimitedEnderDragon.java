@@ -14,9 +14,11 @@ import org.bukkit.craftbukkit.v1_5_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_5_R2.event.CraftEventFactory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeNotFoundException;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonHealthController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonMoveController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.FireballController;
@@ -51,6 +53,11 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	private DragonMoveController dragonMoveController;
 	private AgeContainer ageContainer;
 	private PropertyController propertyController;
+	
+	private boolean doNothingLock = false;
+	private Vector oldSpeed;
+	private Vector oldTarget;
+	
 
 	public LimitedEnderDragon(Location location, World world) {
 		this(location, world, "Normal");
@@ -88,7 +95,11 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	private void createAllControllers(DragonNBTReturn returnContainer){
 		propertyController = new PropertyController(returnContainer);
-		ageContainer = new AgeContainer(returnContainer.getAgeName());
+		try {
+			ageContainer = new AgeContainer(returnContainer.getAgeName());
+		} catch (AgeNotFoundException e) {
+			ageContainer = new AgeContainer();
+		}
 		
 		targetController = new TargetController(returnContainer.getHomeLocation(), this, ageContainer.isHostile());
 		fireballController = new FireballController(targetController);
@@ -101,8 +112,11 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	private void createAllControllers(String ageType, Location homeLocation){
 		boolean hostile = plugin.interactConfig().getConfig_dragonsAreHostile();
-		if(!ageType.equals(""))
+		try{
 			ageContainer = new AgeContainer(ageType);
+		}catch(AgeNotFoundException e){
+			ageContainer = new AgeContainer();
+		}
 		
 		propertyController = new PropertyController();
 		targetController = new TargetController(homeLocation, this, hostile);
@@ -118,6 +132,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		expToDrop = ageContainer.getExp();
 		setHealth(ageContainer.getSpawnHealth());
 		maxHealth = ageContainer.getMaxHealth();
+		plugin.getContainer().registerDragon(this);
 	}
 	
 	@Override
@@ -158,9 +173,30 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	@Override
 	public boolean dealDamage(DamageSource damagesource, int i) { // CraftBukkit - protected -> public
 		dragonHealthController.rememberDamage(damagesource, i);
+		restoreOldDataIfPossible();
 		return super.dealDamage(damagesource, i);
 	}
 	
+
+	private void restoreOldDataIfPossible() {
+		doNothingLock = false;
+		
+		if(oldSpeed != null){
+			this.motX = oldSpeed.getX();
+			this.motY = oldSpeed.getY();
+			this.motZ = oldSpeed.getZ();
+			
+			oldSpeed = null;
+		}
+		
+		if(oldTarget != null){
+			this.a = oldTarget.getX();
+			this.b = oldTarget.getY();
+			this.c = oldTarget.getZ();
+			
+			oldTarget = null;
+		}
+	}
 
 	/**
 	 *  Logic call. All Dragon logic on tick
@@ -181,12 +217,18 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		logicCall++;
 		this.bN = this.bO;
 		
+		dragonHealthController.recheckHealthNotOvercaped();
 		int mappedHealth = dragonHealthController.mapHealth();
-		boolean shouldSitDown = false;
+		boolean shouldSitDown = plugin.interactConfig().getConfig_dragonsSitDownIfInactive();
 		
 		if(!plugin.interactConfig().getConfig_disableDragonHealthBar())
 			this.datawatcher.watch(16, Integer.valueOf(mappedHealth));
 
+		//locks dragons to do absolutely nothing...
+		if(doNothingLock){
+			return;
+		}
+		
 		float f;
 		float f1;
 		float f2;
@@ -246,13 +288,22 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 			this.b = currentTarget.boundingBox.b + d7;
 		} else {
-			shouldSitDown = plugin.interactConfig().getConfig_dragonsSitDownIfInactive();
-			if(!targetController.hasTargets() && shouldSitDown){
+			if(!targetController.hasTargets() && !targetController.isFlyingHome() && shouldSitDown){
 				attackingMode = false;
+				oldSpeed = new Vector()
+							.setX(motX)
+							.setY(motY)
+							.setZ(motZ);
+				
 				this.motX = 0;
 				this.motY = 0;
 				this.motZ = 0;
 				
+				oldTarget = new Vector()
+							.setX(this.a)
+							.setY(this.b)
+							.setZ(this.c);
+						
 				this.a = this.locX;
 				this.b = this.locY;
 				this.c = this.locZ;
@@ -263,6 +314,8 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 				if(loc.getBlock().getType() == Material.AIR){
 					this.motY = -0.2;
 					this.b = this.locY-0.2;
+				}else{
+					doNothingLock = true;
 				}
 			}else{
 				this.a += this.random.nextGaussian() * 2D;
@@ -334,10 +387,14 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		float f7 = 0.06F;
 
 		this.a(0, -1.0F, f7 * (f4 * f6 + (1.0F - f6)));
-		if (this.bQ) {
-			this.move(this.motX * 0.8, this.motY * 0.8, this.motZ * 0.8);
-		} else {
-			this.move(this.motX, this.motY, this.motZ);
+		
+		//From tobiyas stop moving when not needed to
+		if(!doNothingLock){
+			if (this.bQ) {
+				this.move(this.motX * 0.8, this.motY * 0.8, this.motZ * 0.8);
+			} else {
+				this.move(this.motX, this.motY, this.motZ);
+			}
 		}
 
 		Vec3D vec3d2 = this.world.getVec3DPool().create(this.motX, this.motY, this.motZ).a();
@@ -602,5 +659,9 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 	public Object getProperty(String property) {
 		return propertyController.getProperty(property);
+	}
+
+	public AgeContainer getAgeContainer() {
+		return ageContainer;
 	}
 }

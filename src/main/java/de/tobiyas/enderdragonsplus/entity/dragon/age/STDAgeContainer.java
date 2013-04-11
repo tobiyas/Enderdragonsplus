@@ -19,6 +19,7 @@ public class STDAgeContainer {
 	public static final List<ItemStack> STDdrops = new LinkedList<ItemStack>();
 	public static final int STDexp = 1000;
 	public static final int STDdmg = 10;
+	public static final boolean STDageIsHostile = false;
 	
 	public static final int STDrank = 0;
 	
@@ -48,6 +49,7 @@ public class STDAgeContainer {
 		config.set(lowerSTDName + dmgPath, STDdmg);
 		config.set(lowerSTDName + expPath, STDexp);
 		config.set(lowerSTDName + ageNamePath, "&a" + STDName + "&c");
+		config.set(lowerSTDName + ageIsHostilePath, lowerSTDName);
 		
 		config.setDropContainer(lowerSTDName + lootPrefixPath + ".coolitem", 2, 0, 1, 64, 0.5);
 		
