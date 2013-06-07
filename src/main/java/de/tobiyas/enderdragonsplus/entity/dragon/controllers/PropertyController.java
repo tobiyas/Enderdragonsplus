@@ -2,9 +2,9 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.minecraft.server.v1_5_R2.NBTTagCompound;
-import net.minecraft.server.v1_5_R2.NBTTagList;
-import net.minecraft.server.v1_5_R2.NBTTagString;
+import net.minecraft.server.v1_5_R3.NBTTagCompound;
+import net.minecraft.server.v1_5_R3.NBTTagList;
+import net.minecraft.server.v1_5_R3.NBTTagString;
 
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.NBTTagDragonStore.DragonNBTReturn;
 

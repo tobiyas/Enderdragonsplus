@@ -4,10 +4,10 @@ import java.util.UUID;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.minecraft.server.v1_5_R2.World;
+import net.minecraft.server.v1_5_R3.World;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
-import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeNotFoundException;
 
 public class DragonAPI {
 
@@ -111,7 +111,9 @@ public class DragonAPI {
 	 * @return
 	 */
 	public static LivingEntity spawnNewEnderdragon(Location location, String ageName){
-		if(!AgeContainer.ageExists(ageName)){
+		try{
+			EnderdragonsPlus.getPlugin().getAgeContainerManager().getAgeContainer(ageName);
+		}catch(AgeNotFoundException exp){
 			return null;
 		}
 		
@@ -119,10 +121,10 @@ public class DragonAPI {
 		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, ageName);
 		dragon.spawn();
 		
-		if(dragon.getBukkitEntity() == null)
+		if(dragon.getBukkitEntity() == null){
 			return null;
+		}
 			
-		dragon.setHealth(EnderdragonsPlus.getPlugin().interactConfig().getConfig_dragonHealth());
 		return (LivingEntity)dragon.getBukkitEntity();
 	}
 	
@@ -166,7 +168,7 @@ public class DragonAPI {
 		if(LEdragon == null)
 			return false;
 		
-		return LEdragon.spitFireBallOnTarget((net.minecraft.server.v1_5_R2.Entity) target);
+		return LEdragon.spitFireBallOnTarget((net.minecraft.server.v1_5_R3.Entity) target);
 	}
 	
 	

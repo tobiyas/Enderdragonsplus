@@ -1,6 +1,6 @@
 name: EnderdragonsPlus
 main: de.tobiyas.enderdragonsplus.EnderdragonsPlus
-version: 1.9.0
+version: 1.9.1
 website: http://dev.bukkit.org/server-mods/enderdragonsplus/
 author: tobiyas
 depend:
@@ -44,3 +44,8 @@ commands:
     aliases: []
     usage: |
            /edprespawner <respawntime> <dragons>
+  #edpbreath: #Disabled. Not for production code. Only for testing
+  #  description: fires a breath in your sight direction.
+  #  aliases: [edpb]
+  #  usage: |
+  #         /edpbreath

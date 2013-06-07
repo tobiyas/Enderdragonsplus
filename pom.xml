@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.tobiyas</groupId>
   <artifactId>EnderdragonsPlus</artifactId>
-  <version>1.9.0-ALPHA</version>
+  <version>1.9.1-RC</version>
   <name>EnderdragonsPlus</name>
   <url>http://dev.bukkit.org/server-mods/enderdragonsplus/</url>
     
@@ -42,14 +42,14 @@
   	<dependency>
   		<groupId>org.bukkit</groupId>
   		<artifactId>craftbukkit</artifactId>
-  		<version>1.5.1-R0.1-SNAPSHOT</version>
+  		<version>1.5.2-R0.2-SNAPSHOT</version>
   		<optional>true</optional>
   	</dependency>
   	
   	<dependency>
   		<groupId>org.bukkit</groupId>
   		<artifactId>bukkit</artifactId>
-  		<version>1.5.1-R0.1-SNAPSHOT</version>
+  		<version>1.5.2-R0.2-SNAPSHOT</version>
   		<optional>true</optional>
   	</dependency>
   	

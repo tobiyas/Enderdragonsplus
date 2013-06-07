@@ -1,6 +1,7 @@
 package de.tobiyas.enderdragonsplus.commands;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -10,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
 
 public class CommandRespawner implements CommandExecutor {
@@ -70,7 +72,7 @@ public class CommandRespawner implements CommandExecutor {
 			}
 				
 			String respawner = args[1];
-			ArrayList<Location> locs = plugin.getDragonSpawnerManager().getLocationOfRespawner(respawner);
+			ArrayList<Location> locs = plugin.getDragonSpawnerManager().getLocationsOfRespawner(respawner);
 			if(locs == null){
 				player.sendMessage(ChatColor.RED + "Respawner: " + ChatColor.LIGHT_PURPLE + respawner + ChatColor.RED + " could not be found.");
 				return true;
@@ -119,27 +121,50 @@ public class CommandRespawner implements CommandExecutor {
 		if(cmd.equalsIgnoreCase("create")){
 			if(!plugin.getPermissionManager().checkPermissions(player, PermissionNode.createRespawner)) return true;
 			
-			if(args.length <= 1){
-				player.sendMessage(ChatColor.RED + "Wrong usage. Use the command like this: /epdrespawner create <spawnerName> [respawntime] [maxDragons]");
+			if(args.length <= 2){
+				player.sendMessage(ChatColor.RED + "Wrong usage. Use the command like this: /epdrespawner create <spawnerName> [dragonAgeName] [respawntime] [maxDragons]");
 				return true;
 			}
 			
 			String respawnerName = args[1];
 			int respawnTime = 60 * 60;
 			int maxDragons = 1;
+			String dragonAgeName = "Normal";
 			
+			//checks if a respawner with this name already exists
+			List<Location> respawners = plugin.getDragonSpawnerManager().getLocationsOfRespawner(respawnerName);
+			if(respawners != null){
+				sender.sendMessage(ChatColor.RED + "The name " + ChatColor.LIGHT_PURPLE + respawnerName +
+						ChatColor.RED + " is already taken.");
+				return true;
+			}
 			
-			if(args.length >= 3)
+			if(args.length >= 3){
 				try{
-					respawnTime = Integer.valueOf(args[2]);
+					dragonAgeName = args[2];
+					if(!AgeContainer.ageExists(dragonAgeName)){
+						player.sendMessage(ChatColor.RED + "The age name: " + ChatColor.LIGHT_PURPLE
+											+ dragonAgeName + ChatColor.RED + " does not exist.");
+						return true;
+					}
+					
+				}catch(Exception exp){
+					player.sendMessage(ChatColor.RED + "Error during age evaluation.");
+					return true;
+				}
+			}
+			
+			if(args.length >= 4)
+				try{
+					respawnTime = Integer.valueOf(args[3]);
 				}catch(NumberFormatException e){
 					player.sendMessage(ChatColor.RED + "The respawnTime must be a number (in seconds)!");
 					return true;
 				}
 			
-			if(args.length == 4){
+			if(args.length >= 5){
 				try{
-					maxDragons = Integer.valueOf(args[3]);
+					maxDragons = Integer.valueOf(args[4]);
 				}catch(NumberFormatException e){
 					player.sendMessage(ChatColor.RED + "The maxDragons must be a number!");
 					return true;
@@ -147,7 +172,7 @@ public class CommandRespawner implements CommandExecutor {
 			}
 			
 			Location loc = player.getLocation();
-			if(plugin.getDragonSpawnerManager().addSpawner(loc, respawnTime, maxDragons, respawnerName))
+			if(plugin.getDragonSpawnerManager().addSpawner(loc, respawnTime, maxDragons, respawnerName, dragonAgeName))
 				player.sendMessage(ChatColor.GREEN + "Successfully created a new Dragon-Respawner.");
 			else
 				player.sendMessage(ChatColor.RED + "Creation failed! Name already exists.");

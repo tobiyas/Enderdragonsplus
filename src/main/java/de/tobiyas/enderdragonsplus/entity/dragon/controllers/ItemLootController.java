@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.Collections;
 
-import net.minecraft.server.v1_5_R2.Block;
-import net.minecraft.server.v1_5_R2.BlockEnderPortal;
-import net.minecraft.server.v1_5_R2.EntityExperienceOrb;
-import net.minecraft.server.v1_5_R2.MathHelper;
+import net.minecraft.server.v1_5_R3.Block;
+import net.minecraft.server.v1_5_R3.BlockEnderPortal;
+import net.minecraft.server.v1_5_R3.EntityExperienceOrb;
+import net.minecraft.server.v1_5_R3.MathHelper;
 
 import org.bukkit.Location;
 import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_5_R2.util.BlockStateListPopulator;
+import org.bukkit.craftbukkit.v1_5_R3.util.BlockStateListPopulator;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -34,14 +34,20 @@ public class ItemLootController {
 	
 	private int ticksToDespawn = 200;
 	
-	
+	/**
+	 * Creates a new Loot controller for this dragon
+	 * 
+	 * @param dragon
+	 */
 	public ItemLootController(LimitedEnderDragon dragon){
 		random = new Random();
 		this.dragon = dragon;
 	}	
 	
-	//GETTER AND SETTER
-	
+	/**
+	 * Ticks the Death of the dragon 1 tick further.
+	 * This means giving exp and loot to the world.
+	 */
 	public void deathTick(){
 		ticksToDespawn -= 1;
 		if ((ticksToDespawn >= 0) && (ticksToDespawn <= 20)) {
@@ -88,7 +94,7 @@ public class ItemLootController {
 		if(checkCancle())
 			return;
 		
-		int spawnHeight = getTopHeight(posX, posZ, dragon.world.getWorld());
+		int spawnHeight = getNextRealBlockBelowLocation(dragon.getLocation().clone());
 		String prePath = EnderdragonsPlus.getPlugin().getDataFolder() + File.separator + "temples" + File.separator;
 		String fileName = EnderdragonsPlus.getPlugin().interactConfig().getConfig_dragonTempleFile();
 		
@@ -108,10 +114,9 @@ public class ItemLootController {
 		return event.isCancelled();
 	}
 	
-	private int getTopHeight(int x, int z, World world){
-		Location location = new Location(world, x, 255, z);
+	private int getNextRealBlockBelowLocation(Location location){
 		
-		for(int i = 255; i > 1; i++){
+		for(int i = location.getBlockY(); i > 1; i--){
 			if(location.getBlock().getType() != org.bukkit.Material.AIR)
 				return location.add(0, 1, 0).getBlockY();
 			else

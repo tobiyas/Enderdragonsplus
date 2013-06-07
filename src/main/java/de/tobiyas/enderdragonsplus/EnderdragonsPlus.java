@@ -8,19 +8,18 @@
 package de.tobiyas.enderdragonsplus;
 
 
-import net.minecraft.server.v1_5_R2.EntityTypes;
-
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.logging.Logger;
 
+import net.minecraft.server.v1_5_R3.EntityTypes;
+
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import de.tobiyas.enderdragonsplus.bridges.BridgeController;
 import de.tobiyas.enderdragonsplus.commands.CommandEDP;
-//import de.tobiyas.enderdragonsplus.commands.CommandDEBUGGOTO;
 import de.tobiyas.enderdragonsplus.commands.CommandGoHome;
 import de.tobiyas.enderdragonsplus.commands.CommandInfo;
 import de.tobiyas.enderdragonsplus.commands.CommandKillEnderDragon;
@@ -34,7 +33,8 @@ import de.tobiyas.enderdragonsplus.datacontainer.Container;
 import de.tobiyas.enderdragonsplus.datacontainer.DragonLogicTicker;
 import de.tobiyas.enderdragonsplus.datacontainer.OnTheFlyReplacer;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
-import de.tobiyas.enderdragonsplus.entity.dragon.age.STDAgeContainer;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
+import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainerManager;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Entity;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Fireball;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
@@ -58,6 +58,8 @@ public class EnderdragonsPlus extends JavaPlugin{
 	private PermissionManager permissionManager;
 	private Container container;
 	
+	private AgeContainerManager ageContainerManager;
+	
 	private BridgeController bridgeController;
 	private DragonSpawnerManager dragonSpawnerManager;
 	
@@ -80,13 +82,13 @@ public class EnderdragonsPlus extends JavaPlugin{
 		
 		setupConfiguration();
 		setupAgeContainer();
+		checkAgeContainerSynthax();
 		container = new Container();
 		
 		checkDepends();
 		registerEvents();
 		registerCommands();
 		
-		//container.loadContainer();
 		registerTasks();
 		
 		registerManagers();
@@ -149,6 +151,8 @@ public class EnderdragonsPlus extends JavaPlugin{
 		new CommandInfo();
 		new CommandRespawner();
 		new CommandEDP();
+		//new CommandFireBreath();
+		//new CommandError();
 		//new CommandDEBUGGOTO();
 	}
 	
@@ -168,12 +172,45 @@ public class EnderdragonsPlus extends JavaPlugin{
 	private void setupConfiguration(){
 		config = new Config(this);
 		ConfigTemplate template = new ConfigTemplate();
-		if(template.isOldConfigVersion())
+		if(template.isOldConfigVersion()){
 			template.writeTemplate();
+		}
+	}
+	
+	private void checkAgeContainerSynthax(){
+		List<String> notCorrectAgeNames = AgeContainer.getAllIncorrectAgeNames();
+		if(notCorrectAgeNames.size() > 0){			
+			for(int i = 0; i < notCorrectAgeNames.size(); i++){
+				List<String> notCorrectFields = AgeContainer.getIncorrectFieldsOfAge(notCorrectAgeNames.get(i));
+				
+				String ageIncorrectFieldString = "Age: " + notCorrectAgeNames + " has incorrect fields: ";
+				for(String incorrectField : notCorrectFields){
+					ageIncorrectFieldString += incorrectField + ",";
+				}
+				
+				debugLogger.logError(ageIncorrectFieldString);
+				log(ageIncorrectFieldString);
+			}
+		}
+		List<String> correctAges = AgeContainer.getAllCorrectAgeNames();
+		String correctAgeString = "Ages loaded:";
+		for(String correctAge : correctAges){
+			correctAgeString += " " + correctAge + ",";
+		}
+		
+		if(correctAges.size() > 0){
+			correctAgeString.subSequence(0, correctAgeString.length() - 3);
+			correctAgeString += ".";
+			
+			log(correctAgeString);
+			debugLogger.log(correctAgeString);
+		}
+		
 	}
 	
 	private void setupAgeContainer(){
-		STDAgeContainer.generateSTDAgeContainer();
+		ageContainerManager = new AgeContainerManager();
+		ageContainerManager.reload();
 	}
 	
 	private void initMetrics(){
@@ -215,6 +252,10 @@ public class EnderdragonsPlus extends JavaPlugin{
 	
 	public EntityDamageWhisperController getDamageWhisperController(){
 		return damageWhisperController;
+	}
+	
+	public AgeContainerManager getAgeContainerManager(){
+		return ageContainerManager;
 	}
 
 }

@@ -9,9 +9,9 @@ import javax.naming.OperationNotSupportedException;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_5_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_5_R2.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R3.event.CraftEventFactory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -28,16 +28,16 @@ import de.tobiyas.enderdragonsplus.entity.dragon.controllers.NBTTagDragonStore.D
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.PropertyController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.TargetController;
 
-import net.minecraft.server.v1_5_R2.DamageSource;
-import net.minecraft.server.v1_5_R2.Entity;
-import net.minecraft.server.v1_5_R2.EntityComplexPart;
-import net.minecraft.server.v1_5_R2.EntityEnderDragon;
-import net.minecraft.server.v1_5_R2.EntityLiving;
-import net.minecraft.server.v1_5_R2.LocaleI18n;
-import net.minecraft.server.v1_5_R2.MathHelper;
-import net.minecraft.server.v1_5_R2.NBTTagCompound;
-import net.minecraft.server.v1_5_R2.Vec3D;
-import net.minecraft.server.v1_5_R2.World;
+import net.minecraft.server.v1_5_R3.DamageSource;
+import net.minecraft.server.v1_5_R3.Entity;
+import net.minecraft.server.v1_5_R3.EntityComplexPart;
+import net.minecraft.server.v1_5_R3.EntityEnderDragon;
+import net.minecraft.server.v1_5_R3.EntityLiving;
+import net.minecraft.server.v1_5_R3.LocaleI18n;
+import net.minecraft.server.v1_5_R3.MathHelper;
+import net.minecraft.server.v1_5_R3.NBTTagCompound;
+import net.minecraft.server.v1_5_R3.Vec3D;
+import net.minecraft.server.v1_5_R3.World;
 
 public class LimitedEnderDragon extends EntityEnderDragon {
 	
@@ -96,9 +96,9 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	private void createAllControllers(DragonNBTReturn returnContainer){
 		propertyController = new PropertyController(returnContainer);
 		try {
-			ageContainer = new AgeContainer(returnContainer.getAgeName());
+			ageContainer = plugin.getAgeContainerManager().getAgeContainer(returnContainer.getAgeName());
 		} catch (AgeNotFoundException e) {
-			ageContainer = new AgeContainer();
+			ageContainer = plugin.getAgeContainerManager().getNormalAgeContainer();
 		}
 		
 		targetController = new TargetController(returnContainer.getHomeLocation(), this, ageContainer.isHostile());
@@ -107,15 +107,17 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		dragonHealthController = new DragonHealthController(this);
 		dragonMoveController = new DragonMoveController(this);
 		
+		this.uniqueID = returnContainer.getUuid();
+		
 		initStats();
 	}
 	
 	private void createAllControllers(String ageType, Location homeLocation){
 		boolean hostile = plugin.interactConfig().getConfig_dragonsAreHostile();
-		try{
-			ageContainer = new AgeContainer(ageType);
-		}catch(AgeNotFoundException e){
-			ageContainer = new AgeContainer();
+		try {
+			ageContainer = plugin.getAgeContainerManager().getAgeContainer(ageType);
+		} catch (AgeNotFoundException e) {
+			ageContainer = plugin.getAgeContainerManager().getNormalAgeContainer();
 		}
 		
 		propertyController = new PropertyController();

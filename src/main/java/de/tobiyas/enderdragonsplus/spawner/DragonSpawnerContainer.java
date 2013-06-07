@@ -6,14 +6,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.server.v1_5_R2.EntityPlayer;
-import net.minecraft.server.v1_5_R2.Packet130UpdateSign;
+import net.minecraft.server.v1_5_R3.EntityPlayer;
+import net.minecraft.server.v1_5_R3.Packet130UpdateSign;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
@@ -32,10 +32,11 @@ public class DragonSpawnerContainer {
 	private int tickRefresher;
 	
 	private String spawnerID;
+	private String dragonAgeName;
 	private EnderdragonsPlus plugin;
 	
 	
-	private DragonSpawnerContainer(int respawnTime, int maxDragons, Location loc, String spawnerID){
+	private DragonSpawnerContainer(int respawnTime, int maxDragons, Location loc, String spawnerID, String dragonAgeName){
 		this.plugin = EnderdragonsPlus.getPlugin();
 		this.spawnerID = spawnerID;
 		this.locations = new ArrayList<Location>();
@@ -43,12 +44,13 @@ public class DragonSpawnerContainer {
 		this.respawnTime = respawnTime;
 		this.maxDragons = maxDragons;
 		this.tickRefresher = 3;
+		this.dragonAgeName = dragonAgeName;
 		
 		hidingBlock = new HashMap<String, Boolean>();
 		spawnPlaces = new HashSet<DragonSpawnPlace>();
 		
 		for(int i = 0; i < maxDragons; i++){
-			spawnPlaces.add(new DragonSpawnPlace(this, respawnTime));
+			spawnPlaces.add(new DragonSpawnPlace(this, respawnTime, dragonAgeName));
 		}
 		linkPosition(loc);
 	}
@@ -89,6 +91,7 @@ public class DragonSpawnerContainer {
 		config.createSection("spawners." + spawnerID);
 		config.set("spawners." + spawnerID + ".respawnTime", respawnTime);
 		config.set("spawners." + spawnerID + ".maxDragons", maxDragons);
+		config.set("spawners." + spawnerID + ".ageName", dragonAgeName);
 		
 		int i = 1;
 		for(Location loc : locations)
@@ -109,6 +112,7 @@ public class DragonSpawnerContainer {
 		config.load();
 		int respawnTime = config.getInt("spawners." + id + ".respawnTime");
 		int maxDragons = config.getInt("spawners." + id + ".maxDragons");
+		String dragonAgeName = config.getString("spawners." + id + ".ageName", "Normal");
 		
 		ArrayList<Location> list = new ArrayList<Location>();
 		for(String posLoc : config.getChildren("spawners." + id + ".locs")){
@@ -123,7 +127,7 @@ public class DragonSpawnerContainer {
 		}
 		
 		Location initLoc = list.get(0);
-		DragonSpawnerContainer dragonSpawnContainer = new DragonSpawnerContainer(respawnTime, maxDragons, initLoc, id);
+		DragonSpawnerContainer dragonSpawnContainer = new DragonSpawnerContainer(respawnTime, maxDragons, initLoc, id, dragonAgeName);
 		
 		for(int i = 1; i < list.size(); i++)
 			dragonSpawnContainer.linkPosition(list.get(i));
@@ -146,8 +150,8 @@ public class DragonSpawnerContainer {
 		return dragonSpawnContainer;
 	}
 	
-	public static DragonSpawnerContainer createContainer(Location loc, int maxDragons, int respawnTime, String id){
-		DragonSpawnerContainer container = new DragonSpawnerContainer(respawnTime, maxDragons, loc, id);
+	public static DragonSpawnerContainer createContainer(Location loc, int maxDragons, int respawnTime, String id, String dragonAgeName){
+		DragonSpawnerContainer container = new DragonSpawnerContainer(respawnTime, maxDragons, loc, id, dragonAgeName);
 		if(container != null)
 			container.createSigns();
 		

@@ -15,14 +15,14 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 
-import net.minecraft.server.v1_5_R2.World;
+import net.minecraft.server.v1_5_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -62,6 +62,7 @@ public class Listener_Entity implements Listener {
 	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void replaceDragon(CreatureSpawnEvent event){
+		//checking all criteria if replacing possible
 		if(event.isCancelled()) return;
 		if(!event.getEntityType().equals(EntityType.ENDER_DRAGON)) return;
 		if(!plugin.interactConfig().getConfig_replaceAllDragons()) return;
@@ -69,12 +70,6 @@ public class Listener_Entity implements Listener {
 		if(plugin.interactConfig().getConfig_debugOutput())
 			plugin.log("enderdragon id: " + event.getEntity().getEntityId());
 		
-		UUID id = event.getEntity().getUniqueId();
-		if(plugin.getContainer().containsID(id)){
-			if(plugin.interactConfig().getConfig_anounceDragonSpawning())
-				announceDragon(event.getEntity());
-			return;
-		}
 		
 		if(plugin.interactConfig().getConfig_debugOutput())
 			plugin.log("id detection failed.");
@@ -91,30 +86,32 @@ public class Listener_Entity implements Listener {
 		
 		recDepth ++;
 			
+		
+		//replacing
+		UUID id = event.getEntity().getUniqueId();
+		
 		String uidString = id.toString();
-		event.getEntity().remove();
+		//event.getEntity().remove();
 		
 		Entity newDragon = spawnLimitedEnderDragon(event.getLocation(), uidString).getBukkitEntity();
 		try{
-			EntityEvent entityEvent = (EntityEvent) event;			
+			EntityEvent entityEvent = (EntityEvent) event;
 			
 			Field field = entityEvent.getClass().getSuperclass().getDeclaredField("entity");
 			field.setAccessible(true);
 			field.set(entityEvent, newDragon);
 			
-		}catch (IllegalArgumentException e) {
+		}catch (Exception exp) {
 			plugin.log("Something gone Wrong with Injecting!");
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			plugin.log("Something gone Wrong with Injecting!");
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			plugin.log("Something gone Wrong with Injecting!");
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			plugin.log("Something gone Wrong with Injecting!");
-			e.printStackTrace();
-		}	
+			exp.printStackTrace();
+		}
+		
+		//Anouncing
+		if(plugin.getContainer().containsID(id)){
+			if(plugin.interactConfig().getConfig_anounceDragonSpawning())
+				announceDragon(event.getEntity());
+			return;
+		}
 	}
 	
 	private void announceDragon(Entity entity){
@@ -203,8 +200,7 @@ public class Listener_Entity implements Listener {
 		
 		UUID uuid = UUID.fromString(uid);
 		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
-		dragon.spawn();
-		dragon.setHealth(plugin.interactConfig().getConfig_dragonHealth());
+		//dragon.spawn();
 		return dragon;
 	}
 	

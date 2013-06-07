@@ -28,6 +28,7 @@ public class CommandReloadConfig implements CommandExecutor {
 			return true;
 		
 		plugin.interactConfig().reload();
+		plugin.getAgeContainerManager().reload();
 		sender.sendMessage(ChatColor.GREEN + "Config reloaded.");
 		return true;
 	}

@@ -1,6 +1,8 @@
 package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
-import net.minecraft.server.v1_5_R2.NBTTagCompound;
+import java.util.UUID;
+
+import net.minecraft.server.v1_5_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -19,8 +21,10 @@ public class NBTTagDragonStore {
 		private boolean flyingHome;
 		private NBTTagCompound properties;		
 		private AgeContainer ageContainer;
-
 		
+		private UUID uuid;
+
+
 		private DragonNBTReturn(){
 			homeLocation = new Location(Bukkit.getWorlds().get(0), 0d, 0d, 0d);
 			forceTarget = homeLocation.clone();
@@ -49,6 +53,16 @@ public class NBTTagDragonStore {
 			return this;
 		}
 
+		public DragonNBTReturn setProperties(NBTTagCompound properties) {
+			this.properties = properties;
+			return this;
+		}
+
+		public DragonNBTReturn setAgeContainer(NBTTagCompound nbtTagCompound) {
+			ageContainer = AgeContainerBuilder.buildFromNBTTag(nbtTagCompound);
+			return this;
+		}
+
 		public String getAgeName() {
 			return ageName;
 		}
@@ -69,16 +83,16 @@ public class NBTTagDragonStore {
 			return properties;
 		}
 
-		public void setProperties(NBTTagCompound properties) {
-			this.properties = properties;
-		}
-
 		public AgeContainer getAgeContainer() {
 			return ageContainer;
 		}
 
-		public DragonNBTReturn setAgeContainer(NBTTagCompound nbtTagCompound) {
-			ageContainer = AgeContainerBuilder.buildFromNBTTag(nbtTagCompound);
+		public UUID getUuid() {
+			return uuid;
+		}
+
+		public DragonNBTReturn setUuid(UUID uuid) {
+			this.uuid = uuid;
 			return this;
 		}
 	}
@@ -104,6 +118,7 @@ public class NBTTagDragonStore {
 		
 		compound.setCompound("properties", propertiesCompound);
 		compound.setCompound("age", AgeContainerBuilder.saveToNBTTagCompound(dragon.getAgeContainer()));
+		compound.setString("uuid", dragon.getUUID().toString());
 	}
 	
 
@@ -130,13 +145,16 @@ public class NBTTagDragonStore {
 		}
 		
 		NBTTagCompound properties = compound.getCompound("properties");
+		UUID uuid = UUID.fromString(compound.getString("uuid"));
+		
 		
 		DragonNBTReturn returnValue = new DragonNBTReturn();
 		returnValue.setHomeLocation(homeLocation)
 					.setForceTarget(forceTarget)
 					.setAgeContainer(compound.getCompound("age"))
 					.setFlyingHome(flyingHome)
-					.setProperties(properties);
+					.setProperties(properties)
+					.setUuid(uuid);
 		return returnValue;
 	}
 	

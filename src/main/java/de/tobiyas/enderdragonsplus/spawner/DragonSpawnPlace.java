@@ -19,14 +19,16 @@ public class DragonSpawnPlace {
 	private int respawnTime;
 	private UUID dragonID;
 	private int newRespawnIn;
+	private String dragonAgeName;
 	
 	private EnderdragonsPlus plugin;
 	
-	public DragonSpawnPlace(DragonSpawnerContainer dsContainer, int respawnTime){
+	public DragonSpawnPlace(DragonSpawnerContainer dsContainer, int respawnTime, String dragonAgeName){
 		plugin = EnderdragonsPlus.getPlugin();
 		this.dsContainer = dsContainer;
 		this.respawnTime = respawnTime;
 		this.newRespawnIn = respawnTime;
+		this.dragonAgeName = dragonAgeName;
 	}
 	
 	public void setDelay(int delay){
@@ -58,7 +60,7 @@ public class DragonSpawnPlace {
 			newRespawnIn --;
 			if(newRespawnIn < 0){
 				Location loc = getRandomLoc();
-				LivingEntity newDragon = DragonAPI.spawnNewEnderdragon(loc);
+				LivingEntity newDragon = DragonAPI.spawnNewEnderdragon(loc, dragonAgeName);
 				if(newDragon != null){
 					newRespawnIn = respawnTime;
 					dragonID = newDragon.getUniqueId();

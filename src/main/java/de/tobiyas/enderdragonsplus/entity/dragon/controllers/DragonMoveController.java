@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_5_R2.AxisAlignedBB;
-import net.minecraft.server.v1_5_R2.Block;
-import net.minecraft.server.v1_5_R2.Entity;
-import net.minecraft.server.v1_5_R2.EntityLiving;
-import net.minecraft.server.v1_5_R2.MathHelper;
+import net.minecraft.server.v1_5_R3.AxisAlignedBB;
+import net.minecraft.server.v1_5_R3.Block;
+import net.minecraft.server.v1_5_R3.Entity;
+import net.minecraft.server.v1_5_R3.EntityLiving;
+import net.minecraft.server.v1_5_R3.Explosion;
+import net.minecraft.server.v1_5_R3.MathHelper;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
@@ -55,6 +56,8 @@ public class DragonMoveController {
 		}
 	}
 	
+	private Explosion explosionSource = new Explosion(null, dragon, Double.NaN, Double.NaN, Double.NaN, Float.NaN); // CraftBukkit - reusable source for CraftTNTPrimed.getSource()
+	
 	
 	// Original: a(AxisAlignedBB axisalignedbb)
 	public boolean checkHitBlocks(AxisAlignedBB axisalignedbb) {
@@ -71,7 +74,7 @@ public class DragonMoveController {
 
 		// CraftBukkit start - create a list to hold all the destroyed blocks
 		List<org.bukkit.block.Block> destroyedBlocks = new ArrayList<org.bukkit.block.Block>();
-		org.bukkit.craftbukkit.v1_5_R2.CraftWorld craftWorld = dragon.world.getWorld();
+		org.bukkit.craftbukkit.v1_5_R3.CraftWorld craftWorld = dragon.world.getWorld();
 		// CraftBukkit end
 
 		for (int blockX = pos1X; blockX <= pos2X; ++blockX) {
@@ -114,9 +117,29 @@ public class DragonMoveController {
 			// We should consider adding an event extension for it, or perhaps
 			// returning true if the event is cancelled.
 			return hitSomethingHard;
+		} else if (event.getYield() == 0F) {
+			// Yield zero ==> no drops
+			for (org.bukkit.block.Block block : event.blockList()) {
+				dragon.world.setAir(block.getX(), block.getY(), block.getZ());
+			}
 		} else {
 			for (org.bukkit.block.Block block : event.blockList()) {
-				craftWorld.explodeBlock(block, event.getYield());
+				int blockId = block.getTypeId();
+
+				if (blockId == 0) {
+					continue;
+				}
+
+				int blockX = block.getX();
+				int blockY = block.getY();
+				int blockZ = block.getZ();
+
+				if (Block.byId[blockId].a(explosionSource)) {
+					Block.byId[blockId].dropNaturally(dragon.world, blockX, blockY, blockZ, block.getData(), event.getYield(), 0);
+				}
+				Block.byId[blockId].wasExploded(dragon.world, blockX, blockY, blockZ, explosionSource);
+
+				dragon.world.setAir(blockX, blockY, blockZ);
 			}
 		}
 		// CraftBukkit end

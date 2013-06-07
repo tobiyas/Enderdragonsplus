@@ -41,9 +41,9 @@ public class DragonSpawnerManager {
 		ticker.continueTimer();
 	}
 	
-	public boolean addSpawner(Location loc, int respawnTime, int maxDragons, String spawnerName){
+	public boolean addSpawner(Location loc, int respawnTime, int maxDragons, String spawnerName, String dragonAgeName){
 		if(containerContains(spawnerName)) return false;
-		DragonSpawnerContainer container = DragonSpawnerContainer.createContainer(loc.getBlock().getLocation(), maxDragons, respawnTime, spawnerName);
+		DragonSpawnerContainer container = DragonSpawnerContainer.createContainer(loc.getBlock().getLocation(), maxDragons, respawnTime, spawnerName, dragonAgeName);
 		if(container == null)
 			return false;
 		spawners.put(spawnerName, container);
@@ -155,7 +155,7 @@ public class DragonSpawnerManager {
 		}
 	}
 
-	public ArrayList<Location> getLocationOfRespawner(String respawner) {
+	public ArrayList<Location> getLocationsOfRespawner(String respawner) {
 		DragonSpawnerContainer spawner =  spawners.get(respawner);
 		if(spawner == null)
 			return null;
