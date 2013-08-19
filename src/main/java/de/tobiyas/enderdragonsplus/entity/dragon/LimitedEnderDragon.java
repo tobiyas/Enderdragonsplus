@@ -20,6 +20,7 @@ import net.minecraft.server.v1_6_R2.NBTTagCompound;
 import net.minecraft.server.v1_6_R2.Vec3D;
 import net.minecraft.server.v1_6_R2.World;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -125,6 +126,19 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		itemController = new ItemLootController(this);
 		dragonHealthController = new DragonHealthController(this);
 		dragonMoveController = new DragonMoveController(this);
+		
+		
+		//Schedules the spawnHealth for next Tick. This should prevent previous settings from CB side.
+		final double spawnhealth = ageContainer.getSpawnHealth();
+		Bukkit.getScheduler().scheduleSyncDelayedTask(EnderdragonsPlus.getPlugin(), new Runnable() {
+			
+			@Override
+			public void run() {
+				try{
+					LimitedEnderDragon.this.setHealth((float) spawnhealth);
+				}catch(Exception exp){}
+			}
+		}, 1);
 		
 		initStats();
 	}
