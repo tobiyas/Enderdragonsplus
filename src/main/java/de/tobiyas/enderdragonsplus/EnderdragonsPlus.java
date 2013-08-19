@@ -10,9 +10,9 @@ package de.tobiyas.enderdragonsplus;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Set;
 
-import net.minecraft.server.v1_5_R3.EntityTypes;
+import net.minecraft.server.v1_6_R2.EntityTypes;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -35,6 +35,7 @@ import de.tobiyas.enderdragonsplus.datacontainer.OnTheFlyReplacer;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainerManager;
+import de.tobiyas.enderdragonsplus.listeners.Listener_Dragon_Spawn;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Entity;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Fireball;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
@@ -48,7 +49,6 @@ import de.tobiyas.util.permissions.PermissionManager;
 
 
 public class EnderdragonsPlus extends JavaPlugin{
-	private Logger log;
 	private DebugLogger debugLogger;
 	private PluginDescriptionFile description;
 
@@ -71,13 +71,14 @@ public class EnderdragonsPlus extends JavaPlugin{
 	@Override
 	public void onEnable(){
 		plugin = this;
-		log = Logger.getLogger("Minecraft");
+		
 		debugLogger = new DebugLogger(this);
+		debugLogger.setAlsoToPlugin(true);
 		
 		description = getDescription();
 		prefix = "["+description.getName()+"] ";
 		
-		injectDragon();
+		tryInjectDragon();
 		permissionManager = new PermissionManager(this);
 		
 		setupConfiguration();
@@ -97,7 +98,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 		log(description.getFullName() + " fully loaded with: " + permissionManager.getPermissionsName());
 	}
 	
-	private void injectDragon(){
+	private void tryInjectDragon(){
 		try{
 	      Method method = EntityTypes.class.getDeclaredMethod("a", new Class[] { Class.class, String.class, Integer.TYPE });
 	      method.setAccessible(true);
@@ -131,7 +132,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 
 	}
 	public void log(String message){
-		log.info(prefix+message);
+		debugLogger.log(prefix + message);
 	}
 
 
@@ -141,6 +142,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 		new Listener_Plugins();
 		new Listener_Sign();
 		new Listener_Fireball();
+		new Listener_Dragon_Spawn();
 	}
 	
 	private void registerCommands(){
@@ -178,32 +180,28 @@ public class EnderdragonsPlus extends JavaPlugin{
 	}
 	
 	private void checkAgeContainerSynthax(){
-		List<String> notCorrectAgeNames = AgeContainer.getAllIncorrectAgeNames();
-		if(notCorrectAgeNames.size() > 0){			
-			for(int i = 0; i < notCorrectAgeNames.size(); i++){
-				List<String> notCorrectFields = AgeContainer.getIncorrectFieldsOfAge(notCorrectAgeNames.get(i));
-				
-				String ageIncorrectFieldString = "Age: " + notCorrectAgeNames + " has incorrect fields: ";
-				for(String incorrectField : notCorrectFields){
-					ageIncorrectFieldString += incorrectField + ",";
-				}
-				
-				debugLogger.logError(ageIncorrectFieldString);
-				log(ageIncorrectFieldString);
+		for(String ageName : ageContainerManager.getAllIncorrectAgeNames()){
+			List<String> notCorrectFields = AgeContainer.getIncorrectFieldsOfAge(ageName);
+			String ageIncorrectFieldString = "Age: " + ageName + " has incorrect fields: ";
+			for(String incorrectField : notCorrectFields){
+				ageIncorrectFieldString += incorrectField + ",";
 			}
+			
+			debugLogger.logError(ageIncorrectFieldString);
+			log(ageIncorrectFieldString);
 		}
-		List<String> correctAges = AgeContainer.getAllCorrectAgeNames();
+		
+		Set<String> correctAges = ageContainerManager.getAllAgeNames();
 		String correctAgeString = "Ages loaded:";
 		for(String correctAge : correctAges){
 			correctAgeString += " " + correctAge + ",";
 		}
 		
 		if(correctAges.size() > 0){
-			correctAgeString.subSequence(0, correctAgeString.length() - 3);
+			correctAgeString = correctAgeString.substring(0, correctAgeString.length() - 1);
 			correctAgeString += ".";
 			
 			log(correctAgeString);
-			debugLogger.log(correctAgeString);
 		}
 		
 	}

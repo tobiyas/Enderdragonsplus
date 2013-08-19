@@ -13,7 +13,7 @@ public class RecursionEraser implements Runnable {
 
 	@Override
 	public void run() {
-		Listener_Entity.recDepth = 0;
+		Listener_Dragon_Spawn.recDepth = 0;
 	}
 
 }

@@ -10,13 +10,13 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 //import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 
-import net.minecraft.server.v1_5_R3.DamageSource;
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityEnderCrystal;
-import net.minecraft.server.v1_5_R3.EntityHuman;
-import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
-import net.minecraft.server.v1_5_R3.Explosion;
+import net.minecraft.server.v1_6_R2.DamageSource;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityEnderCrystal;
+import net.minecraft.server.v1_6_R2.EntityHuman;
+import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.Explosion;
 
 public class DragonHealthController {
 
@@ -24,7 +24,7 @@ public class DragonHealthController {
 	private LimitedEnderDragon dragon;
 	private Random random;
 	
-	private HashMap<String, Integer> damageDoneByPlayer;
+	private HashMap<String, Float> damageDoneByPlayer;
 	private String lastPlayerAttacked = "";
 	
 	//private AgeContainer ageContainer;
@@ -34,7 +34,7 @@ public class DragonHealthController {
 		this.dragon = dragon;
 		random = new Random();
 		
-		damageDoneByPlayer = new HashMap<String, Integer>();
+		damageDoneByPlayer = new HashMap<String, Float>();
 	}
 	
 	
@@ -42,20 +42,21 @@ public class DragonHealthController {
 	 * Checks if the Dragon is near a EnderDragonCrystal to regain health
 	 */
 	public void checkRegainHealth() {
-		if (dragon.bS != null) {
-			if (dragon.bS.dead) {
-				dragon.a(dragon.g, DamageSource.explosion((Explosion) null), 10);
-				dragon.bS = null;
+		if (dragon.bC != null) {
+			if (dragon.bC.dead) {
+				dragon.a(dragon.bq, DamageSource.explosion((Explosion) null), 10F);
+				
+				dragon.bC = null;
 			} else if (dragon.ticksLived % 10 == 0 && dragon.getHealth() < dragon.getMaxHealth()) {
 				// CraftBukkit start
 				org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(
 						dragon.getBukkitEntity(),
-						1,
+						1.0,
 						org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL);
 				dragon.world.getServer().getPluginManager().callEvent(event);
 
 				if (!event.isCancelled()) {
-					int newDragonHealth = dragon.getHealth() + event.getAmount();
+					float newDragonHealth = (float) (dragon.getHealth() + event.getAmount());
 					dragon.setHealth(newDragonHealth);
 				}
 				// CraftBukkit end
@@ -80,7 +81,7 @@ public class DragonHealthController {
 				}
 			}
 
-			dragon.bS = entityendercrystal;
+			dragon.bC = entityendercrystal;
 		}
 	}
 	
@@ -109,11 +110,11 @@ public class DragonHealthController {
 					if (!damageEvent.isCancelled()) {
 						 entity.getBukkitEntity().setLastDamageCause(damageEvent);
 						entity.damageEntity(DamageSource.mobAttack(dragon),
-								damageEvent.getDamage());
+								(float) damageEvent.getDamage());
 					}
 				} else {
-					int damageDone = plugin.interactConfig().getConfig_dragonDamage();
-					entity.damageEntity(DamageSource.mobAttack(dragon), damageDone);
+					double damageDone = plugin.interactConfig().getConfig_dragonDamage();
+					entity.damageEntity(DamageSource.mobAttack(dragon), (float) damageDone);
 				}
 				// CraftBukkit end
 			}
@@ -136,15 +137,15 @@ public class DragonHealthController {
 		return mappedHealth;
 	}
 	
-	public void rememberDamage(DamageSource source, int damage){
+	public void rememberDamage(DamageSource source, float damage){
 		if(source.getEntity() instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer) source.getEntity();
 			rememberDamage(player.getName(), damage);
 		}
 	}
 	
-	public void rememberDamage(String player, int damage){
-		int newDmg = damage;	
+	public void rememberDamage(String player, float damage){
+		float newDmg = damage;	
 		if(damageDoneByPlayer.containsKey(player))
 			newDmg += damageDoneByPlayer.get(player);
 		
@@ -152,7 +153,7 @@ public class DragonHealthController {
 		lastPlayerAttacked = player;
 	}
 	
-	public Map<String, Integer> getPlayerDamage(){
+	public Map<String, Float> getPlayerDamage(){
 		return damageDoneByPlayer;
 	}
 
@@ -162,7 +163,7 @@ public class DragonHealthController {
 	}
 
 
-	public int getDamageByPlayer(String player) {
+	public float getDamageByPlayer(String player) {
 		if(damageDoneByPlayer.containsKey(player))
 			return damageDoneByPlayer.get(player);
 		
@@ -171,8 +172,8 @@ public class DragonHealthController {
 
 
 	public void recheckHealthNotOvercaped() {
-		int dragonMaxHealth = dragon.getMaxHealth();
-		int dragonCurrentHealth = dragon.getHealth();
+		float dragonMaxHealth = dragon.getMaxHealth();
+		float dragonCurrentHealth = dragon.getHealth();
 		
 		if(dragonCurrentHealth > dragonMaxHealth){
 			dragon.setHealth(dragonMaxHealth);

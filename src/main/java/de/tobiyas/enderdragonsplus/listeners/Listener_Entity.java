@@ -8,44 +8,34 @@
 package de.tobiyas.enderdragonsplus.listeners;
 
 
-import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-
-import net.minecraft.server.v1_5_R3.World;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener; 
-import org.bukkit.event.EventHandler; 
-
-import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
 
 public class Listener_Entity implements Listener {
 	private EnderdragonsPlus plugin;
-	public static int recDepth = 0;
 	
 	public Listener_Entity(){
 		this.plugin = EnderdragonsPlus.getPlugin();
@@ -59,89 +49,7 @@ public class Listener_Entity implements Listener {
 		if(plugin.interactConfig().getConfig_deactivateDragonTemples()) 
 			event.setCancelled(true);
 	}
-	
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void replaceDragon(CreatureSpawnEvent event){
-		//checking all criteria if replacing possible
-		if(event.isCancelled()) return;
-		if(!event.getEntityType().equals(EntityType.ENDER_DRAGON)) return;
-		if(!plugin.interactConfig().getConfig_replaceAllDragons()) return;
-		
-		if(plugin.interactConfig().getConfig_debugOutput())
-			plugin.log("enderdragon id: " + event.getEntity().getEntityId());
-		
-		
-		if(plugin.interactConfig().getConfig_debugOutput())
-			plugin.log("id detection failed.");
-		
-		if(plugin.interactBridgeController().isSpecialDragon(event.getEntity())) return;
-		
-		if(recDepth > 40){
-			plugin.log("CRITICAL: Concurring plugins detected! Disable the concurring plugin!");
-			return;
-		}
-		
-		if(recDepth == 0)
-			new RecursionEraser();
-		
-		recDepth ++;
-			
-		
-		//replacing
-		UUID id = event.getEntity().getUniqueId();
-		
-		String uidString = id.toString();
-		//event.getEntity().remove();
-		
-		Entity newDragon = spawnLimitedEnderDragon(event.getLocation(), uidString).getBukkitEntity();
-		try{
-			EntityEvent entityEvent = (EntityEvent) event;
-			
-			Field field = entityEvent.getClass().getSuperclass().getDeclaredField("entity");
-			field.setAccessible(true);
-			field.set(entityEvent, newDragon);
-			
-		}catch (Exception exp) {
-			plugin.log("Something gone Wrong with Injecting!");
-			exp.printStackTrace();
-		}
-		
-		//Anouncing
-		if(plugin.getContainer().containsID(id)){
-			if(plugin.interactConfig().getConfig_anounceDragonSpawning())
-				announceDragon(event.getEntity());
-			return;
-		}
-	}
-	
-	private void announceDragon(Entity entity){
-		LimitedEnderDragon dragon = (LimitedEnderDragon)((CraftEnderDragon) entity).getHandle();
-		String ageName = dragon.getAgeName();
-		
-		Location loc = dragon.getLocation();
-		
-		int x = loc.getBlockX();
-		int y = loc.getBlockY();
-		int z = loc.getBlockZ();
-		String world = loc.getWorld().getName();
-		
-		String message = plugin.interactConfig().getConfig_dragonSpawnMessage();
-		message = message.replaceAll(Pattern.quote("{x}"), ChatColor.LIGHT_PURPLE + "" + x + ChatColor.GREEN);
-		message = message.replaceAll(Pattern.quote("{y}"), ChatColor.LIGHT_PURPLE + "" + y + ChatColor.GREEN);
-		message = message.replaceAll(Pattern.quote("{z}"), ChatColor.LIGHT_PURPLE + "" + z + ChatColor.GREEN);
-		message = message.replaceAll(Pattern.quote("{age}"), ChatColor.RED + ageName + ChatColor.GREEN);
-		
-		message = message.replaceAll(Pattern.quote("{world}"), ChatColor.LIGHT_PURPLE + world + ChatColor.GREEN);
-		
-		for(Player player : Bukkit.getOnlinePlayers()){
-			player.sendMessage(decodeColor(message));
-		}
-	}
-	
-	private String decodeColor(String message){
-		return message.replaceAll("(&([a-f0-9]))", "§$2");
-	}
-	
+
 	
 	
 	@EventHandler
@@ -193,17 +101,6 @@ public class Listener_Entity implements Listener {
 		}
 	}
 	
-	
-	
-	private LimitedEnderDragon spawnLimitedEnderDragon(Location location, String uid){
-		World world = ((CraftWorld)location.getWorld()).getHandle();
-		
-		UUID uuid = UUID.fromString(uid);
-		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
-		//dragon.spawn();
-		return dragon;
-	}
-	
 	@EventHandler
 	public void callDeath(EntityDeathEvent event){
 		if(!plugin.interactConfig().getConfig_anounceDragonKill())
@@ -222,12 +119,12 @@ public class Listener_Entity implements Listener {
 	
 	private void parseDragonDeath(LimitedEnderDragon dragon,org.bukkit.World dragonDeathWorld){
 		String message = plugin.interactConfig().getConfig_dragonKillMessage();
-		int damage = dragon.getDamageByPlayer(dragon.getLastPlayerAttacked());
+		double damage = dragon.getDamageByPlayer(dragon.getLastPlayerAttacked());
 		
 		message =
-		message.replaceAll(Pattern.quote("{player_kill}"), dragon.getLastPlayerAttacked())
-				.replaceAll(Pattern.quote("{player_kill_dmg}"), damage + "")
-				.replaceAll(Pattern.quote("{age}"), dragon.getAgeName())
+		message.replaceAll(Pattern.quote("~player_kill~"), dragon.getLastPlayerAttacked())
+				.replaceAll(Pattern.quote("~player_kill_dmg~"), damage + "")
+				.replaceAll(Pattern.quote("~age~"), dragon.getAgeName())
 				.replaceAll("(&([a-f0-9]))", "§$2");
 		
 		List<org.bukkit.World> toWorlds = decodeWorlds(dragonDeathWorld);

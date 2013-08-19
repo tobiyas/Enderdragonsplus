@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R3.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_6_R2.event.CraftEventFactory;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -62,7 +62,7 @@ public class Listener_Fireball implements Listener {
 		List<Entity> nearby = fireball.getNearbyEntities(distance, distance, distance);
 		fireball.getWorld().createExplosion(fireball.getLocation(), 0);
 		
-		int dmg = plugin.interactConfig().getConfig_fireballEntityDamage();
+		double dmg = plugin.interactConfig().getConfig_fireballEntityDamage();
 		for(Entity entity : nearby){
 			if(!entity.isDead() && entity instanceof LivingEntity){
 				if(entity instanceof EnderDragon) continue;

@@ -1,6 +1,7 @@
 package de.tobiyas.enderdragonsplus.commands;
 
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -58,6 +59,18 @@ public class CommandSpawnEnderDragon implements CommandExecutor {
 			
 			if(entity == null){
 				player.sendMessage(ChatColor.RED + "Could not spawn " + args[0] + " dragon. It does not exist.");
+
+				Set<String> correctAges = plugin.getAgeContainerManager().getAllAgeNames();
+				String ageNames = "";
+				for(String correctAge : correctAges){
+					ageNames += " " + ChatColor.AQUA + correctAge + ChatColor.RED + ",";
+				}
+				
+				if(correctAges.size() > 0){
+					ageNames = ageNames.substring(0, ageNames.length() - 3);
+				}
+				
+				player.sendMessage(ChatColor.RED + "Valid ages are:" + ageNames);
 				return true;
 			}
 		}

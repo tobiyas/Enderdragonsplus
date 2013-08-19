@@ -17,11 +17,11 @@ public class STDAgeContainer {
 	public static final String STDName = "Demo";
 	
 	public static final String STDAgeName = "Demo";
-	public static final int STDmaxHealth = 200;
-	public static final int STDspawnHealth = 200;
+	public static final double STDmaxHealth = 200;
+	public static final double STDspawnHealth = 200;
 	public static final List<ItemStack> STDdrops = new LinkedList<ItemStack>();
 	public static final int STDexp = 1000;
-	public static final int STDdmg = 10;
+	public static final double STDdmg = 10;
 	public static final boolean STDageIsHostile = false;
 	
 	public static final int STDrank = 0;
@@ -71,11 +71,11 @@ public class STDAgeContainer {
 		
 		Config config = EnderdragonsPlus.getPlugin().interactConfig();
 		
-		String ageName = "'&aNormal&c'";
-		int maxHealth = config.getConfig_dragonMaxHealth();
-		int spawnHealth = config.getConfig_dragonHealth();
+		String ageName = "&a'Normal'&c";
+		double maxHealth = config.getConfig_dragonMaxHealth();
+		double spawnHealth = config.getConfig_dragonHealth();
 		int exp = config.getConfig_dropEXP();
-		int dmg = config.getConfig_dragonDamage();
+		double dmg = config.getConfig_dragonDamage();
 		boolean isHostile = config.getConfig_dragonsAreHostile();
 		int rank = 0;
 		List<DropContainer> drops = new LinkedList<DropContainer>();

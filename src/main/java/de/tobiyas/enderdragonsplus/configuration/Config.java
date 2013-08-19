@@ -9,10 +9,10 @@ public class Config
   private EnderdragonsPlus plugin;
  
   //Enderdragons general
-  private int config_dragonMaxHealth;
-  private int config_dragonHealtch;
+  private double config_dragonMaxHealth;
+  private double config_dragonHealtch;
   private int config_dropEXP;
-  private int config_dragonDamage;
+  private double config_dragonDamage;
   private int config_maxHomeDistance;
   private int config_maxHomeDistanceSquared; //easier calculation
   @SuppressWarnings("unused")
@@ -24,7 +24,7 @@ public class Config
   private int config_dragonSpitFireballsEvery;
   private int config_dragonsSpitFireballsRange;
   private boolean config_disableFireballWorldDamage;
-  private int config_fireballEntityDamage;
+  private double config_fireballEntityDamage;
   private int config_fireballExplosionRadius;
   private int config_maxFireballTargets;
   private int config_fireballSetOnFireChance;
@@ -87,15 +87,15 @@ public class Config
 	config.addDefault("dropEXP", Integer.valueOf(200));
 	config.addDefault("debugOutputs", Boolean.valueOf(false));
 	config.addDefault("replaceAllDragons", Boolean.valueOf(true));
-	config.addDefault("dragonSpawnHealth", Integer.valueOf(200));
-	config.addDefault("dragonDamage", Integer.valueOf(10));
+	config.addDefault("dragonSpawnHealth", Double.valueOf(200));
+	config.addDefault("dragonDamage", Double.valueOf(10));
 	config.addDefault("ignorePlayerGamemode1", Boolean.valueOf(true));
 	config.addDefault("fireBukkitEvents", Boolean.valueOf(false));
 	config.addDefault("disableEnderdragonBlockDamage", Boolean.valueOf(true));
 	config.addDefault("neverUnloadChunkWithED", Boolean.valueOf(false));
 	config.addDefault("ticksPerSecondWhenOutOfRange", Integer.valueOf(25));
 	config.addDefault("pluginHandlesDragonLoads", Boolean.valueOf(true));
-	config.addDefault("dragonMaxHealth", Integer.valueOf(200));
+	config.addDefault("dragonMaxHealth", Double.valueOf(200));
 	config.addDefault("informPlayerDamageDone", Boolean.valueOf(true));
 	config.addDefault("informPlayerDamageTaken", Boolean.valueOf(true));
 	config.addDefault("replaceOnTheFly", Boolean.valueOf(true));
@@ -103,13 +103,13 @@ public class Config
 	config.addDefault("dragonsSpitFireballsEveryXSeconds", Integer.valueOf(7));
 	config.addDefault("dragonsSpitFireballsRange", Integer.valueOf(100));
 	config.addDefault("anounceDragonSpawning", Boolean.valueOf(true));
-	config.addDefault("dragonSpawnMessage", "'&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'");
-	config.addDefault("dragonKillMessage", "'&aPlayer &b{player_kill} &ahas killed a dragon! (done &1{player_kill_dmg} &adamage)'");
+	config.addDefault("dragonSpawnMessage", "'&aA new Dragon has spawned at: x: ~x~ y: ~y~ z: ~z~ on world: ~world~.'");
+	config.addDefault("dragonKillMessage", "'&aPlayer &b~player_kill~ &ahas killed a dragon! (done &1~player_kill_dmg~ &adamage)'");
 	config.addDefault("anounceDragonKill", true);
-	config.addDefault("dragonKillMessageToWorlds", "{all}");
+	config.addDefault("dragonKillMessageToWorlds", "~all~");
 	config.addDefault("deactivateBlockExplodeEffect", Boolean.valueOf(false));
 	config.addDefault("disableFireballWorldDamage", Boolean.valueOf(true));
-	config.addDefault("fireballEntityDamage", Integer.valueOf(4));
+	config.addDefault("fireballEntityDamage", Double.valueOf(4));
 	config.addDefault("fireballExplosionRadius", Integer.valueOf(5));
 	config.addDefault("maxFireballTargets", Integer.valueOf(2));
 	config.addDefault("fireballSetOnFireChance", Integer.valueOf(50));
@@ -139,15 +139,15 @@ public class Config
     this.config_dropEXP = this.plugin.getConfig().getInt("dropEXP", 2000);
     this.config_debugOutput = this.plugin.getConfig().getBoolean("debugOutputs", false);
     this.config_replaceAllDragons = this.plugin.getConfig().getBoolean("replaceAllDragons", true);
-    this.config_dragonHealtch = this.plugin.getConfig().getInt("dragonSpawnHealth", 200);
-    this.config_dragonDamage = this.plugin.getConfig().getInt("dragonDamage", 10);
+    this.config_dragonHealtch = this.plugin.getConfig().getDouble("dragonSpawnHealth", 200);
+    this.config_dragonDamage = this.plugin.getConfig().getDouble("dragonDamage", 10);
     this.config_ignorePlayerGamemode1 = this.plugin.getConfig().getBoolean("ignorePlayerGamemode1");
     this.config_fireBukkitEvents = this.plugin.getConfig().getBoolean("fireBukkitEvents");
     this.config_disableEnderdragonBlockDamage = this.plugin.getConfig().getBoolean("disableEnderdragonBlockDamage", true);
     this.config_neverUnloadChunkWithED = this.plugin.getConfig().getBoolean("neverUnloadChunkWithED", false);
     this.config_ticksWhenOutOfRange = this.plugin.getConfig().getInt("ticksPerSecondWhenOutOfRange", 25);
     this.config_pluginHandleLoads = this.plugin.getConfig().getBoolean("pluginHandlesDragonLoads", true);
-    this.config_dragonMaxHealth = this.plugin.getConfig().getInt("dragonMaxHealth", 200);
+    this.config_dragonMaxHealth = this.plugin.getConfig().getDouble("dragonMaxHealth", 200);
     this.config_informPlayerDamageDone = this.plugin.getConfig().getBoolean("informPlayerDamageDone", true);
     this.config_informPlayerDamageTaken = this.plugin.getConfig().getBoolean("informPlayerDamageTaken", true);
     this.config_replaceOnTheFly = this.plugin.getConfig().getBoolean("replaceOnTheFly", true);
@@ -156,14 +156,14 @@ public class Config
     this.config_dragonsSpitFireballsRange = this.plugin.getConfig().getInt("dragonsSpitFireballsRange", 100);
     this.config_anounceDragonSpawning = this.plugin.getConfig().getBoolean("anounceDragonSpawning", true);
     this.config_deactivateBlockExplosionEffect = this.plugin.getConfig().getBoolean("deactivateBlockExplodeEffect", false);
-    this.config_dragonSpawnMessage = this.plugin.getConfig().getString("dragonSpawnMessage", "'&aA new Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'");
-    this.config_dragonKillMessage = this.plugin.getConfig().getString("dragonKillMessage", "'&aPlayer &b{player_kill} &ahas killed a dragon! (done &1{player_kill_dmg} &adamage)'");   
+    this.config_dragonSpawnMessage = this.plugin.getConfig().getString("dragonSpawnMessage", "'&aA new Dragon has spawned at: x: ~x~ y: ~y~ z: ~z~ on world: ~world~.'");
+    this.config_dragonKillMessage = this.plugin.getConfig().getString("dragonKillMessage", "'&aPlayer &b~player_kill~ &ahas killed a dragon! (done &1~player_kill_dmg~ &adamage)'");   
     this.config_anounceDragonKill = this.plugin.getConfig().getBoolean("anounceDragonKill", true);
-    this.config_dragonKillMessageToWorlds = this.plugin.getConfig().getString("dragonKillMessageToWorlds", "'{all}'");    
+    this.config_dragonKillMessageToWorlds = this.plugin.getConfig().getString("dragonKillMessageToWorlds", "~all~");    
     this.config_disableFireballWorldDamage = this.plugin.getConfig().getBoolean("disableFireballWorldDamage", true);
     this.config_dragonTempleFile = this.plugin.getConfig().getString("dragonTempleFile", "'STDTemple.schematic'");
 
-    this.config_fireballEntityDamage = this.plugin.getConfig().getInt("fireballEntityDamage", 4);
+    this.config_fireballEntityDamage = this.plugin.getConfig().getDouble("fireballEntityDamage", 4);
     this.config_fireballExplosionRadius = this.plugin.getConfig().getInt("fireballExplosionRadius", 5);
     this.config_maxFireballTargets = this.plugin.getConfig().getInt("maxFireballTargets", 2);
     this.config_fireballSetOnFireChance = this.plugin.getConfig().getInt("fireballSetOnFireChance", 50);
@@ -224,11 +224,11 @@ public class Config
     return this.config_replaceAllDragons;
   }
 
-  public int getConfig_dragonHealth() {
+  public double getConfig_dragonHealth() {
     return this.config_dragonHealtch;
   }
 
-  public int getConfig_dragonDamage() {
+  public double getConfig_dragonDamage() {
     return this.config_dragonDamage;
   }
 
@@ -256,7 +256,7 @@ public class Config
     return this.config_pluginHandleLoads;
   }
 
-  public int getConfig_dragonMaxHealth() {
+  public double getConfig_dragonMaxHealth() {
     return this.config_dragonMaxHealth;
   }
 
@@ -300,7 +300,7 @@ public class Config
     return this.config_disableFireballWorldDamage;
   }
 
-  public int getConfig_fireballEntityDamage() {
+  public double getConfig_fireballEntityDamage() {
     return this.config_fireballEntityDamage;
   }
 

@@ -8,8 +8,8 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
@@ -19,8 +19,8 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
 
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityLiving;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityLiving;
 
 public class TargetController {
 
@@ -315,7 +315,7 @@ public class TargetController {
 	
 	public void changeTarget(boolean force) {
 		try {
-			dragon.bP = false;
+			dragon.bz = false;
 
 			int homeRange = plugin.interactConfig().getConfig_maxHomeDistance();
 			Location homeLocation = dragon.getHomeLocation();
@@ -389,21 +389,21 @@ public class TargetController {
 
 		double vecDistance = 0;
 		do {
-			dragon.a = location.getX();
-			dragon.b = (70.0F + this.random.nextFloat() * 50.0F);
-			dragon.c = location.getZ();
+			dragon.h = location.getX();
+			dragon.i = (70.0F + this.random.nextFloat() * 50.0F);
+			dragon.j = location.getZ();
 			if (forceGoTo == null) {
-				dragon.a += (this.random.nextFloat() * 120.0F - 60.0F);
-				dragon.c += (this.random.nextFloat() * 120.0F - 60.0F);
+				dragon.h += (this.random.nextFloat() * 120.0F - 60.0F);
+				dragon.j += (this.random.nextFloat() * 120.0F - 60.0F);
 
-				double distanceX = dragon.locX - dragon.a;
-				double distanceY = dragon.locY - dragon.b;
-				double distanceZ = dragon.locZ - dragon.c;
+				double distanceX = dragon.locX - dragon.h;
+				double distanceY = dragon.locY - dragon.i;
+				double distanceZ = dragon.locZ - dragon.j;
 
 				vecDistance = distanceX * distanceX + distanceY * distanceY
 						+ distanceZ * distanceZ;
 			} else {
-				dragon.c = location.getY();
+				dragon.j = location.getY();
 				vecDistance = 101;
 			}
 

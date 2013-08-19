@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
-import net.minecraft.server.v1_5_R3.AxisAlignedBB;
-import net.minecraft.server.v1_5_R3.Block;
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.Explosion;
-import net.minecraft.server.v1_5_R3.MathHelper;
+import net.minecraft.server.v1_6_R2.AxisAlignedBB;
+import net.minecraft.server.v1_6_R2.Block;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.Explosion;
+import net.minecraft.server.v1_6_R2.MathHelper;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
@@ -38,8 +38,8 @@ public class DragonMoveController {
 	 * @param entities
 	 */
 	public void knockbackNearbyEntities(List<Entity> entities) {
-		double pointX = (dragon.h.boundingBox.a + dragon.h.boundingBox.d) / 2;
-		double pointZ = (dragon.h.boundingBox.c + dragon.h.boundingBox.f) / 2;
+		double pointX = (dragon.br.boundingBox.a + dragon.br.boundingBox.d) / 2;
+		double pointZ = (dragon.br.boundingBox.c + dragon.br.boundingBox.f) / 2;
 
 		for (Entity entity : entities) {
 			if (entity instanceof EntityLiving) {
@@ -74,7 +74,7 @@ public class DragonMoveController {
 
 		// CraftBukkit start - create a list to hold all the destroyed blocks
 		List<org.bukkit.block.Block> destroyedBlocks = new ArrayList<org.bukkit.block.Block>();
-		org.bukkit.craftbukkit.v1_5_R3.CraftWorld craftWorld = dragon.world.getWorld();
+		org.bukkit.craftbukkit.v1_6_R2.CraftWorld craftWorld = dragon.world.getWorld();
 		// CraftBukkit end
 
 		for (int blockX = pos1X; blockX <= pos2X; ++blockX) {

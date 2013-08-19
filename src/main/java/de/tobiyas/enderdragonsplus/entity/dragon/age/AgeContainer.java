@@ -1,7 +1,9 @@
 package de.tobiyas.enderdragonsplus.entity.dragon.age;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.util.Consts;
@@ -14,11 +16,11 @@ public class AgeContainer {
 
 	private String ageConfigName;
 	private String agePrettyName;
-	private int maxHealth;
-	private int spawnHealth;
+	private double maxHealth;
+	private double spawnHealth;
 	private List<DropContainer> drops;
 	private int exp;
-	private int dmg;
+	private double dmg;
 	private boolean isHostile;
 	
 	private int rank;
@@ -33,7 +35,7 @@ public class AgeContainer {
 	
 	
 	//constructor with ALL fields
-	public AgeContainer(String ageConfigName, String agePrettyName, int maxHealth, int spawnHealth, int exp, int dmg, boolean isHostile, int rank, List<DropContainer> drops){
+	public AgeContainer(String ageConfigName, String agePrettyName, double maxHealth, double spawnHealth, int exp, double dmg, boolean isHostile, int rank, List<DropContainer> drops){
 		this.ageConfigName = ageConfigName;
 		this.agePrettyName = agePrettyName;
 		this.maxHealth = maxHealth;
@@ -57,19 +59,24 @@ public class AgeContainer {
 			brokenFields.add("ROOT");
 		}
 		
-		if(!config.contains(tempAgeName + STDAgeContainer.maxHealthPath) ||
-				!config.isInt(tempAgeName + STDAgeContainer.maxHealthPath)){
+		
+		if(!config.contains(tempAgeName + STDAgeContainer.maxHealthPath) || 
+				!(config.isDouble(tempAgeName + STDAgeContainer.maxHealthPath) ||
+				config.isInt(tempAgeName + STDAgeContainer.maxHealthPath))){
 			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
 						STDAgeContainer.maxHealthPath + " not set/incorrect set.");
 			brokenFields.add(STDAgeContainer.maxHealthPath);
 		}
 		
+		
 		if(!config.contains(tempAgeName + STDAgeContainer.spawnHealthPath)||
-				!config.isInt(tempAgeName + STDAgeContainer.spawnHealthPath)){
+				!(config.isDouble(tempAgeName + STDAgeContainer.spawnHealthPath) ||
+				config.isInt(tempAgeName + STDAgeContainer.spawnHealthPath))){
 			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
 					STDAgeContainer.spawnHealthPath + " not set/incorrect set.");
 			brokenFields.add(STDAgeContainer.spawnHealthPath);
 		}
+		
 		
 		if(!config.contains(tempAgeName + STDAgeContainer.rankPath)||
 				!config.isInt(tempAgeName + STDAgeContainer.rankPath)){
@@ -78,6 +85,7 @@ public class AgeContainer {
 			brokenFields.add(STDAgeContainer.rankPath);
 		}
 		
+		
 		if(!config.contains(tempAgeName + STDAgeContainer.expPath)||
 				!config.isInt(tempAgeName + STDAgeContainer.expPath)){
 			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
@@ -85,12 +93,15 @@ public class AgeContainer {
 			brokenFields.add(STDAgeContainer.expPath);
 		}
 		
+		
 		if(!config.contains(tempAgeName + STDAgeContainer.dmgPath)||
-				!config.isInt(tempAgeName + STDAgeContainer.dmgPath)){
+				!(config.isDouble(tempAgeName + STDAgeContainer.dmgPath) ||
+				config.isInt(tempAgeName + STDAgeContainer.dmgPath))){
 			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
 					STDAgeContainer.dmgPath + " not set/incorrect set.");
 			brokenFields.add(STDAgeContainer.dmgPath);
 		}
+		
 		
 		if(!config.contains(tempAgeName + STDAgeContainer.ageNamePath)||
 				!config.isString(tempAgeName + STDAgeContainer.ageNamePath)){
@@ -99,12 +110,14 @@ public class AgeContainer {
 			brokenFields.add(STDAgeContainer.ageNamePath);
 		}
 		
+		
 		if(!config.contains(tempAgeName + STDAgeContainer.ageIsHostilePath)||
 				!config.isBoolean(tempAgeName + STDAgeContainer.ageIsHostilePath)){
 			plugin.getDebugLogger().logWarning("Age: " + tempAgeName + ", path: " + 
 					STDAgeContainer.ageIsHostilePath + " not set/incorrect set.");
 			brokenFields.add(STDAgeContainer.ageIsHostilePath);
 		}
+		
 		
 		/*
 		if(!config.contains(tempAgeName + STDAgeContainer.lootPrefixPath)||
@@ -128,11 +141,11 @@ public class AgeContainer {
 			return;
 		}
 		
-		maxHealth = config.getInt(tempAgeName + STDAgeContainer.maxHealthPath, plugin.interactConfig().getConfig_dragonMaxHealth());
-		spawnHealth = config.getInt(tempAgeName + STDAgeContainer.spawnHealthPath, maxHealth);
+		maxHealth = config.getDouble(tempAgeName + STDAgeContainer.maxHealthPath, plugin.interactConfig().getConfig_dragonMaxHealth());
+		spawnHealth = config.getDouble(tempAgeName + STDAgeContainer.spawnHealthPath, maxHealth);
 		rank = config.getInt(tempAgeName + STDAgeContainer.rankPath, 0);
 		exp = config.getInt(tempAgeName + STDAgeContainer.expPath, plugin.interactConfig().getConfig_dropEXP());
-		dmg = config.getInt(tempAgeName + STDAgeContainer.dmgPath, plugin.interactConfig().getConfig_dragonDamage());
+		dmg = config.getDouble(tempAgeName + STDAgeContainer.dmgPath, plugin.interactConfig().getConfig_dragonDamage());
 		agePrettyName = config.getString(tempAgeName + STDAgeContainer.ageNamePath, tempAgeName);
 		isHostile = config.getBoolean(tempAgeName + STDAgeContainer.ageIsHostilePath, plugin.interactConfig().getConfig_dragonsAreHostile());
 		
@@ -149,7 +162,7 @@ public class AgeContainer {
 	//Public Methods
 	
 
-	public int getDmg() {
+	public double getDmg() {
 		return dmg;
 	}
 
@@ -159,12 +172,12 @@ public class AgeContainer {
 	}
 
 
-	public int getMaxHealth() {
+	public double getMaxHealth() {
 		return maxHealth;
 	}
 
 
-	public int getSpawnHealth() {
+	public double getSpawnHealth() {
 		return spawnHealth;
 	}
 
@@ -223,7 +236,7 @@ public class AgeContainer {
 	 * 
 	 * @return
 	 */
-	public static List<String> getAllAgeNames(){
+	protected static List<String> getAllAgeNames(){
 		List<String> ageNames = new LinkedList<String>();
 		
 		YAMLConfigExtended config = new YAMLConfigExtended(Consts.AgeTablePath).load();
@@ -241,7 +254,7 @@ public class AgeContainer {
 	 * 
 	 * @return
 	 */
-	public static List<String> getAllCorrectAgeNames(){
+	protected static List<String> getAllCorrectAgeNames(){
 		List<String> ageNames = new LinkedList<String>();
 		
 		YAMLConfigExtended config = new YAMLConfigExtended(Consts.AgeTablePath).load();
@@ -264,8 +277,8 @@ public class AgeContainer {
 	 * returns a list of all NON correct syntactic ages as name
 	 * @return
 	 */
-	public static List<String> getAllIncorrectAgeNames(){
-		List<String> notCorrect = new LinkedList<String>();
+	protected static Set<String> getAllIncorrectAgeNames(){
+		Set<String> notCorrect = new HashSet<String>();
 		
 		List<String> allNames = getAllAgeNames();
 		List<String> correctNames = getAllCorrectAgeNames();
@@ -277,6 +290,19 @@ public class AgeContainer {
 		}
 		
 		return notCorrect;
+	}
+
+
+	/**
+	 * This is ONLY for respawning Dragons!
+	 * This means reloading from NBT tags.
+	 * 
+	 * DO NOT USE ELSE!
+	 * 
+	 * @param currentHealth to set the new Health after spawning
+	 */
+	public void setSpawnHealth(float currentHealth) {
+		this.spawnHealth = currentHealth;
 	}
 
 

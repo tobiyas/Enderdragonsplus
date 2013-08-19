@@ -78,7 +78,7 @@ public class CommandEDP implements CommandExecutor {
 		}
 		
 		if(plugin.getPermissionManager().checkPermissionsSilent(sender, PermissionNode.info)){
-		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/sedpinfo" + ChatColor.YELLOW
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "/edpinfo" + ChatColor.YELLOW
 				+ ": gives an info how many Dragons are loaded.");
 		usedAny = true;
 		}

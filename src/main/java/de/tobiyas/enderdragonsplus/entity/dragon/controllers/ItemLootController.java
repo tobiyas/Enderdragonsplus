@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.Collections;
 
-import net.minecraft.server.v1_5_R3.Block;
-import net.minecraft.server.v1_5_R3.BlockEnderPortal;
-import net.minecraft.server.v1_5_R3.EntityExperienceOrb;
-import net.minecraft.server.v1_5_R3.MathHelper;
+import net.minecraft.server.v1_6_R2.Block;
+import net.minecraft.server.v1_6_R2.BlockEnderPortal;
+import net.minecraft.server.v1_6_R2.EntityExperienceOrb;
+import net.minecraft.server.v1_6_R2.MathHelper;
 
 import org.bukkit.Location;
 import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_5_R3.util.BlockStateListPopulator;
+import org.bukkit.craftbukkit.v1_6_R2.util.BlockStateListPopulator;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -67,7 +67,7 @@ public class ItemLootController {
 		}
 	
 		dragon.move(0, 0.1, 0);
-		dragon.aw = (dragon.yaw += 20);
+		dragon.aN = (dragon.yaw += 20);
 		if (ticksToDespawn <= 0) {
 			int exp = dragon.getExpReward() - dragon.getExpReward() / 2;
 			dropEXPOrbs(exp);
@@ -76,7 +76,7 @@ public class ItemLootController {
 			int dragonY = MathHelper.floor(dragon.getLocation().getBlockZ());
 			
 			spawnEnderPortal(dragonX, dragonY);
-			dragon.aH();
+			//dragon.aH(); //TODO not sure what this does.
 			dragon.die();
 		}
 	}

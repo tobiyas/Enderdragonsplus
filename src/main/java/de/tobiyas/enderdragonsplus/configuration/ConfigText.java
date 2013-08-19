@@ -4,7 +4,7 @@ import de.tobiyas.enderdragonsplus.util.Consts;
 
 public class ConfigText {
 	
-	public static String getConfig(){
+	public static String getConfig() {
 		String text = "";
 		
 		text += "#Config for Enderdragons+\n";
@@ -13,10 +13,12 @@ public class ConfigText {
 		text += "#	REGION: EnderDragons\n";
 		text += "#The maximal Life an EnderDragon comes to Life\n";
 		text += "#When set to -1, the Health will not be set (for compability to other plugins regulating health)\n";
+		text += "#This can be a double (number with comma)\n";
 		text += "#default: 200\n";
 		text += "dragonMaxHealth: 200\n\n";
 
 		text += "#The actual Life an EnderDragon comes to Life\n";
+		text += "#This can be a double (number with comma)\n";
 		text += "#default: 200\n";
 		text += "dragonSpawnHealth: 200\n\n";
 
@@ -25,6 +27,7 @@ public class ConfigText {
 		text += "dropEXP: 20000\n\n";
 
 		text += "#Damage an EnderDragon does when attacking\n";
+		text += "#This can be a double (number with comma)\n";
 		text += "#default: 10\n";
 		text += "dragonDamage: 10\n\n";
 
@@ -36,7 +39,7 @@ public class ConfigText {
 		text += "#default: false\n";
 		text += "disableDragonHealthBar: false\n\n";
 		
-		text += "#If dragons have no targets they will set down\n";
+		text += "#If dragons have no targets they will sit down\n";
 		text += "#default: false\n";
 		text += "dragonsSitDownIfInactive: false\n\n";
 		
@@ -59,6 +62,7 @@ public class ConfigText {
 		text += "disableFireballWorldDamage: true\n\n";
 		
 		text += "#The damage a fireball does, when it hits an Entity\n";
+		text += "#This can be a double (number with comma)\n";
 		text += "#default: 4\n";
 		text += "fireballEntityDamage: 4\n\n";
 		
@@ -97,30 +101,30 @@ public class ConfigText {
 		text += "anounceDragonSpawning: true\n\n";
 		
 		text += "#If Dragon Spawn announce is activated, this is the message.\n";
-		text += "#Keywords: {x} is the X position. {y} is the y position.\n";
-		text += "#{z} is the z position. {world} is the world\n";
-		text += "#{age} is the age Name of the dragon";
-		text += "#default: '&aA new {age} Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.'\n";
-		text += "dragonSpawnMessage: &aA new {age} Dragon has spawned at: x: {x} y: {y} z: {z} on world: {world}.\n\n";
+		text += "#Keywords: ~x~ is the X position. ~y~ is the y position.\n";
+		text += "#~z~ is the z position. ~world~ is the world\n";
+		text += "#~age~ is the age Name of the dragon";
+		text += "#default: '&aA new ~age~ Dragon has spawned at: x: ~x~ y: ~y~ z: ~z~ on world: ~world~.'\n";
+		text += "dragonSpawnMessage: '&aA new ~age~ Dragon has spawned at: x: ~x~ y: ~y~ z: ~z~ on world: ~world~.'\n\n";
 
 		text += "#Defines if it is anounces publicaly if a dragon dies\n";
 		text += "#default: true\n";
 		text += "anounceDragonKill: true\n\n";
 		
 		text += "#If Dragon death announce is activated, this is the message.\n";
-		text += "#Keywords: {player_kill} = name of player who killed the dragon\n";
-		text += "# {player_kill_dmg} = total damage done by the player killing the dragon\n";
-		text += "# {age} the age name of the Dragon\n";
-		text += "#default: '&aPlayer &b{player_kill} &ahas killed a {age} dragon! (done &1{player_kill_dmg} &adamage).'\n";
-		text += "dragonKillMessage: '&aPlayer &b{player_kill} &ahas killed a {age} dragon! (done &1{player_kill_dmg} &adamage).'\n\n";
+		text += "#Keywords: ~player_kill~ = name of player who killed the dragon\n";
+		text += "# ~player_kill_dmg~ = total damage done by the player killing the dragon\n";
+		text += "# ~age~ the age name of the Dragon\n";
+		text += "#default: '&aPlayer &b~player_kill~ &ahas killed a ~age~ dragon! (done &1~player_kill_dmg~ &adamage).'\n";
+		text += "dragonKillMessage: '&aPlayer &b~player_kill~ &ahas killed a ~age~ dragon! (done &1~player_kill_dmg~ &adamage).'\n\n";
 		
 		text += "#To which worlds the Dragon kill message should be announced.\n";
-		text += "#Keywords: {current} = the current world of the dragon\n";
-		text += "# {all} = all worlds\n";
+		text += "#Keywords: ~current~ = the current world of the dragon\n";
+		text += "# ~all~ = all worlds\n";
 		text += "# IMPORTANT!!!! The total String has to be in ' ' symbols or it will not load correct. (see example below)\n";
-		text += "#example: 'world,{current},gmworld'\n";
-		text += "#default: '{all}'\n";
-		text += "dragonKillMessageToWorlds: '{all}'\n\n";
+		text += "#example: 'world,~current~,gmworld'\n";
+		text += "#default: '~all~'\n";
+		text += "dragonKillMessageToWorlds: '~all~'\n\n";
 		
 		text += "#	/SUBREGION: EnderDragons.Announcements\n";
 		text += "#	/REGION: EnderDragons\n\n\n";

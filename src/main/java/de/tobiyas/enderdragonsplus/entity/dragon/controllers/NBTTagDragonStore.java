@@ -2,7 +2,7 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
 import java.util.UUID;
 
-import net.minecraft.server.v1_5_R3.NBTTagCompound;
+import net.minecraft.server.v1_6_R2.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -17,10 +17,12 @@ public class NBTTagDragonStore {
 
 		private Location homeLocation;
 		private Location forceTarget;
-		private String ageName;
 		private boolean flyingHome;
 		private NBTTagCompound properties;		
 		private AgeContainer ageContainer;
+		
+		private float currentHealth;
+		
 		
 		private UUID uuid;
 
@@ -28,11 +30,12 @@ public class NBTTagDragonStore {
 		private DragonNBTReturn(){
 			homeLocation = new Location(Bukkit.getWorlds().get(0), 0d, 0d, 0d);
 			forceTarget = homeLocation.clone();
-			ageName = "Normal";
 			flyingHome = true;
 			properties = new NBTTagCompound();
+			currentHealth = 42;
 		}
 
+		
 		public DragonNBTReturn setHomeLocation(Location homeLocation) {
 			this.homeLocation = homeLocation;
 			return this;
@@ -40,11 +43,6 @@ public class NBTTagDragonStore {
 
 		public DragonNBTReturn setForceTarget(Location forceTarget) {
 			this.forceTarget = forceTarget;
-			return this;
-		}
-
-		public DragonNBTReturn setAgeName(String ageName) {
-			this.ageName = ageName;
 			return this;
 		}
 
@@ -63,10 +61,17 @@ public class NBTTagDragonStore {
 			return this;
 		}
 
-		public String getAgeName() {
-			return ageName;
+		public DragonNBTReturn setCurrentHealth(float currentHealth) {
+			this.currentHealth = currentHealth;
+			return this;
 		}
 
+		public DragonNBTReturn setUuid(UUID uuid) {
+			this.uuid = uuid;
+			return this;
+		}
+		
+		
 		public Location getHomeLocation() {
 			return homeLocation;
 		}
@@ -91,9 +96,8 @@ public class NBTTagDragonStore {
 			return uuid;
 		}
 
-		public DragonNBTReturn setUuid(UUID uuid) {
-			this.uuid = uuid;
-			return this;
+		public float getCurrentHealth(){
+			return currentHealth;
 		}
 	}
 	
@@ -115,6 +119,8 @@ public class NBTTagDragonStore {
 
 		compound.setBoolean("flyingHome", dragon.isFlyingHome());
 		compound.setBoolean("isHostile", dragon.isHostile());
+		
+		compound.setFloat("currentHealth", dragon.getHealth());
 		
 		compound.setCompound("properties", propertiesCompound);
 		compound.setCompound("age", AgeContainerBuilder.saveToNBTTagCompound(dragon.getAgeContainer()));
@@ -147,6 +153,7 @@ public class NBTTagDragonStore {
 		NBTTagCompound properties = compound.getCompound("properties");
 		UUID uuid = UUID.fromString(compound.getString("uuid"));
 		
+		float currentHealth = compound.getFloat("currentHealth");
 		
 		DragonNBTReturn returnValue = new DragonNBTReturn();
 		returnValue.setHomeLocation(homeLocation)
@@ -154,7 +161,8 @@ public class NBTTagDragonStore {
 					.setAgeContainer(compound.getCompound("age"))
 					.setFlyingHome(flyingHome)
 					.setProperties(properties)
-					.setUuid(uuid);
+					.setUuid(uuid)
+					.setCurrentHealth(currentHealth);
 		return returnValue;
 	}
 	

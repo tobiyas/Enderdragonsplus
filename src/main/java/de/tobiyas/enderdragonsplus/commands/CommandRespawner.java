@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
 
 public class CommandRespawner implements CommandExecutor {
@@ -142,7 +141,7 @@ public class CommandRespawner implements CommandExecutor {
 			if(args.length >= 3){
 				try{
 					dragonAgeName = args[2];
-					if(!AgeContainer.ageExists(dragonAgeName)){
+					if(plugin.getAgeContainerManager().getAgeContainer(dragonAgeName) == null){
 						player.sendMessage(ChatColor.RED + "The age name: " + ChatColor.LIGHT_PURPLE
 											+ dragonAgeName + ChatColor.RED + " does not exist.");
 						return true;

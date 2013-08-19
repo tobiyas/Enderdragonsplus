@@ -2,9 +2,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.tobiyas</groupId>
   <artifactId>EnderdragonsPlus</artifactId>
-  <version>1.9.1-RC</version>
+  <version>1.10.2-RC</version>
   <name>EnderdragonsPlus</name>
   <url>http://dev.bukkit.org/server-mods/enderdragonsplus/</url>
+  
+  <properties>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	<utilsVersion>1.0.7</utilsVersion>
+  </properties>
     
   <scm>
      <developerConnection>scm:git:git@github.com:tobiyas/Enderdragonsplus.git</developerConnection>
@@ -21,8 +26,8 @@
   		<url>http://maven.sk89q.com/repo/</url>
   	</repository>
   	<repository>
-      <id>org.bukkit</id>
-      <url>http://repo.bukkit.org/content/groups/public</url>
+        <id>bukkit-repo</id>
+        <url>http://repo.bukkit.org/content/groups/public/</url>
     </repository>
     <repository>
       <id>org.spout</id>
@@ -40,16 +45,16 @@
   	</dependency>
   	
   	<dependency>
-  		<groupId>org.bukkit</groupId>
-  		<artifactId>craftbukkit</artifactId>
-  		<version>1.5.2-R0.2-SNAPSHOT</version>
-  		<optional>true</optional>
+  	    <groupId>org.bukkit</groupId>
+  	    <artifactId>bukkit</artifactId>
+  	    <optional>true</optional>
+  	    <version>1.6.2-R0.2-SNAPSHOT</version>
   	</dependency>
   	
   	<dependency>
   		<groupId>org.bukkit</groupId>
-  		<artifactId>bukkit</artifactId>
-  		<version>1.5.2-R0.2-SNAPSHOT</version>
+  		<artifactId>craftbukkit</artifactId>
+  		<version>1.6.2-R0.2-SNAPSHOT</version>
   		<optional>true</optional>
   	</dependency>
   	
@@ -57,7 +62,7 @@
   	<dependency>
   		<groupId>de.tobiyas</groupId>
   		<artifactId>Utils</artifactId>
-  		<version>1.0.6-SNAPSHOT</version>
+  		<version>${utilsVersion}</version>
   	</dependency>
   	
   	<!-- Jar-File System Dependency -->
@@ -78,9 +83,6 @@
   		<optional>true</optional>
   	</dependency>
   </dependencies>
-  <properties>
-  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   
  <build>
     <sourceDirectory>src/main/java</sourceDirectory>
@@ -114,6 +116,14 @@
                   <include>de.tobiyas:Utils</include>
                 </includes>
               </artifactSet>
+              
+              <!-- We want to relocate the Utils -->
+              <relocations>
+                  <relocation>
+                      <pattern>de.tobiyas.util</pattern>
+                      <shadedPattern>de.tobiyas.util.v${utilsVersion}</shadedPattern>
+                  </relocation>
+              </relocations>
             </configuration>
           </execution>
         </executions>

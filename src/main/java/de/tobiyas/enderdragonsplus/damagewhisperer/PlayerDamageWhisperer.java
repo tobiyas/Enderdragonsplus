@@ -16,7 +16,7 @@ public class PlayerDamageWhisperer implements Runnable{
 	private int tickerTime = 5;
 	
 	private String playerName;
-	private int health;
+	private double health;
 
 	public PlayerDamageWhisperer(Player player) {
 		if(damageList.contains(player.getName()))
@@ -38,12 +38,12 @@ public class PlayerDamageWhisperer implements Runnable{
 		if(player == null)
 			return;
 		
-		int newHealth = player.getHealth();
+		double newHealth = player.getHealth();
 		if(newHealth < health)
 			broadcastDamage(player, health - newHealth);
 	}
 	
-	private void broadcastDamage(Player player, int damage){
+	private void broadcastDamage(Player player, double damage){
 		player.sendMessage(ChatColor.YELLOW + "The Dragon has done " + ChatColor.LIGHT_PURPLE + damage + ChatColor.YELLOW + " damage to you.");
 	}
 

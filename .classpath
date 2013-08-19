@@ -7,7 +7,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry including="**/*.java" kind="src" path="src/main/resources"/>
-	<classpathentry kind="src" path="/Utils"/>
+	<classpathentry exported="true" kind="src" path="/Utils"/>
 	<classpathentry kind="lib" path="D:/Dropbox/Workspace/Workspace-Minecraft/Libaries/Misc/DragonTravel.jar"/>
 	<classpathentry kind="lib" path="D:/Dropbox/Workspace/Workspace-Minecraft/Libaries/Misc/RideThaDragon.jar"/>
 	<classpathentry kind="src" output="target/test-classes" path="test/main/java">

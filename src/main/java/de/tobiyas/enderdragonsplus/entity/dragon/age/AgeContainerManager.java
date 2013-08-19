@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tobiyas.enderdragonsplus.util.Consts;
 
@@ -78,5 +79,18 @@ public class AgeContainerManager {
 	 */
 	public AgeContainer getNormalAgeContainer() {
 		return ageMap.get("normal");
+	}
+	
+	/**
+	 * Returns a Set of all names of ages.
+	 * @return
+	 */
+	public Set<String> getAllAgeNames(){
+		return ageMap.keySet();
+	}
+
+
+	public Set<String> getAllIncorrectAgeNames() {
+		return AgeContainer.getAllIncorrectAgeNames();
 	}
 }
