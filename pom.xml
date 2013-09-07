@@ -8,7 +8,8 @@
   
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<utilsVersion>1.0.7</utilsVersion>
+  	<utilsVersion>1.0.8</utilsVersion>
+  	<cb.version>1.6.2-R0.2-SNAPSHOT</cb.version>
   </properties>
     
   <scm>
@@ -21,14 +22,14 @@
   
   <repositories>
   	<repository>
+        <id>bukkit-repo</id>
+        <url>http://repo.bukkit.org/content/groups/public/</url>
+    </repository>
+  	<repository>
   		<id>com.sk89q</id>
   		<name>sk89qRepo</name>
   		<url>http://maven.sk89q.com/repo/</url>
   	</repository>
-  	<repository>
-        <id>bukkit-repo</id>
-        <url>http://repo.bukkit.org/content/groups/public/</url>
-    </repository>
     <repository>
       <id>org.spout</id>
       <url>http://repo.spout.org/</url>
@@ -48,13 +49,13 @@
   	    <groupId>org.bukkit</groupId>
   	    <artifactId>bukkit</artifactId>
   	    <optional>true</optional>
-  	    <version>1.6.2-R0.2-SNAPSHOT</version>
+  	    <version>${cb.version}</version>
   	</dependency>
   	
   	<dependency>
   		<groupId>org.bukkit</groupId>
   		<artifactId>craftbukkit</artifactId>
-  		<version>1.6.2-R0.2-SNAPSHOT</version>
+  		<version>${cb.version}</version>
   		<optional>true</optional>
   	</dependency>
   	

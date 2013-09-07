@@ -18,9 +18,11 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
-
 import net.minecraft.server.v1_6_R2.Entity;
 import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.NBTTagList;
+import net.minecraft.server.v1_6_R2.NBTTagString;
 
 public class TargetController {
 
@@ -43,6 +45,7 @@ public class TargetController {
 	private int unTargetTick;
 	private Location forceGoTo;
 	
+	
 	public TargetController(Location homeLocation, LimitedEnderDragon dragon, boolean isHostile){
 		targets = new LinkedList<EntityLiving>();
 		currentTarget = null;
@@ -53,12 +56,36 @@ public class TargetController {
 		this.isHostile = isHostile;
 		
 		this.lockTarget = false;
+		System.out.println("Releasing false constructor.");
 		this.plugin = EnderdragonsPlus.getPlugin();
 		
 		this.unTargetTicksMax = plugin.interactConfig().getConfig_dragonUntargeting();
 		this.unTargetTick = unTargetTicksMax;
 		this.isFlyingHome = false;
-	}	
+	}
+	
+	/**
+	 * Sets up the Target management + adds the players located in the targetList as Targets.
+	 * 
+	 * @param homeLocation
+	 * @param dragon
+	 * @param isHostile
+	 * @param targetList
+	 */
+	public TargetController(Location homeLocation, LimitedEnderDragon dragon, boolean isHostile, NBTTagList targetList){
+		this(homeLocation, dragon, isHostile);
+		
+		for(int i = 0; i < targetList.size(); i++){
+			try{
+				String playerName = targetList.get(i).getName();
+				Player player = Bukkit.getPlayer(playerName);
+				if(player != null && player.isOnline()){
+					targets.add(((CraftPlayer) player).getHandle());
+				}
+				
+			}catch(Exception exp){}
+		}
+	}
 	
 	public void addTarget(EntityLiving entity){
 		targets.add(entity);
@@ -80,11 +107,13 @@ public class TargetController {
 			if(entity == null) continue;
 			LivingEntity bukkitEntity = (LivingEntity) entity.getBukkitEntity();
 			Location targetLoc = bukkitEntity.getLocation();
-			if(targetLoc.getWorld() != currentLocation.getWorld())
+			if(targetLoc.getWorld() != currentLocation.getWorld()){
 				continue;
+			}
 			
 			double distanceSquared = currentLocation.distanceSquared(targetLoc);
 			double allowedDistance = plugin.interactConfig().getConfig_maxFollowDistanceSquared();
+			
 			if(distanceSquared > allowedDistance) continue;
 			if(!isValidTarget(bukkitEntity)) continue;
 			newTargets.add(entity);
@@ -95,8 +124,9 @@ public class TargetController {
 	}
 	
 	public boolean switchTargetsWithMode(){
-		if(isHostile)
+		if(isHostile && !isFlyingHome){
 			rescanTargetsAggressive();
+		}
 		
 		checkTargets();
 		return switchTarget();
@@ -106,8 +136,9 @@ public class TargetController {
 		Location currentLocation = getDragonLocation();
 		List<Player> players = currentLocation.getWorld().getPlayers();
 		targets.clear();
-		for(Player player : players)
+		for(Player player : players){
 			targets.add( ((CraftPlayer)player).getHandle());
+		}
 	}
 	
 	/**
@@ -121,8 +152,15 @@ public class TargetController {
 		EntityLiving newTarget = currentTarget;
 		
 		if(lockTarget){
-			if(currentLocation.distanceSquared(targetLocation) < 900)
-			lockTarget = false;
+			double distanceSquared = currentLocation.distanceSquared(targetLocation);
+			System.out.println("current distance to target: " + distanceSquared + " lock set. flying home? " + isFlyingHome);
+			
+			if(distanceSquared < 900){
+				lockTarget = false;
+				System.out.println("Releasing lock.");
+			}else{
+				return false;
+			}
 		}
 		
 		boolean targetChanged = false;
@@ -133,14 +171,15 @@ public class TargetController {
 		}else{
 			int randomTarget = random.nextInt(targets.size());
 			newTarget = targets.get(randomTarget);
-			if(newTarget != null && newTarget.getHealth() > 0)	
+			if(newTarget != null && newTarget.getHealth() > 0){
 				targetChanged = currentTarget != newTarget;
+			}
 			
 		}
 		
 		if(targetChanged){
 			currentTarget = fireBukkitEvent(newTarget);
-			targetLocation = currentTarget == null ? homeLocation : currentTarget.getBukkitEntity().getLocation();
+			targetLocation = currentTarget == null ? homeLocation.clone() : currentTarget.getBukkitEntity().getLocation();
 			return true;
 		}
 		
@@ -235,11 +274,11 @@ public class TargetController {
 	 * returns the Location of the given Entity
 	 * Only used for API calls.
 	 * 
-	 * @param entity the new target (or null to tell him to fly home)
+	 * @param entity the location of the entity to check
 	 * @return the new location to fly to
 	 */
 	private Location getLoc(EntityLiving entity){
-		return entity == null ? homeLocation : entity.getBukkitEntity().getLocation();
+		return entity == null ? homeLocation.clone() : entity.getBukkitEntity().getLocation();
 	}
 	
 	//Getter - Setter
@@ -313,29 +352,27 @@ public class TargetController {
 	//Original EnderDragon functions!
 	//
 	
-	public void changeTarget(boolean force) {
+	public void changeTarget() {
 		try {
 			dragon.bz = false;
 
 			int homeRange = plugin.interactConfig().getConfig_maxHomeDistance();
-			Location homeLocation = dragon.getHomeLocation();
 
 			if (getVectorDistance(homeLocation) > homeRange){
 				isFlyingHome = true;
 				forceGoTo = homeLocation;
+				
 				currentTarget = null;
-				lockTarget = false;
+				lockTarget = true;
+				
 				targets.clear();
+				System.out.println("flying home!");
 			}
-			
-
-			if (dragon.isFlyingHome() || dragon.getForceLocation() != null)
-				force = true;
 			
 			switchTargetsWithMode();
 			Location newTarget = getTargetLocation();
 			
-			setNewTarget(newTarget,getLock());
+			setNewTarget(newTarget, getLock());
 		} catch (Exception e) {
 			if (!plugin.interactConfig().getConfig_debugOutput())
 				return;
@@ -372,27 +409,39 @@ public class TargetController {
 	}
 	
 	public void setNewTarget(Location location, boolean lockTarget) {
-		if (lockTarget)
+		if (lockTarget){
 			forceGoTo = location;
+		}
+		
 
-		if (forceGoTo != null)
+		if (forceGoTo != null){
 			location = forceGoTo;
+		}
+
+		if(isFlyingHome){
+			location = homeLocation.clone();
+		}
 
 		if (getVectorDistance(location) < 30) {
-			isFlyingHome = false;
+			if(isFlyingHome && location.equals(homeLocation)){
+				isFlyingHome = false;
+				System.out.println("not flying home any more!");
+			}
+			
 			if (forceGoTo != null) {
 				forceGoTo = null;
-				location = homeLocation;
+				location = homeLocation.clone();
 				return;
 			}
 		}
+		
 
 		double vecDistance = 0;
 		do {
 			dragon.h = location.getX();
 			dragon.i = (70.0F + this.random.nextFloat() * 50.0F);
 			dragon.j = location.getZ();
-			if (forceGoTo == null) {
+			if (forceGoTo == null  && !isFlyingHome) {
 				dragon.h += (this.random.nextFloat() * 120.0F - 60.0F);
 				dragon.j += (this.random.nextFloat() * 120.0F - 60.0F);
 
@@ -403,7 +452,7 @@ public class TargetController {
 				vecDistance = distanceX * distanceX + distanceY * distanceY
 						+ distanceZ * distanceZ;
 			} else {
-				dragon.j = location.getY();
+				dragon.i = location.getY();
 				vecDistance = 101;
 			}
 
@@ -420,10 +469,30 @@ public class TargetController {
 	}
 
 	public Location getHomeLocation() {
-		return homeLocation;
+		return homeLocation.clone();
 	}
 	
 	public void setHomeLocation(Location homeLocation) {
-		this.homeLocation = homeLocation;
+		this.homeLocation = homeLocation.clone();
+	}
+	
+	
+	/**
+	 * Returns an NBTTagList containing the current targets.
+	 * This is for storing / restoring the Entities.
+	 * 
+	 * @return
+	 */
+	public NBTTagList getCurrentTagetsAsNBTList(){
+		NBTTagList list = new NBTTagList();
+		
+		for(EntityLiving target : targets){
+			if(target instanceof EntityPlayer){
+				String playerName = ((EntityPlayer) target).getName();
+				list.add(new NBTTagString(playerName, playerName));
+			}
+		}
+		
+		return list;
 	}
 }

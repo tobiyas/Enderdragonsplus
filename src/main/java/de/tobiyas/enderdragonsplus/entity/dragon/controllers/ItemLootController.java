@@ -11,6 +11,7 @@ import net.minecraft.server.v1_6_R2.BlockEnderPortal;
 import net.minecraft.server.v1_6_R2.EntityExperienceOrb;
 import net.minecraft.server.v1_6_R2.MathHelper;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.PortalType;
 import org.bukkit.World;

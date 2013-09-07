@@ -3,12 +3,8 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
-
-import org.bukkit.Bukkit;
-import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
-//import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 
 import net.minecraft.server.v1_6_R2.DamageSource;
 import net.minecraft.server.v1_6_R2.Entity;
@@ -17,6 +13,13 @@ import net.minecraft.server.v1_6_R2.EntityHuman;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
 import net.minecraft.server.v1_6_R2.Explosion;
+import net.minecraft.server.v1_6_R2.NBTTagFloat;
+import net.minecraft.server.v1_6_R2.NBTTagList;
+
+import org.bukkit.Bukkit;
+
+import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
 public class DragonHealthController {
 
@@ -27,7 +30,6 @@ public class DragonHealthController {
 	private HashMap<String, Float> damageDoneByPlayer;
 	private String lastPlayerAttacked = "";
 	
-	//private AgeContainer ageContainer;
 	
 	public DragonHealthController(LimitedEnderDragon dragon){
 		plugin = EnderdragonsPlus.getPlugin();
@@ -35,6 +37,32 @@ public class DragonHealthController {
 		random = new Random();
 		
 		damageDoneByPlayer = new HashMap<String, Float>();
+	}
+	
+	/**
+	 * This constructor also restores the Damage done.
+	 * 
+	 * @param dragon
+	 * @param playerMapCompound
+	 */
+	public DragonHealthController(LimitedEnderDragon dragon, NBTTagList playerMapCompound){
+		this(dragon);
+		
+		for(int i = 0; i < playerMapCompound.size(); i++){
+			try{
+				NBTTagFloat playerTag = (NBTTagFloat) playerMapCompound.get(i);
+				String playerName = playerTag.getName();
+				float damage = playerTag.data;
+				
+				if(playerName != null && !"".equals(playerName)){
+					if(this.damageDoneByPlayer.containsKey(playerName)){
+						damage += damageDoneByPlayer.get(playerName);
+					}
+					
+					this.damageDoneByPlayer.put(playerName, damage);					
+				}
+			}catch(Exception exp){}
+		}
 	}
 	
 	
@@ -178,6 +206,20 @@ public class DragonHealthController {
 		if(dragonCurrentHealth > dragonMaxHealth){
 			dragon.setHealth(dragonMaxHealth);
 		}
+	}
+
+
+	public NBTTagList generatePlayerDamageMapAsNBT() {
+		NBTTagList compound = new NBTTagList();
+		
+		for(Entry<String, Float> entry : damageDoneByPlayer.entrySet()){
+			String playerName = entry.getKey();
+			float dmg = entry.getValue();
+			
+			compound.add(new NBTTagFloat(playerName, dmg));
+		}
+		
+		return compound;
 	}
 	
 }

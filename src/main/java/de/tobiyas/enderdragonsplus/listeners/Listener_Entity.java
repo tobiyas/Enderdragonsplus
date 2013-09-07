@@ -55,7 +55,9 @@ public class Listener_Entity implements Listener {
 	@EventHandler
 	public void onEnderDragonExplode(EntityExplodeEvent event) {
 		if(!plugin.interactConfig().getConfig_disableEnderdragonBlockDamage()) return;
+		
 		if(!(event.getEntity() instanceof EnderDragon)) return;
+		
 		UUID id = event.getEntity().getUniqueId();
 		if (plugin.getContainer().containsID(id)) {
 			event.setCancelled(true);
@@ -111,8 +113,9 @@ public class Listener_Entity implements Listener {
 		
 		LimitedEnderDragon dragon = (LimitedEnderDragon) ((CraftEnderDragon)event.getEntity()).getHandle();
 		String lastPlayerAttacked = dragon.getLastPlayerAttacked();
-		if(lastPlayerAttacked.equals(""))
+		if(lastPlayerAttacked.equals("")){
 			return;
+		}			
 
 		parseDragonDeath(dragon, event.getEntity().getWorld());
 	}

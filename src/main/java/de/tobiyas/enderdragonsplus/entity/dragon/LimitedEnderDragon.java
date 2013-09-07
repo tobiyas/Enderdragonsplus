@@ -101,16 +101,18 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		
 		ageContainer.setSpawnHealth(returnContainer.getCurrentHealth());
 		
-		targetController = new TargetController(returnContainer.getHomeLocation(), this, ageContainer.isHostile());
+		targetController = new TargetController(returnContainer.getHomeLocation(), this, ageContainer.isHostile(), 
+				returnContainer.getTargetList());
 		fireballController = new FireballController(targetController);
 		itemController = new ItemLootController(this);
-		dragonHealthController = new DragonHealthController(this);
+		dragonHealthController = new DragonHealthController(this, returnContainer.getDamageList());
 		dragonMoveController = new DragonMoveController(this);
 		
 		this.uniqueID = returnContainer.getUuid();
 		
 		initStats();
 	}
+	
 	
 	private void createAllControllers(String ageType, Location homeLocation){
 		boolean hostile = plugin.interactConfig().getConfig_dragonsAreHostile();
@@ -128,7 +130,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		dragonMoveController = new DragonMoveController(this);
 		
 		
-		//Schedules the spawnHealth for next Tick. This should prevent previous settings from CB side.
+		//Schedules the spawnHealth for next Tick. This should prevent settings from CB side.
 		final double spawnhealth = ageContainer.getSpawnHealth();
 		Bukkit.getScheduler().scheduleSyncDelayedTask(EnderdragonsPlus.getPlugin(), new Runnable() {
 			
@@ -158,7 +160,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		
 		
 		String dragonName = decodeColors(ageContainer.getAgePrettyName()) + " Dragon";
-		if(dragonName.length() > 50){
+		if(dragonName.length() > 15){
 			dragonName = dragonName.substring(0, 15);
 		}
 		
@@ -348,7 +350,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 		if (this.bz || (d3 < 100.0D) || d3 > 22500D || this.positionChanged
 				|| this.H) {
-			targetController.changeTarget(false);
+			targetController.changeTarget();
 		}
 
 		d1 /= MathHelper.sqrt(d0 * d0 + d2 * d2);
@@ -547,7 +549,8 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	@Override
 	public void b(NBTTagCompound compound){
 		super.b(compound);
-		NBTTagDragonStore.saveToNBT(this, compound, propertyController.getAllProperties());
+		NBTTagDragonStore.saveToNBT(this, compound, propertyController.getAllProperties(), 
+				dragonHealthController.generatePlayerDamageMapAsNBT(), targetController.getCurrentTagetsAsNBTList());
 	}
 
 	public void remove() {
@@ -560,7 +563,8 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 	@Override
 	public int getExpReward() {
-		return plugin.interactConfig().getConfig_dropEXP();
+		return ageContainer.getExp();
+		//return plugin.interactConfig().getConfig_dropEXP();
 	}
 
 	public Location getLocation() {
