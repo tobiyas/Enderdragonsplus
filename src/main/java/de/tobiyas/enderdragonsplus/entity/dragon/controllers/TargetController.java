@@ -56,7 +56,6 @@ public class TargetController {
 		this.isHostile = isHostile;
 		
 		this.lockTarget = false;
-		System.out.println("Releasing false constructor.");
 		this.plugin = EnderdragonsPlus.getPlugin();
 		
 		this.unTargetTicksMax = plugin.interactConfig().getConfig_dragonUntargeting();
@@ -153,11 +152,9 @@ public class TargetController {
 		
 		if(lockTarget){
 			double distanceSquared = currentLocation.distanceSquared(targetLocation);
-			System.out.println("current distance to target: " + distanceSquared + " lock set. flying home? " + isFlyingHome);
 			
 			if(distanceSquared < 900){
 				lockTarget = false;
-				System.out.println("Releasing lock.");
 			}else{
 				return false;
 			}
@@ -366,7 +363,6 @@ public class TargetController {
 				lockTarget = true;
 				
 				targets.clear();
-				System.out.println("flying home!");
 			}
 			
 			switchTargetsWithMode();
@@ -425,7 +421,6 @@ public class TargetController {
 		if (getVectorDistance(location) < 30) {
 			if(isFlyingHome && location.equals(homeLocation)){
 				isFlyingHome = false;
-				System.out.println("not flying home any more!");
 			}
 			
 			if (forceGoTo != null) {
@@ -494,5 +489,14 @@ public class TargetController {
 		}
 		
 		return list;
+	}
+	
+	/**
+	 * Returns a COPIED list of targets from the Dragon
+	 * 
+	 * @return
+	 */
+	public List<Entity> getAllCurrentTargets(){
+		return new LinkedList<Entity>(targets);
 	}
 }

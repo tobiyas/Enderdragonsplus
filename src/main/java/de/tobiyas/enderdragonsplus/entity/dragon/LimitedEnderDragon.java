@@ -690,4 +690,8 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	public AgeContainer getAgeContainer() {
 		return ageContainer;
 	}
+	
+	public List<Entity> getAllTargets(){
+		return targetController.getAllCurrentTargets();
+	}
 }

@@ -8,6 +8,7 @@ import java.util.Collections;
 
 import net.minecraft.server.v1_6_R2.Block;
 import net.minecraft.server.v1_6_R2.BlockEnderPortal;
+import net.minecraft.server.v1_6_R2.Entity;
 import net.minecraft.server.v1_6_R2.EntityExperienceOrb;
 import net.minecraft.server.v1_6_R2.MathHelper;
 
@@ -17,6 +18,8 @@ import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_6_R2.util.BlockStateListPopulator;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -62,7 +65,8 @@ public class ItemLootController {
 				0, 0, 0);
 		}
 
-		if ((ticksToDespawn < 50) && (ticksToDespawn % 5 == 0)) {
+		boolean giveDirectlyToPlayer = EnderdragonsPlus.getPlugin().interactConfig().isConfig_dragonGiveXPOnlyToDamagers();
+		if ((ticksToDespawn < 50) && (ticksToDespawn % 5 == 0) && !giveDirectlyToPlayer) {
 			int exp = dragon.getExpReward() / 20;
 			dropEXPOrbs(exp);
 		}
@@ -70,15 +74,47 @@ public class ItemLootController {
 		dragon.move(0, 0.1, 0);
 		dragon.aN = (dragon.yaw += 20);
 		if (ticksToDespawn <= 0) {
-			int exp = dragon.getExpReward() - dragon.getExpReward() / 2;
-			dropEXPOrbs(exp);
-
+			if(!giveDirectlyToPlayer){
+				givePlayersDirectlyXP(dragon.getExpReward());
+			}else{
+				int exp = dragon.getExpReward() - dragon.getExpReward() / 2;
+				dropEXPOrbs(exp);
+				
+			}
+			
 			int dragonX = MathHelper.floor(dragon.getLocation().getBlockX());
 			int dragonY = MathHelper.floor(dragon.getLocation().getBlockZ());
 			
 			spawnEnderPortal(dragonX, dragonY);
 			//dragon.aH(); //TODO not sure what this does.
 			dragon.die();
+		}
+	}
+
+	/**
+	 * Gives the EXP directly to the Players that hittet the dragon at least once.
+	 * This is equaly spread among the players.
+	 * 
+	 * @param expReward
+	 */
+	private void givePlayersDirectlyXP(int expReward) {
+		List<Entity> targets = dragon.getAllTargets();
+		
+		List<Player> playersToGiveXP = new LinkedList<Player>();
+		for(Entity target : targets){
+			if(target.getBukkitEntity() instanceof Player){
+				playersToGiveXP.add((Player) target.getBukkitEntity());
+			}
+		}
+		
+		int expPerPlayer = expReward / playersToGiveXP.size();
+		for(Player player : playersToGiveXP){
+			for(int i = 0; i < expReward; i += 50){
+				player.giveExp(i);			
+			}
+			
+			int rest = expPerPlayer % 50;
+			player.giveExp(rest);
 		}
 	}
 

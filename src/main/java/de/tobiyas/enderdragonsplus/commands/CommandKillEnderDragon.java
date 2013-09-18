@@ -30,6 +30,13 @@ public class CommandKillEnderDragon implements CommandExecutor {
 			return true;
 		}
 		
+		boolean instantRemove = false;
+		for(String arg : args){
+			if(arg.contains("-r")){
+				instantRemove = true;
+			}
+		}
+		
 		Player player = (Player) sender;
 		if(!(plugin.getPermissionManager().checkPermissions(player, PermissionNode.killEnderDragons)))
 			return true;
@@ -55,7 +62,7 @@ public class CommandKillEnderDragon implements CommandExecutor {
 			return true;
 		}
 		
-		int killed = plugin.getContainer().killEnderDragons(player.getLocation(), range);
+		int killed = plugin.getContainer().killEnderDragons(player.getLocation(), range, instantRemove);
 		
 		if(killed != 0)
 			player.sendMessage(ChatColor.GREEN + "Killed " + killed + " dragon/s.");

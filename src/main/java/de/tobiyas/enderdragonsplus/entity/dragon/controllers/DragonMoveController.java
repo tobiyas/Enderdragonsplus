@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+
 import net.minecraft.server.v1_6_R2.AxisAlignedBB;
 import net.minecraft.server.v1_6_R2.Block;
 import net.minecraft.server.v1_6_R2.Entity;
@@ -126,7 +128,7 @@ public class DragonMoveController {
 			for (org.bukkit.block.Block block : event.blockList()) {
 				int blockId = block.getTypeId();
 
-				if (blockId == 0) {
+				if (block.getType() == Material.AIR) {
 					continue;
 				}
 

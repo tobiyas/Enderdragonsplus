@@ -18,6 +18,7 @@ public class Config
   @SuppressWarnings("unused")
   private boolean config_disableDragonHealthBar;
   private boolean config_dragonsSitDownIfInactive;
+  private boolean config_dragonGiveXPOnlyToDamagers;
   
   //Fireballs
   private boolean config_dragonsSpitFireballs;
@@ -123,13 +124,13 @@ public class Config
 	config.addDefault("dragonTempleFile", "STDTemple.schematic");
 	config.addDefault("dragonsSitDownIfInactive", false);
 	config.addDefault("uploadMetrics", true);
-	config.addDefault("uploadErrors", false);	
+	config.addDefault("uploadErrors", false);
+	config.addDefault("dragonGiveXPOnlyToDamagers", false);
 
 	config.options().copyDefaults(true);
   }
 
-  private void reloadConfiguration()
-  {
+  private void reloadConfiguration(){
     this.plugin.reloadConfig();
     setupConfiguration();
 
@@ -186,6 +187,8 @@ public class Config
     this.config_maxHomeDistanceSquared = (this.config_maxHomeDistance * this.config_maxHomeDistance);
     this.config_uploadMetrics = this.plugin.getConfig().getBoolean("uploadMetrics");
     this.config_uploadErrors = this.plugin.getConfig().getBoolean("uploadErrors");
+    
+    this.config_dragonGiveXPOnlyToDamagers = this.plugin.getConfig().getBoolean("dragonGiveXPOnlyToDamagers", false);
   }
 
   public void reload() {
@@ -371,5 +374,9 @@ public class Config
 
 	public boolean getConfig_uploadErrors() {
 		return config_uploadErrors;
+	}
+
+	public boolean isConfig_dragonGiveXPOnlyToDamagers() {
+		return config_dragonGiveXPOnlyToDamagers;
 	}
 }

@@ -45,14 +45,17 @@ public class Container {
 		return toDelete.size();
 	}
 	
-	public int killEnderDragons(Location location, int range){
+	public int killEnderDragons(Location location, int range, boolean instantRemove){
 		ArrayList<UUID> toRemove = new ArrayList<UUID>();
 		for(UUID dragonID : dragonList.keySet()){
 			LimitedEnderDragon dragon = dragonList.get(dragonID);
 			if(dragon != null && (range == 0 || dragon.isInRange(location, range))){
 				toRemove.add(dragonID);
-				//container.dragon.remove();
-				dragon.dealDamage(DamageSource.MAGIC, 1000);
+				if(instantRemove){
+					dragon.remove();
+				}else{
+					dragon.dealDamage(DamageSource.MAGIC, 1000);
+				}
 			}
 		}
 		
