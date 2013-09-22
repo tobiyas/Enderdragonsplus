@@ -6,15 +6,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import net.minecraft.server.v1_6_R2.DamageSource;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityEnderCrystal;
-import net.minecraft.server.v1_6_R2.EntityHuman;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.Explosion;
-import net.minecraft.server.v1_6_R2.NBTTagFloat;
-import net.minecraft.server.v1_6_R2.NBTTagList;
+import net.minecraft.server.v1_6_R3.DamageSource;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityEnderCrystal;
+import net.minecraft.server.v1_6_R3.EntityHuman;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R3.Explosion;
+import net.minecraft.server.v1_6_R3.NBTTagFloat;
+import net.minecraft.server.v1_6_R3.NBTTagList;
 
 import org.bukkit.Bukkit;
 

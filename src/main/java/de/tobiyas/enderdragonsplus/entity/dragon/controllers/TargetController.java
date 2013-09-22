@@ -8,8 +8,8 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
@@ -18,11 +18,11 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.NBTTagList;
-import net.minecraft.server.v1_6_R2.NBTTagString;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R3.NBTTagList;
+import net.minecraft.server.v1_6_R3.NBTTagString;
 
 public class TargetController {
 

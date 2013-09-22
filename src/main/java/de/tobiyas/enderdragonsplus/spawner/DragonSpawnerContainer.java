@@ -6,14 +6,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.Packet130UpdateSign;
+import net.minecraft.server.v1_6_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R3.Packet130UpdateSign;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;

@@ -6,13 +6,13 @@ import java.lang.reflect.Field;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;

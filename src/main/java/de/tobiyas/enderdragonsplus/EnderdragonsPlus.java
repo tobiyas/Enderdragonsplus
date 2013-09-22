@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.server.v1_6_R2.EntityTypes;
+import net.minecraft.server.v1_6_R3.EntityTypes;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;

@@ -8,25 +8,25 @@ import java.util.UUID;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.minecraft.server.v1_6_R2.DamageSource;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityComplexPart;
-import net.minecraft.server.v1_6_R2.EntityEnderDragon;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.GenericAttributes;
-import net.minecraft.server.v1_6_R2.LocaleI18n;
-import net.minecraft.server.v1_6_R2.MathHelper;
-import net.minecraft.server.v1_6_R2.NBTTagCompound;
-import net.minecraft.server.v1_6_R2.Vec3D;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.DamageSource;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityComplexPart;
+import net.minecraft.server.v1_6_R3.EntityEnderDragon;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.GenericAttributes;
+import net.minecraft.server.v1_6_R3.LocaleI18n;
+import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.v1_6_R3.NBTTagCompound;
+import net.minecraft.server.v1_6_R3.Vec3D;
+import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.event.CraftEventFactory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -147,8 +147,8 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	//This overrides the health setting
 	/*@Override
-	protected void ay(){
-		super.ay();
+	protected void az(){
+		super.az();
 		this.getAttributeInstance(GenericAttributes.a).setValue((float) ageContainer.getMaxHealth());
 	}*/
 	
@@ -169,7 +169,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	
 	/** This method sets the Life of the EnderDragon
-	 * @see net.minecraft.server.v1_6_R2.v1_5_R2.EntityEnderDragon#a()
+	 * @see net.minecraft.server.v1_6_R3.v1_5_R2.EntityEnderDragon#a()
 	 */
 	@Override
 	protected void a() {
@@ -227,7 +227,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 	/**
 	 *  Logic call. All Dragon logic on tick
-	 * @see net.minecraft.server.v1_6_R2.v1_4_R1.Enderdragon#
+	 * @see net.minecraft.server.v1_6_R3.v1_4_R1.Enderdragon#
 	 */
 	@Override
 	public void c(){
@@ -524,13 +524,13 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 	/** 
 	 * Function to drop the EXP if a Dragon is dead
-	 * ORIGINAL: aP()
+	 * ORIGINAL: aA()
 	 * Moved to: ItemLootController
 	 * 
-	 * @see net.minecraft.server.v1_6_R2.v1_5_R2.EntityEnderDragon#aO()
+	 * @see net.minecraft.server.v1_6_R3.v1_5_R3.EntityEnderDragon#aB()
 	 */
 	@Override
-	protected void aA() {
+	protected void aB() {
 		itemController.deathTick();
 	}
 	
@@ -544,7 +544,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	/**
 	 * Saving dragon data to NBT Compound
-	 * @see net.minecraft.server.v1_6_R2.v1_5_R2.EntityLiving#b(net.minecraft.server.v1_6_R2.v1_5_R2.NBTTagCompound)
+	 * @see net.minecraft.server.v1_6_R3.v1_5_R2.EntityLiving#b(net.minecraft.server.v1_6_R3.v1_5_R2.NBTTagCompound)
 	 */
 	@Override
 	public void b(NBTTagCompound compound){

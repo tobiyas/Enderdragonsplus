@@ -14,8 +14,8 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;

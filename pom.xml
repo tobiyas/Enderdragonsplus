@@ -8,8 +8,8 @@
   
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<utilsVersion>1.0.8</utilsVersion>
-  	<cb.version>1.6.2-R0.2-SNAPSHOT</cb.version>
+  	<utilsVersion>1.0.9</utilsVersion>
+  	<cb.version>1.6.4-R0.1-SNAPSHOT</cb.version>
   </properties>
     
   <scm>

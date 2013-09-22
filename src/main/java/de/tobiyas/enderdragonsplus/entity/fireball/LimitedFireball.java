@@ -1,7 +1,7 @@
 package de.tobiyas.enderdragonsplus.entity.fireball;
 
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.event.CraftEventFactory;
 import org.bukkit.entity.Explosive;
 import org.bukkit.entity.Fireball;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -9,12 +9,12 @@ import org.bukkit.event.entity.ExplosionPrimeEvent;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.entity.fireball.FireballRebounceEvent.RebounceReason;
-import net.minecraft.server.v1_6_R2.DamageSource;
-import net.minecraft.server.v1_6_R2.EntityLargeFireball;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.MovingObjectPosition;
-import net.minecraft.server.v1_6_R2.Vec3D;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.DamageSource;
+import net.minecraft.server.v1_6_R3.EntityLargeFireball;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.MovingObjectPosition;
+import net.minecraft.server.v1_6_R3.Vec3D;
+import net.minecraft.server.v1_6_R3.World;
 
 public class LimitedFireball extends EntityLargeFireball {
 
@@ -47,7 +47,7 @@ public class LimitedFireball extends EntityLargeFireball {
 		if (damageSource.getEntity() != null) {
 			if (damageSource.getEntity() instanceof LimitedEnderDragon)
 				return false;
-			Vec3D vec3d = damageSource.getEntity().Z();
+			Vec3D vec3d = damageSource.getEntity().aa();
 
 			if (vec3d != null) {
 				this.motX = vec3d.c;

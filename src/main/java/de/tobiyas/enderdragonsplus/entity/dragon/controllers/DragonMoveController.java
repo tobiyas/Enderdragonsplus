@@ -7,12 +7,12 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
-import net.minecraft.server.v1_6_R2.AxisAlignedBB;
-import net.minecraft.server.v1_6_R2.Block;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.Explosion;
-import net.minecraft.server.v1_6_R2.MathHelper;
+import net.minecraft.server.v1_6_R3.AxisAlignedBB;
+import net.minecraft.server.v1_6_R3.Block;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.Explosion;
+import net.minecraft.server.v1_6_R3.MathHelper;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
@@ -76,7 +76,7 @@ public class DragonMoveController {
 
 		// CraftBukkit start - create a list to hold all the destroyed blocks
 		List<org.bukkit.block.Block> destroyedBlocks = new ArrayList<org.bukkit.block.Block>();
-		org.bukkit.craftbukkit.v1_6_R2.CraftWorld craftWorld = dragon.world.getWorld();
+		org.bukkit.craftbukkit.v1_6_R3.CraftWorld craftWorld = dragon.world.getWorld();
 		// CraftBukkit end
 
 		for (int blockX = pos1X; blockX <= pos2X; ++blockX) {
