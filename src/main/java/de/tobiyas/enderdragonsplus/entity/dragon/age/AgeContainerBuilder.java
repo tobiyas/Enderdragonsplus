@@ -9,6 +9,19 @@ import de.tobiyas.util.config.returncontainer.DropContainer;
 
 public class AgeContainerBuilder {
 
+	private static final String NBT_TAG__NAME = "name";
+	private static final String NBT_TAG__PRETTY_AGE_NAME = "agePrettyName";
+	private static final String NBT_TAG__MAX_HEALTH = "maxHP";
+	private static final String NBT_TAG__SPAWN_HEALTH = "spawnHP";
+	
+	//private static final String NBT_TAG__DROPS= "drops"; //TODO add drops
+	private static final String NBT_TAG__EXP = "exp";
+
+	private static final String NBT_TAG__DMG = "dmg";
+	private static final String NBT_TAG__IS_HOSTILE = "isHostile";
+	private static final String NBT_TAG__RANK = "rank";
+	
+	
 	private String ageConfigName;
 	private String prettyAgeName;
 	
@@ -76,15 +89,16 @@ public class AgeContainerBuilder {
 
 	public static AgeContainer buildFromNBTTag(NBTTagCompound compound) {
 		
-		String ageConfigName = compound.getString("name");
-		String agePrettyName = compound.getString("agePrettyName");
-		double maxHealth = compound.getDouble("maxHP");
-		double spawnHealth = compound.getDouble("spawnHP");
+		String ageConfigName = compound.getString(NBT_TAG__NAME);
+		String agePrettyName = compound.getString(NBT_TAG__PRETTY_AGE_NAME);
+		double maxHealth = compound.getDouble(NBT_TAG__MAX_HEALTH);
+		double spawnHealth = compound.getDouble(NBT_TAG__SPAWN_HEALTH);
+		int exp = compound.getInt(NBT_TAG__EXP);
+		double dmg = compound.getDouble(NBT_TAG__DMG);
+		int rank = compound.getInt(NBT_TAG__RANK);
+		boolean isHostile = compound.getBoolean(NBT_TAG__IS_HOSTILE);
+
 		List<DropContainer> drops = new LinkedList<DropContainer>(); //TODO add implementation
-		int exp = compound.getInt("exp");
-		double dmg = compound.getDouble("dmp");
-		int rank = compound.getInt("rank");
-		boolean isHostile = compound.getBoolean("isHostile");
 
 		return new AgeContainer(ageConfigName, agePrettyName, maxHealth, spawnHealth, exp, dmg, isHostile, rank, drops);
 	}
@@ -93,14 +107,14 @@ public class AgeContainerBuilder {
 	public static NBTTagCompound saveToNBTTagCompound(AgeContainer ageContainer) {
 		NBTTagCompound compound = new NBTTagCompound();
 		
-		compound.setString("name", ageContainer.getAgeName());
-		compound.setString("agePrettyName", ageContainer.getAgePrettyName());
-		compound.setDouble("dmg", ageContainer.getDmg());
-		compound.setInt("exp", ageContainer.getExp());
-		compound.setDouble("maxHP", ageContainer.getMaxHealth());
-		compound.setInt("rank", ageContainer.getRank());
-		compound.setDouble("spawnHP", ageContainer.getSpawnHealth());
-		compound.setBoolean("isHostile", ageContainer.isHostile());
+		compound.setString(NBT_TAG__NAME, ageContainer.getAgeName());
+		compound.setString(NBT_TAG__PRETTY_AGE_NAME, ageContainer.getAgePrettyName());
+		compound.setDouble(NBT_TAG__MAX_HEALTH, ageContainer.getMaxHealth());
+		compound.setDouble(NBT_TAG__SPAWN_HEALTH, ageContainer.getSpawnHealth());
+		compound.setInt(NBT_TAG__EXP, ageContainer.getExp());
+		compound.setDouble(NBT_TAG__DMG, ageContainer.getDmg());
+		compound.setInt(NBT_TAG__RANK, ageContainer.getRank());
+		compound.setBoolean(NBT_TAG__IS_HOSTILE, ageContainer.isHostile());
 		
 		//TODO set item//compound("drops", ageContainer.getDrops());
 		

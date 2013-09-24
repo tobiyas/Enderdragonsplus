@@ -126,9 +126,16 @@ public class Listener_Entity implements Listener {
 		
 		message =
 		message.replaceAll(Pattern.quote("~player_kill~"), dragon.getLastPlayerAttacked())
+				.replaceAll(Pattern.quote("{player_kill}"), dragon.getLastPlayerAttacked())
+				
 				.replaceAll(Pattern.quote("~player_kill_dmg~"), damage + "")
+				.replaceAll(Pattern.quote("{player_kill_dmg}"), damage + "")
+				
 				.replaceAll(Pattern.quote("~age~"), dragon.getAgeName())
+				.replaceAll(Pattern.quote("{age}"), dragon.getAgeName())
+				
 				.replaceAll("(&([a-f0-9]))", "§$2");
+		
 		
 		List<org.bukkit.World> toWorlds = decodeWorlds(dragonDeathWorld);
 		announceToWorlds(message, toWorlds);
@@ -137,10 +144,11 @@ public class Listener_Entity implements Listener {
 	private List<org.bukkit.World> decodeWorlds(org.bukkit.World dragonDeathWorld) {
 		String worldString = plugin.interactConfig().getConfig_dragonKillMessageToWorlds();
 		List<org.bukkit.World> worldList = new LinkedList<org.bukkit.World>();
-		if(worldString.contains("{all}"))
+		if(worldString.contains("~all~") || worldString.contains("{all}"))
 			return Bukkit.getWorlds();
 		
 		worldString.replace("{current}", dragonDeathWorld.getName());
+		worldString.replace("~current~", dragonDeathWorld.getName());
 		
 		String[] worlds = worldString.split(",");
 		for(String world : worlds){

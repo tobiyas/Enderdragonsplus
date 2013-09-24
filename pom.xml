@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.tobiyas</groupId>
   <artifactId>EnderdragonsPlus</artifactId>
-  <version>1.10.2-RC</version>
+  <version>1.11.0-RC</version>
   <name>EnderdragonsPlus</name>
   <url>http://dev.bukkit.org/server-mods/enderdragonsplus/</url>
   
@@ -65,25 +65,7 @@
   		<artifactId>Utils</artifactId>
   		<version>${utilsVersion}</version>
   	</dependency>
-  	
-  	<!-- Jar-File System Dependency -->
-  	<dependency>
-  		<groupId>de.v10lator</groupId>
-    	<artifactId>RideThaDragon</artifactId>
-    	<version>0.9.2</version>
-   		<scope>system</scope>
-    	<systemPath>D:/Dropbox/Workspace/Workspace-Minecraft/Libaries/Misc/RideThaDragon.jar</systemPath>
-    	<optional>true</optional>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.xemsdoom</groupId>
-  		<artifactId>DragonTravel</artifactId>
-  		<version>1.6</version>
-  		<scope>system</scope>
-  		<systemPath>D:/Dropbox/Workspace/Workspace-Minecraft/Libaries/Misc/DragonTravel.jar</systemPath>
-  		<optional>true</optional>
-  	</dependency>
-  </dependencies>
+ </dependencies>
   
  <build>
     <sourceDirectory>src/main/java</sourceDirectory>
