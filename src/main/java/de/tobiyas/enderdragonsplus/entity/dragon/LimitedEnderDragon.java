@@ -8,25 +8,25 @@ import java.util.UUID;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.minecraft.server.v1_6_R3.DamageSource;
-import net.minecraft.server.v1_6_R3.Entity;
-import net.minecraft.server.v1_6_R3.EntityComplexPart;
-import net.minecraft.server.v1_6_R3.EntityEnderDragon;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.GenericAttributes;
-import net.minecraft.server.v1_6_R3.LocaleI18n;
-import net.minecraft.server.v1_6_R3.MathHelper;
-import net.minecraft.server.v1_6_R3.NBTTagCompound;
-import net.minecraft.server.v1_6_R3.Vec3D;
-import net.minecraft.server.v1_6_R3.World;
+import net.minecraft.server.DamageSource;
+import net.minecraft.server.Entity;
+import net.minecraft.server.EntityComplexPart;
+import net.minecraft.server.EntityEnderDragon;
+import net.minecraft.server.EntityLiving;
+import net.minecraft.server.GenericAttributes;
+import net.minecraft.server.LocaleI18n;
+import net.minecraft.server.MathHelper;
+import net.minecraft.server.NBTTagCompound;
+import net.minecraft.server.Vec3D;
+import net.minecraft.server.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R3.event.CraftEventFactory;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -169,11 +169,13 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	
 	/** This method sets the Life of the EnderDragon
-	 * @see net.minecraft.server.v1_6_R3.v1_5_R2.EntityEnderDragon#a()
+	 * @see net.minecraft.server.EntityEnderDragon#aD()
 	 */
 	@Override
-	protected void a() {
-		super.a();
+	protected void aD() {
+		super.aD();
+		//Health is set somewehere else.
+		
 		/*  Actually doing this: 
 		this.datawatcher.a(8, Integer.valueOf(0));
 		this.datawatcher.a(9, Byte.valueOf(0));
@@ -192,7 +194,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 
 	@Override
-	public String getLocalizedName() {
+	public String getName() {
 		return LocaleI18n.get("entity.EnderDragon.name");
 	}
 
@@ -227,10 +229,10 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 	/**
 	 *  Logic call. All Dragon logic on tick
-	 * @see net.minecraft.server.v1_6_R3.v1_4_R1.Enderdragon#
+	 * @see net.minecraft.server.Enderdragon#e
 	 */
 	@Override
-	public void c(){
+	public void e(){
 		try{
 			internalLogicTick();
 		}catch(Exception e){
@@ -349,7 +351,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		}
 
 		if (this.bz || (d3 < 100.0D) || d3 > 22500D || this.positionChanged
-				|| this.H) {
+				|| this.G) {
 			targetController.changeTarget();
 		}
 
@@ -449,13 +451,13 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		float f11 = MathHelper.sin(f10);
 		float f12 = MathHelper.cos(f10);
 
-		this.br.l_();
+		this.br.h();
 		this.br.setPositionRotation(this.locX + (f11 * 0.5F),
 				this.locY, this.locZ - (f12 * 0.5F), 0.0F, 0.0F);
-		this.bv.l_();
+		this.bv.h();
 		this.bv.setPositionRotation(this.locX + (f12 * 4.5F),
 				this.locY + 2.0D, this.locZ + (f11 * 4.5F), 0.0F, 0.0F);
-		this.bw.l_();
+		this.bw.h();
 		this.bw.setPositionRotation(this.locX - (f12 * 4.5F),
 				this.locY + 2.0D, this.locZ - (f11 * 4.5F), 0.0F, 0.0F);
 
@@ -476,7 +478,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		float f13 = MathHelper.cos((float)directionDegree
 				- this.bg * 0.01F);
 
-		this.bq.l_();
+		this.bq.h();
 		this.bq.setPositionRotation(this.locX + (f3 * 5.5F * f2),
 				this.locY + (adouble1[1] - adouble[1])
 						+ (f9 * 5.5F), this.locZ
@@ -504,7 +506,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			float f17 = 1.5F;
 			float f18 = (j + 1) * 2.0F;
 
-			entitycomplexpart.l_();
+			entitycomplexpart.h();
 			entitycomplexpart.setPositionRotation(this.locX - ((f11 * f17 + f15 * f18) * f2), 
 					this.locY + (adouble2[1] - adouble[1]) * 1.0D - ((f18 + f17) * f9) + 1.5D, 
 					this.locZ + ((f12 * f17 + f16 * f18) * f2), 0.0F, 0.0F);
@@ -527,10 +529,11 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	 * ORIGINAL: aA()
 	 * Moved to: ItemLootController
 	 * 
-	 * @see net.minecraft.server.v1_6_R3.v1_5_R3.EntityEnderDragon#aB()
+	 * @see net.minecraft.server.v1_5_R3.EntityEnderDragon#aB()
 	 */
 	@Override
-	protected void aB() {
+	protected void aF() {
+		if(this.dead) return; // CraftBukkit - can't kill what's already dead
 		itemController.deathTick();
 	}
 	
@@ -544,7 +547,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	/**
 	 * Saving dragon data to NBT Compound
-	 * @see net.minecraft.server.v1_6_R3.v1_5_R2.EntityLiving#b(net.minecraft.server.v1_6_R3.v1_5_R2.NBTTagCompound)
+	 * @see net.minecraft.server.v1_5_R2.EntityLiving#b(net.minecraft.server.v1_5_R2.NBTTagCompound)
 	 */
 	@Override
 	public void b(NBTTagCompound compound){
@@ -557,9 +560,6 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		getBukkitEntity().remove();
 	}
 
-	public String getName() {
-		return "EnderDragon";
-	}
 
 	@Override
 	public int getExpReward() {
@@ -693,5 +693,9 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	public List<Entity> getAllTargets(){
 		return targetController.getAllCurrentTargets();
+	}
+
+	public Location getTargetLocation() {
+		return targetController.getTargetLocation();
 	}
 }

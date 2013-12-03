@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -46,7 +46,7 @@ public class OnTheFlyReplacer implements Runnable {
 	}
 	
 	private LimitedEnderDragon spawnLimitedEnderDragon(Location location, UUID uuid){
-		net.minecraft.server.v1_6_R3.World world = ((CraftWorld)location.getWorld()).getHandle();
+		net.minecraft.server.World world = ((CraftWorld)location.getWorld()).getHandle();
 		
 		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
 		dragon.spawn();

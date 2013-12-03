@@ -2,10 +2,7 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.minecraft.server.v1_6_R3.NBTTagCompound;
-import net.minecraft.server.v1_6_R3.NBTTagList;
-import net.minecraft.server.v1_6_R3.NBTTagString;
-
+import net.minecraft.server.NBTTagCompound;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.NBTTagDragonStore.DragonNBTReturn;
 
 public class PropertyController {
@@ -22,48 +19,54 @@ public class PropertyController {
 	
 	public void addProperty(String name, Object value) throws OperationNotSupportedException{
 		try{
-			NBTTagList properties = propertyMap.getList("propertyList");
-			properties.add(new NBTTagString(name));
-			
+			NBTTagCompound properties = propertyMap.getCompound("propertyList");
 			boolean setSomething = false;
 			
 			if(value instanceof String){
 				propertyMap.setString(name, (String) value);
+				properties.setString(name, (String) value);
 				setSomething = true;
 			}
 			
 			if(value instanceof Long){
 				propertyMap.setLong(name, (Long) value);
+				properties.setLong(name, (Long) value);
 				setSomething = true;
 			}
 			
 			if(value instanceof Boolean){
 				propertyMap.setBoolean(name, (Boolean) value);
+				properties.setBoolean(name, (Boolean) value);
 				setSomething = true;
 			}
 			
 			if(value instanceof Byte){
 				propertyMap.setByte(name, (Byte) value);
+				properties.setByte(name, (Byte) value);
 				setSomething = true;
 			}
 
 			if(value instanceof Double){
 				propertyMap.setDouble(name, (Double) value);
+				properties.setDouble(name, (Double) value);
 				setSomething = true;
 			}
 			
 			if(value instanceof Float){
 				propertyMap.setFloat(name, (Float) value);
+				properties.setFloat(name, (Float) value);
 				setSomething = true;
 			}
 			
 			if(value instanceof Integer){
 				propertyMap.setInt(name, (Integer) value);
+				properties.setInt(name, (Integer) value);
 				setSomething = true;
 			}
 			
 			if(value instanceof Short){
 				propertyMap.setShort(name, (Short) value);
+				properties.setShort(name, (Short) value);
 				setSomething = true;
 			}
 			

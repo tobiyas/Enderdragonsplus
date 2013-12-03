@@ -49,7 +49,7 @@ public class DragonLogicTicker implements Runnable {
 					for(int i = 0; i < limit; i++){
 						try{
 							if(dragon == null) break;
-							dragon.l_();
+							dragon.e();
 						}catch(Exception exp)
 						{}//prevent Craftbukkit from crashing
 					}

@@ -1,7 +1,7 @@
 package de.tobiyas.enderdragonsplus.entity.fireball;
 
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R3.event.CraftEventFactory;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.Explosive;
 import org.bukkit.entity.Fireball;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -9,12 +9,12 @@ import org.bukkit.event.entity.ExplosionPrimeEvent;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.entity.fireball.FireballRebounceEvent.RebounceReason;
-import net.minecraft.server.v1_6_R3.DamageSource;
-import net.minecraft.server.v1_6_R3.EntityLargeFireball;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.MovingObjectPosition;
-import net.minecraft.server.v1_6_R3.Vec3D;
-import net.minecraft.server.v1_6_R3.World;
+import net.minecraft.server.DamageSource;
+import net.minecraft.server.EntityLargeFireball;
+import net.minecraft.server.EntityLiving;
+import net.minecraft.server.MovingObjectPosition;
+import net.minecraft.server.Vec3D;
+import net.minecraft.server.World;
 
 public class LimitedFireball extends EntityLargeFireball {
 
@@ -43,11 +43,11 @@ public class LimitedFireball extends EntityLargeFireball {
 				return false;
 		}
 
-		K();
+		Q();
 		if (damageSource.getEntity() != null) {
 			if (damageSource.getEntity() instanceof LimitedEnderDragon)
 				return false;
-			Vec3D vec3d = damageSource.getEntity().aa();
+			Vec3D vec3d = damageSource.getEntity().ag();
 
 			if (vec3d != null) {
 				this.motX = vec3d.c;
@@ -71,13 +71,13 @@ public class LimitedFireball extends EntityLargeFireball {
 	}
 
 	@Override
-	public void l_() {
+	public void h() {
 		speedUp();
 		if (--maxSurvivalCounter < 0) {
 			this.die();
 			return;
 		}
-		super.l_();
+		super.h();
 	}
 
 	private void speedUp() {
@@ -85,7 +85,7 @@ public class LimitedFireball extends EntityLargeFireball {
 		motY *= speedup;
 		motZ *= speedup;
 
-		K();
+		Q();
 	}
 
 	public void speedUp(double speed) {

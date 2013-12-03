@@ -8,15 +8,15 @@
 package de.tobiyas.enderdragonsplus;
 
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.server.v1_6_R3.EntityTypes;
+import net.minecraft.server.EntityTypes;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import de.tobiyas.enderdragonsplus.bridges.BridgeController;
 import de.tobiyas.enderdragonsplus.commands.CommandEDP;
@@ -43,12 +43,13 @@ import de.tobiyas.enderdragonsplus.listeners.Listener_Sign;
 import de.tobiyas.enderdragonsplus.listeners.Listener_World;
 import de.tobiyas.enderdragonsplus.spawner.DragonSpawnerManager;
 import de.tobiyas.enderdragonsplus.util.Consts;
+import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
 import de.tobiyas.util.permissions.PermissionManager;
 
 
-public class EnderdragonsPlus extends JavaPlugin{
+public class EnderdragonsPlus extends UtilsUsingPlugin{
 	private DebugLogger debugLogger;
 	private PluginDescriptionFile description;
 
@@ -78,7 +79,7 @@ public class EnderdragonsPlus extends JavaPlugin{
 		description = getDescription();
 		prefix = "["+description.getName()+"] ";
 		
-		tryInjectDragon();
+		if(!tryInjectDragon()) return;
 		permissionManager = new PermissionManager(this);
 		
 		setupConfiguration();
@@ -98,25 +99,62 @@ public class EnderdragonsPlus extends JavaPlugin{
 		log(description.getFullName() + " fully loaded with: " + permissionManager.getPermissionsName());
 	}
 	
-	private void tryInjectDragon(){
+	
+
+	//The Consts the EnderDragon is Identified With
+	private final int edInt = 63; //63 is ED
+	private final String edName = "LimitedEnderDragon";
+	private final Class<?> edClass = LimitedEnderDragon.class;
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private boolean tryInjectDragon(){
 		try{
-	      Method method = EntityTypes.class.getDeclaredMethod("a", new Class[] { Class.class, String.class, Integer.TYPE });
-	      method.setAccessible(true);
-	      method.invoke(
+			Class<EntityTypes> entityTypeClass = EntityTypes.class;
+			
+			Field c = entityTypeClass.getDeclaredField("c"); c.setAccessible(true);
+			HashMap c_map = (HashMap) c.get(null);
+			c_map.put(edName, edClass);
+			
+			Field d = entityTypeClass.getDeclaredField("d"); d.setAccessible(true);
+			HashMap d_map = (HashMap) d.get(null);
+			d_map.put(edClass, edName);
+			
+			Field e = entityTypeClass.getDeclaredField("e"); e.setAccessible(true);
+			HashMap e_map = (HashMap) e.get(null);
+			e_map.put(edInt, edClass);
+			
+			Field f = entityTypeClass.getDeclaredField("f"); f.setAccessible(true);
+			HashMap f_map = (HashMap) f.get(null);
+			f_map.put(edClass, edInt);
+			
+			Field g = entityTypeClass.getDeclaredField("g"); g.setAccessible(true);
+			HashMap g_map = (HashMap) g.get(null);
+			g_map.put(edName, edInt);
+	      
+			return true;
+			/*   //Old way
+	        Method method = entityTypeClass.getDeclaredMethod("a", new Class[] { Class.class, String.class, Integer.TYPE });
+	        method.setAccessible(true);
+	      
+	        method.invoke(
 	    		  EntityTypes.class, new Object[] { 
 	    	  		LimitedEnderDragon.class, 
-	    	  		"LimitedEnderDragon", 
-	    	  		Integer.valueOf(63) 
+	    	  		constEnderDragonName, 
+	    	  		constEnderDragonValue,
 	    	  	});
+	    	*/
 	            
 	    } catch (NoClassDefFoundError exp) {
 	    	log("Could not inject LimitedEnderDragon. Disabling Plugin.");
 	    	log("You are probably using the wrong Version. Your version: " + Bukkit.getVersion() + " supportet EnderDragonsPlusVersion: " + Consts.SupportetVersion);
 	    	exp.printStackTrace();
 	    	Bukkit.getPluginManager().disablePlugin(this);
+	    	return false;
 	    } catch (Exception exp) {
 			log("Something has gone wrong while injekting! Plugin will be disabled!");
+			debugLogger.logStackTrace(exp);
 			Bukkit.getPluginManager().disablePlugin(this);
+			return false;
 		}
 	}
 	

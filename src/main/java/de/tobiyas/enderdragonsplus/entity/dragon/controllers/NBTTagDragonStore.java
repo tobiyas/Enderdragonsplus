@@ -2,8 +2,7 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
 import java.util.UUID;
 
-import net.minecraft.server.v1_6_R3.NBTTagCompound;
-import net.minecraft.server.v1_6_R3.NBTTagList;
+import net.minecraft.server.NBTTagCompound;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,9 +20,9 @@ public class NBTTagDragonStore {
 		private Location forceTarget;
 		private boolean flyingHome;
 		private NBTTagCompound properties;
-		private NBTTagList damageList;
+		private NBTTagCompound damageList;
 		private AgeContainer ageContainer;
-		private NBTTagList targetList;
+		private NBTTagCompound targetList;
 		
 		private float currentHealth;
 		
@@ -75,13 +74,13 @@ public class NBTTagDragonStore {
 			return this;
 		}
 		
-		public DragonNBTReturn setDamageList(NBTTagList damageList) {
+		public DragonNBTReturn setDamageList(NBTTagCompound damageList) {
 			this.damageList = damageList;
 			return this;
 		}		
 
 
-		public DragonNBTReturn setTargetList(NBTTagList targetList) {
+		public DragonNBTReturn setTargetList(NBTTagCompound targetList) {
 			this.targetList = targetList;
 			return this;
 		}
@@ -115,12 +114,12 @@ public class NBTTagDragonStore {
 			return currentHealth;
 		}
 
-		public NBTTagList getDamageList() {
+		public NBTTagCompound getDamageList() {
 			return damageList;
 		}
 
 
-		public NBTTagList getTargetList() {
+		public NBTTagCompound getTargetList() {
 			return targetList;
 		}
 		
@@ -128,7 +127,7 @@ public class NBTTagDragonStore {
 	
 
 	public static void saveToNBT(LimitedEnderDragon dragon, NBTTagCompound compound, NBTTagCompound propertiesCompound, 
-			NBTTagList damageMap, NBTTagList targetList) {
+			NBTTagCompound damageMap, NBTTagCompound targetList) {
 		Location homeLocation = dragon.getHomeLocation();
 		compound.setDouble("homeLocation.x", homeLocation.getX());
 		compound.setDouble("homeLocation.y", homeLocation.getY());
@@ -148,8 +147,8 @@ public class NBTTagDragonStore {
 		
 		compound.setFloat("currentHealth", dragon.getHealth());
 		
-		compound.setCompound("properties", propertiesCompound);
-		compound.setCompound("age", AgeContainerBuilder.saveToNBTTagCompound(dragon.getAgeContainer()));
+		compound.set("properties", propertiesCompound);
+		compound.set("age", AgeContainerBuilder.saveToNBTTagCompound(dragon.getAgeContainer()));
 		compound.setString("uuid", dragon.getUUID().toString());
 		
 		compound.set("damagemap", damageMap);
@@ -183,8 +182,8 @@ public class NBTTagDragonStore {
 		UUID uuid = UUID.fromString(compound.getString("uuid"));
 		
 		float currentHealth = compound.getFloat("currentHealth");
-		NBTTagList damageList = compound.getList("damagemap");
-		NBTTagList targetList = compound.getList("targetlist");
+		NBTTagCompound damageList = compound.getCompound("damagemap");
+		NBTTagCompound targetList = compound.getCompound("targetlist");
 		
 		DragonNBTReturn returnValue = new DragonNBTReturn();
 		returnValue.setHomeLocation(homeLocation)

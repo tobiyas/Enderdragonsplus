@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import net.minecraft.server.AxisAlignedBB;
+import net.minecraft.server.Block;
+import net.minecraft.server.Blocks;
+import net.minecraft.server.Entity;
+import net.minecraft.server.EntityLiving;
+import net.minecraft.server.Explosion;
+import net.minecraft.server.Material;
+import net.minecraft.server.MathHelper;
 
-import net.minecraft.server.v1_6_R3.AxisAlignedBB;
-import net.minecraft.server.v1_6_R3.Block;
-import net.minecraft.server.v1_6_R3.Entity;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.Explosion;
-import net.minecraft.server.v1_6_R3.MathHelper;
+import org.bukkit.Bukkit;
+
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 
@@ -62,6 +64,7 @@ public class DragonMoveController {
 	
 	
 	// Original: a(AxisAlignedBB axisalignedbb)
+	@SuppressWarnings("deprecation")
 	public boolean checkHitBlocks(AxisAlignedBB axisalignedbb) {
 		int pos1X = MathHelper.floor(axisalignedbb.a);
 		int pos1Y = MathHelper.floor(axisalignedbb.b);
@@ -76,19 +79,20 @@ public class DragonMoveController {
 
 		// CraftBukkit start - create a list to hold all the destroyed blocks
 		List<org.bukkit.block.Block> destroyedBlocks = new ArrayList<org.bukkit.block.Block>();
-		org.bukkit.craftbukkit.v1_6_R3.CraftWorld craftWorld = dragon.world.getWorld();
+		org.bukkit.craftbukkit.CraftWorld craftWorld = dragon.world.getWorld();
 		// CraftBukkit end
 
 		for (int blockX = pos1X; blockX <= pos2X; ++blockX) {
 			for (int blockY = pos1Y; blockY <= pos2Y; ++blockY) {
 				for (int blockZ = pos1Z; blockZ <= pos2Z; ++blockZ) {
-					int blockType = dragon.world
-							.getTypeId(blockX, blockY, blockZ);
+					Block block = dragon.world
+							.getType(blockX, blockY, blockZ);
 
-					if (blockType != 0) {
-						if (blockType != Block.OBSIDIAN.id
-								&& blockType != Block.WHITESTONE.id
-								&& blockType != Block.BEDROCK.id) {
+					if (block.getMaterial() != Material.AIR) {
+						if (block != Blocks.OBSIDIAN
+								&& block != Blocks.WHITESTONE
+								&& block != Blocks.BEDROCK) {
+							
 							hitSomething = true;
 							// CraftBukkit start - add blocks to list rather
 							// than destroying them
@@ -126,20 +130,21 @@ public class DragonMoveController {
 			}
 		} else {
 			for (org.bukkit.block.Block block : event.blockList()) {
-				int blockId = block.getTypeId();
-
-				if (block.getType() == Material.AIR) {
+				 org.bukkit.Material blockId = block.getType();
+				 if (blockId == org.bukkit.Material.AIR) {
 					continue;
-				}
+				 }
 
 				int blockX = block.getX();
 				int blockY = block.getY();
 				int blockZ = block.getZ();
 
-				if (Block.byId[blockId].a(explosionSource)) {
-					Block.byId[blockId].dropNaturally(dragon.world, blockX, blockY, blockZ, block.getData(), event.getYield(), 0);
+				Block nmsBlock = org.bukkit.craftbukkit.util.CraftMagicNumbers.getBlock(blockId);
+				if (nmsBlock.a(explosionSource)) {
+					nmsBlock.dropNaturally(dragon.world, blockX, blockY, blockZ, block.getData(), event.getYield(), 0);
 				}
-				Block.byId[blockId].wasExploded(dragon.world, blockX, blockY, blockZ, explosionSource);
+
+				nmsBlock.wasExploded(dragon.world, blockX, blockY, blockZ, explosionSource);
 
 				dragon.world.setAir(blockX, blockY, blockZ);
 			}
@@ -158,16 +163,6 @@ public class DragonMoveController {
 		}
 
 		return hitSomethingHard;
-	}
-	
-	public int getCurrentFlightHeight(){
-		int posX = dragon.getLocation().getBlockX();
-		int posZ = dragon.getLocation().getBlockZ();
-		
-		int posY = dragon.getLocation().getBlockY();
-		
-		//TODO search for possible flight height.
-		return posX + posY + posZ == 0 ? 70 : 70;
 	}
 	
 }

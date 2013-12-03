@@ -1,28 +1,32 @@
 package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
+import java.util.Set;
+
+import net.minecraft.server.Entity;
+import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.NBTTagCompound;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
-import net.minecraft.server.v1_6_R3.Entity;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.NBTTagList;
-import net.minecraft.server.v1_6_R3.NBTTagString;
+import de.tobiyas.util.math.Bresenham;
 
 public class TargetController {
 
@@ -71,12 +75,13 @@ public class TargetController {
 	 * @param isHostile
 	 * @param targetList
 	 */
-	public TargetController(Location homeLocation, LimitedEnderDragon dragon, boolean isHostile, NBTTagList targetList){
+	@SuppressWarnings("unchecked")
+	public TargetController(Location homeLocation, LimitedEnderDragon dragon, boolean isHostile, NBTTagCompound targetList){
 		this(homeLocation, dragon, isHostile);
 		
-		for(int i = 0; i < targetList.size(); i++){
+		for(String key : (Set<String>) targetList.c()){
 			try{
-				String playerName = targetList.get(i).getName();
+				String playerName = targetList.getString(key);
 				Player player = Bukkit.getPlayer(playerName);
 				if(player != null && player.isOnline()){
 					targets.add(((CraftPlayer) player).getHandle());
@@ -446,6 +451,34 @@ public class TargetController {
 
 				vecDistance = distanceX * distanceX + distanceY * distanceY
 						+ distanceZ * distanceZ;
+				
+				if(vecDistance > 100){
+					int minHeight = 0;
+					//recalculate Height.
+					Location target = new Location(dragon.getLocation().getWorld(), dragon.h, dragon.i, dragon.j);
+					Location currentLocation = dragon.getLocation();
+					
+					Queue<Location> line = Bresenham.line3D(currentLocation, target);
+					Iterator<Location> lineIt = line.iterator();
+					
+					String calcString = "";
+					
+					while(lineIt.hasNext()){
+						Location nextLocation = lineIt.next();
+						int newMinHeight = nextLocation.getWorld().getHighestBlockYAt(nextLocation) + 7;
+						if(newMinHeight > minHeight){
+							minHeight = newMinHeight;
+
+							calcString += " new Height: x " + nextLocation.getBlockX() + " z " + nextLocation.getBlockZ() + " y " + newMinHeight;
+						}
+						
+					}
+					
+					plugin.getDebugLogger().log(calcString);
+					
+					if(minHeight < 10) minHeight = 20;
+					dragon.i = minHeight;
+				}
 			} else {
 				dragon.i = location.getY();
 				vecDistance = 101;
@@ -478,13 +511,15 @@ public class TargetController {
 	 * 
 	 * @return
 	 */
-	public NBTTagList getCurrentTagetsAsNBTList(){
-		NBTTagList list = new NBTTagList();
+	public NBTTagCompound getCurrentTagetsAsNBTList(){
+		NBTTagCompound list = new NBTTagCompound();
 		
+		int i = 0;
 		for(EntityLiving target : targets){
 			if(target instanceof EntityPlayer){
 				String playerName = ((EntityPlayer) target).getName();
-				list.add(new NBTTagString(playerName, playerName));
+				list.setString("target" + i, playerName);
+				i++;
 			}
 		}
 		

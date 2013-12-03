@@ -6,15 +6,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import net.minecraft.server.v1_6_R3.DamageSource;
-import net.minecraft.server.v1_6_R3.Entity;
-import net.minecraft.server.v1_6_R3.EntityEnderCrystal;
-import net.minecraft.server.v1_6_R3.EntityHuman;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.Explosion;
-import net.minecraft.server.v1_6_R3.NBTTagFloat;
-import net.minecraft.server.v1_6_R3.NBTTagList;
+import net.minecraft.server.DamageSource;
+import net.minecraft.server.Entity;
+import net.minecraft.server.EntityEnderCrystal;
+import net.minecraft.server.EntityHuman;
+import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.Explosion;
+import net.minecraft.server.NBTTagCompound;
 
 import org.bukkit.Bukkit;
 
@@ -45,14 +44,15 @@ public class DragonHealthController {
 	 * @param dragon
 	 * @param playerMapCompound
 	 */
-	public DragonHealthController(LimitedEnderDragon dragon, NBTTagList playerMapCompound){
+	public DragonHealthController(LimitedEnderDragon dragon, NBTTagCompound playerMapCompound){
 		this(dragon);
 		
-		for(int i = 0; i < playerMapCompound.size(); i++){
+		for(Object key : playerMapCompound.c()){
 			try{
-				NBTTagFloat playerTag = (NBTTagFloat) playerMapCompound.get(i);
-				String playerName = playerTag.getName();
-				float damage = playerTag.data;
+				if(!(key instanceof String)) continue;
+				String playerName = (String) key;
+				
+				float damage = playerMapCompound.getFloat(playerName);
 				
 				if(playerName != null && !"".equals(playerName)){
 					if(this.damageDoneByPlayer.containsKey(playerName)){
@@ -209,14 +209,14 @@ public class DragonHealthController {
 	}
 
 
-	public NBTTagList generatePlayerDamageMapAsNBT() {
-		NBTTagList compound = new NBTTagList();
+	public NBTTagCompound generatePlayerDamageMapAsNBT() {
+		NBTTagCompound compound = new NBTTagCompound();
 		
 		for(Entry<String, Float> entry : damageDoneByPlayer.entrySet()){
 			String playerName = entry.getKey();
 			float dmg = entry.getValue();
 			
-			compound.add(new NBTTagFloat(playerName, dmg));
+			compound.setFloat(playerName, dmg);
 		}
 		
 		return compound;

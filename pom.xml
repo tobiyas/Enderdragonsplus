@@ -1,146 +1,174 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>de.tobiyas</groupId>
-  <artifactId>EnderdragonsPlus</artifactId>
-  <version>1.11.0-RC</version>
-  <name>EnderdragonsPlus</name>
-  <url>http://dev.bukkit.org/server-mods/enderdragonsplus/</url>
-  
-  <properties>
-  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<utilsVersion>1.0.9</utilsVersion>
-  	<cb.version>1.6.4-R0.1-SNAPSHOT</cb.version>
-  </properties>
-    
-  <scm>
-     <developerConnection>scm:git:git@github.com:tobiyas/Enderdragonsplus.git</developerConnection>
-     <connection>scm:git:git://github.com/tobiyas/Enderdragonsplus.git</connection>
-     <url>https://github.com/tobiyas/Enderdragonsplus</url>
-     <tag>master</tag>
-  </scm>
-  
-  
-  <repositories>
-  	<repository>
-        <id>bukkit-repo</id>
-        <url>http://repo.bukkit.org/content/groups/public/</url>
-    </repository>
-  	<repository>
-  		<id>com.sk89q</id>
-  		<name>sk89qRepo</name>
-  		<url>http://maven.sk89q.com/repo/</url>
-  	</repository>
-    <repository>
-      <id>org.spout</id>
-      <url>http://repo.spout.org/</url>
-    </repository>
-  </repositories>
-  
-  <dependencies>
-  <!-- Repository Dependency -->
-  	<dependency>
-  		<groupId>com.sk89q</groupId>
-  		<artifactId>worldedit</artifactId>
-  		<version>5.4.6-SNAPSHOT</version>
-  		<optional>true</optional>
-  	</dependency>
-  	
-  	<dependency>
-  	    <groupId>org.bukkit</groupId>
-  	    <artifactId>bukkit</artifactId>
-  	    <optional>true</optional>
-  	    <version>${cb.version}</version>
-  	</dependency>
-  	
-  	<dependency>
-  		<groupId>org.bukkit</groupId>
-  		<artifactId>craftbukkit</artifactId>
-  		<version>${cb.version}</version>
-  		<optional>true</optional>
-  	</dependency>
-  	
-  	<!-- Workspace Dependency -->
-  	<dependency>
-  		<groupId>de.tobiyas</groupId>
-  		<artifactId>Utils</artifactId>
-  		<version>${utilsVersion}</version>
-  	</dependency>
- </dependencies>
-  
- <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-    <testSourceDirectory>test/main/java</testSourceDirectory>
-    <plugins>
-     <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-        	<source>1.6</source>
-        	<target>1.6</target>
-        </configuration>
-      </plugin>
-      
-      <!-- Shade -->
-      <!-- We want to bundle in some dependencies -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>1.4</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <artifactSet>
-                <includes>
-                  <include>de.tobiyas:Utils</include>
-                </includes>
-              </artifactSet>
-              
-              <!-- We want to relocate the Utils -->
-              <relocations>
-                  <relocation>
-                      <pattern>de.tobiyas.util</pattern>
-                      <shadedPattern>de.tobiyas.util.v${utilsVersion}</shadedPattern>
-                  </relocation>
-              </relocations>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      
-      <!-- Release -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.2.2</version><!--$NO-MVN-MAN-VER$-->
-        <configuration>
-          <preparationGoals>assembly:assembly</preparationGoals>
-          <goals>assembly:assembly</goals>
-          <tagNameFormat>@{project.version}</tagNameFormat>
-        </configuration>
-      </plugin>
-    </plugins>
-    
-    
-    <!-- Resources to add -->
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>plugin.yml</include>
-        </includes>
-        <excludes>
-        	<exclude>*.jar</exclude>
-        	<exclude>*.project</exclude>
-        </excludes>
-        <filtering>false</filtering>
-      </resource>
-    </resources>
-    
-  </build>
- <description>EnderdragonsPlus is a Plugin of CraftBukkit to support EnderDragon handling more easily</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.tobiyas</groupId>
+	<artifactId>EnderdragonsPlus</artifactId>
+	<version>1.11.0</version>
+	<name>EnderdragonsPlus</name>
+	<url>http://dev.bukkit.org/server-mods/enderdragonsplus/</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<utilsVersion>1.0.11</utilsVersion>
+		<utilsAddition>edp</utilsAddition>
+		<cbRelocation>v1_7_R1</cbRelocation>
+		<cb.version>1.7.2-R0.1-SNAPSHOT</cb.version>
+	</properties>
+
+	<scm>
+		<developerConnection>scm:git:git@github.com:tobiyas/Enderdragonsplus.git</developerConnection>
+		<connection>scm:git:git://github.com/tobiyas/Enderdragonsplus.git</connection>
+		<url>https://github.com/tobiyas/Enderdragonsplus</url>
+		<tag>master</tag>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>tobiyas-maven</id>
+			<url>file:///D:/Dropbox/Öffentlich/maven</url>
+		</repository>
+	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>bukkit-repo</id>
+			<url>http://repo.bukkit.org/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>com.sk89q</id>
+			<name>sk89qRepo</name>
+			<url>http://maven.sk89q.com/repo/</url>
+		</repository>
+		<repository>
+			<id>org.spout</id>
+			<url>http://repo.spout.org/</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<!-- Repository Dependency -->
+		<dependency>
+			<groupId>com.sk89q</groupId>
+			<artifactId>worldedit</artifactId>
+			<version>5.4.6-SNAPSHOT</version>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>bukkit</artifactId>
+			<optional>true</optional>
+			<version>${cb.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<version>${cb.version}</version>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- Workspace Dependency -->
+		<dependency>
+			<groupId>de.tobiyas</groupId>
+			<artifactId>Utils</artifactId>
+			<version>${utilsVersion}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>test/main/java</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+
+			<!-- Shade -->
+			<!-- We want to bundle in some dependencies -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>de.tobiyas:Utils</include>
+								</includes>
+							</artifactSet>
+
+							<!-- We want to relocate the Utils -->
+							<relocations>
+								<relocation>
+									<pattern>de.tobiyas.util</pattern>
+									<shadedPattern>de.tobiyas.util.v${utilsVersion}.${utilsAddition}</shadedPattern>
+								</relocation>
+								
+								<relocation>
+									<pattern>net.minecraft.server</pattern>
+									<shadedPattern>net.minecraft.server.${cbRelocation}</shadedPattern>
+								</relocation>
+	
+								<relocation>
+									<pattern>org.bukkit.craftbukkit</pattern>
+									<shadedPattern>org.bukkit.craftbukkit.${cbRelocation}</shadedPattern>
+								</relocation>
+							</relocations>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Release -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2.2</version><!--$NO-MVN-MAN-VER$ -->
+				<configuration>
+					<preparationGoals>assembly:assembly</preparationGoals>
+					<goals>assembly:assembly</goals>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+				</configuration>
+			</plugin>
+		</plugins>
+
+
+		<!-- Resources to add -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>plugin.yml</include>
+				</includes>
+				<excludes>
+					<exclude>*.jar</exclude>
+					<exclude>*.project</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+
+		<!-- Pushing to Maven -->
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>1.0-alpha-6</version>
+			</extension>
+		</extensions>
+
+	</build>
+	<description>EnderdragonsPlus is a Plugin of CraftBukkit to support EnderDragon handling more easily</description>
 </project>

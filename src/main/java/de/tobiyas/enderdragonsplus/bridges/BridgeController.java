@@ -3,9 +3,9 @@ package de.tobiyas.enderdragonsplus.bridges;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.server.v1_6_R3.EntityEnderDragon;
+import net.minecraft.server.EntityEnderDragon;
 
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.entity.LivingEntity;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;

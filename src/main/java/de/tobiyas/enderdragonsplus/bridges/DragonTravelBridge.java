@@ -1,8 +1,8 @@
 package de.tobiyas.enderdragonsplus.bridges;
 
 /*
-import net.minecraft.server.v1_6_R3.EntityEnderDragon;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEnderDragon;
+import net.minecraft.server.EntityEnderDragon;
+import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import com.xemsdoom.dt.XemDragon;
 */
 

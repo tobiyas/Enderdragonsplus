@@ -6,18 +6,19 @@ import java.util.List;
 import java.util.Random;
 import java.util.Collections;
 
-import net.minecraft.server.v1_6_R3.Block;
-import net.minecraft.server.v1_6_R3.BlockEnderPortal;
-import net.minecraft.server.v1_6_R3.Entity;
-import net.minecraft.server.v1_6_R3.EntityExperienceOrb;
-import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.Block;
+import net.minecraft.server.BlockEnderPortal;
+import net.minecraft.server.Blocks;
+import net.minecraft.server.Entity;
+import net.minecraft.server.EntityExperienceOrb;
+import net.minecraft.server.MathHelper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_6_R3.util.BlockStateListPopulator;
+import org.bukkit.craftbukkit.util.BlockStateListPopulator;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
@@ -74,10 +75,10 @@ public class ItemLootController {
 		dragon.move(0, 0.1, 0);
 		dragon.aN = (dragon.yaw += 20);
 		if (ticksToDespawn <= 0) {
-			if(!giveDirectlyToPlayer){
+			if(giveDirectlyToPlayer){
 				givePlayersDirectlyXP(dragon.getExpReward());
 			}else{
-				int exp = dragon.getExpReward() - dragon.getExpReward() / 2;
+				int exp = dragon.getExpReward() / 2;
 				dropEXPOrbs(exp);
 				
 			}
@@ -105,6 +106,11 @@ public class ItemLootController {
 			if(target.getBukkitEntity() instanceof Player){
 				playersToGiveXP.add((Player) target.getBukkitEntity());
 			}
+		}
+		
+		if(playersToGiveXP.size() == 0){
+			dropEXPOrbs(expReward);
+			return;
 		}
 		
 		int expPerPlayer = expReward / playersToGiveXP.size();
@@ -180,30 +186,30 @@ public class ItemLootController {
 						if (k < spawnHeight) {
 							if (d2 <= ((double) (b1 - 1) - 0.5D)
 									* ((double) (b1 - 1) - 0.5D)) {
-								world.setTypeId(l, k, i1, Block.BEDROCK.id);
+								world.setTypeUpdate(l, k, i1, Blocks.BEDROCK);
 							}
 						} else if (k > spawnHeight) {
 							world.setTypeId(l, k, i1, 0);
 						} else if (d2 > ((double) (b1 - 1) - 0.5D)
 								* ((double) (b1 - 1) - 0.5D)) {
-							world.setTypeId(l, k, i1, Block.BEDROCK.id);
+							world.setTypeUpdate(l, k, i1, Blocks.BEDROCK);
 						} else {
-							world.setTypeId(l, k, i1, Block.ENDER_PORTAL.id);
+							world.setTypeUpdate(l, k, i1, Blocks.ENDER_PORTAL);
 						}
 					}
 				}
 			}
 		}
 
-		world.setTypeId(posX, spawnHeight + 0, posZ, Block.BEDROCK.id);
-		world.setTypeId(posX, spawnHeight + 1, posZ, Block.BEDROCK.id);
-		world.setTypeId(posX, spawnHeight + 2, posZ, Block.BEDROCK.id);
-		world.setTypeId(posX - 1, spawnHeight + 2, posZ, Block.TORCH.id);
-		world.setTypeId(posX + 1, spawnHeight + 2, posZ, Block.TORCH.id);
-		world.setTypeId(posX, spawnHeight + 2, posZ - 1, Block.TORCH.id);
-		world.setTypeId(posX, spawnHeight + 2, posZ + 1, Block.TORCH.id);
-		world.setTypeId(posX, spawnHeight + 3, posZ, Block.BEDROCK.id);
-		world.setTypeId(posX, spawnHeight + 4, posZ, Block.DRAGON_EGG.id);
+		world.setTypeUpdate(posX, spawnHeight + 0, posZ, Blocks.BEDROCK);
+		world.setTypeUpdate(posX, spawnHeight + 1, posZ, Blocks.BEDROCK);
+		world.setTypeUpdate(posX, spawnHeight + 2, posZ, Blocks.BEDROCK);
+		world.setTypeUpdate(posX - 1, spawnHeight + 2, posZ, Blocks.TORCH);
+		world.setTypeUpdate(posX + 1, spawnHeight + 2, posZ, Blocks.TORCH);
+		world.setTypeUpdate(posX, spawnHeight + 2, posZ - 1, Blocks.TORCH);
+		world.setTypeUpdate(posX, spawnHeight + 2, posZ + 1, Blocks.TORCH);
+		world.setTypeUpdate(posX, spawnHeight + 3, posZ, Blocks.BEDROCK);
+		world.setTypeUpdate(posX, spawnHeight + 4, posZ, Blocks.DRAGON_EGG);
 		
 		for (BlockState state : world.getList()) {
             state.update(true);
