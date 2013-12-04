@@ -25,6 +25,7 @@ import de.tobiyas.enderdragonsplus.commands.CommandInfo;
 import de.tobiyas.enderdragonsplus.commands.CommandKillEnderDragon;
 import de.tobiyas.enderdragonsplus.commands.CommandReloadConfig;
 import de.tobiyas.enderdragonsplus.commands.CommandRespawner;
+import de.tobiyas.enderdragonsplus.commands.CommandRide;
 import de.tobiyas.enderdragonsplus.commands.CommandSpawnEnderDragon;
 import de.tobiyas.enderdragonsplus.configuration.Config;
 import de.tobiyas.enderdragonsplus.configuration.ConfigTemplate;
@@ -191,6 +192,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		new CommandInfo();
 		new CommandRespawner();
 		new CommandEDP();
+		new CommandRide();
 		//new CommandFireBreath();
 		//new CommandError();
 		//new CommandDEBUGGOTO();

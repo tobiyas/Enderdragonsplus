@@ -30,24 +30,24 @@ import de.tobiyas.util.math.Bresenham;
 
 public class TargetController {
 
-	private LinkedList<EntityLiving> targets;
-	private EntityLiving currentTarget;
+	protected LinkedList<EntityLiving> targets;
+	protected EntityLiving currentTarget;
 	
-	private Location targetLocation;
-	private Location homeLocation;
+	protected Location targetLocation;
+	protected Location homeLocation;
 
-	private boolean lockTarget;
-	private boolean isFlyingHome;
+	protected boolean lockTarget;
+	protected boolean isFlyingHome;
 	
-	private boolean isHostile;
+	protected boolean isHostile;
 	
-	private EnderdragonsPlus plugin;
-	private Random random = new Random();
-	private LimitedEnderDragon dragon;
+	protected EnderdragonsPlus plugin;
+	protected Random random = new Random();
+	protected LimitedEnderDragon dragon;
 	
-	private int unTargetTicksMax;
-	private int unTargetTick;
-	private Location forceGoTo;
+	protected int unTargetTicksMax;
+	protected int unTargetTick;
+	protected Location forceGoTo;
 	
 	
 	public TargetController(Location homeLocation, LimitedEnderDragon dragon, boolean isHostile){
@@ -103,7 +103,7 @@ public class TargetController {
 		targets.clear();
 	}
 	
-	private void checkTargets(){
+	protected void checkTargets(){
 		Location currentLocation = getDragonLocation();
 		LinkedList<EntityLiving> newTargets = new LinkedList<EntityLiving>();
 		
@@ -136,7 +136,7 @@ public class TargetController {
 		return switchTarget();
 	}
 	
-	private void rescanTargetsAggressive(){
+	protected void rescanTargetsAggressive(){
 		Location currentLocation = getDragonLocation();
 		List<Player> players = currentLocation.getWorld().getPlayers();
 		targets.clear();
@@ -151,7 +151,7 @@ public class TargetController {
 	 * @param currentLocation
 	 * @return
 	 */
-	private boolean switchTarget(){
+	protected boolean switchTarget(){
 		Location currentLocation = getDragonLocation();
 		EntityLiving newTarget = currentTarget;
 		
@@ -209,7 +209,7 @@ public class TargetController {
 		return randomTargets;
 	}
 	
-	//Private Methods
+	//protected Methods
 	
 	/**
 	 * Checks if a Entity is in Range range of the dragon
@@ -232,7 +232,7 @@ public class TargetController {
 	 * @param entity, the Entity to check
 	 * @return true, if the target is a valid target
 	 */
-	private boolean isValidTarget(LivingEntity entity){
+	protected boolean isValidTarget(LivingEntity entity){
 		if(entity == null || entity.isDead()) return false;
 		if(!(entity instanceof Player)) return true;
 		
@@ -254,7 +254,7 @@ public class TargetController {
 	 * @param nextTarget the next target puposed by the Controller
 	 * @return the next Target purposed after event
 	 */
-	private EntityLiving fireBukkitEvent(EntityLiving nextTarget){
+	protected EntityLiving fireBukkitEvent(EntityLiving nextTarget){
 		// fire bukkit event: Target change
 		if (plugin.interactConfig().getConfig_fireBukkitEvents()) {
 			if (currentTarget != nextTarget) {
@@ -279,7 +279,7 @@ public class TargetController {
 	 * @param entity the location of the entity to check
 	 * @return the new location to fly to
 	 */
-	private Location getLoc(EntityLiving entity){
+	protected Location getLoc(EntityLiving entity){
 		return entity == null ? homeLocation.clone() : entity.getBukkitEntity().getLocation();
 	}
 	
@@ -389,7 +389,7 @@ public class TargetController {
 		}
 	}
 	
-	private double getVectorDistance(Location location) {
+	protected double getVectorDistance(Location location) {
 		double x = location.getX();
 		double y = location.getY();
 		double z = location.getZ();
@@ -397,7 +397,7 @@ public class TargetController {
 		return getVectorDistance(x, y, z);
 	}
 	
-	private double getVectorDistance(double x, double y, double z) {
+	protected double getVectorDistance(double x, double y, double z) {
 		double deltaX = dragon.locX - x;
 		double deltaY = dragon.locY - y;
 		double deltaZ = dragon.locZ - z;
@@ -461,20 +461,14 @@ public class TargetController {
 					Queue<Location> line = Bresenham.line3D(currentLocation, target);
 					Iterator<Location> lineIt = line.iterator();
 					
-					String calcString = "";
-					
 					while(lineIt.hasNext()){
 						Location nextLocation = lineIt.next();
 						int newMinHeight = nextLocation.getWorld().getHighestBlockYAt(nextLocation) + 7;
 						if(newMinHeight > minHeight){
 							minHeight = newMinHeight;
-
-							calcString += " new Height: x " + nextLocation.getBlockX() + " z " + nextLocation.getBlockZ() + " y " + newMinHeight;
 						}
 						
 					}
-					
-					plugin.getDebugLogger().log(calcString);
 					
 					if(minHeight < 10) minHeight = 20;
 					dragon.i = minHeight;

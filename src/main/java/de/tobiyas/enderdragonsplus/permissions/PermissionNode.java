@@ -20,6 +20,10 @@ public class PermissionNode {
 	public final static String debugRespawners = pluginPre + "respawner.debug";
 	public final static String seeRespawners = pluginPre + "respawner.see";
 	public final static String portRespawner = pluginPre + "respawner.port";
+	
+	//RidingPermissions
+	public final static String ride = pluginPre + "riding.ride";
+	public final static String shootFireballs = pluginPre + "riding.fireball";
 
 	//Targeting Permissions
 	public final static String getIgnored = pluginPre + "targeting.ignore";

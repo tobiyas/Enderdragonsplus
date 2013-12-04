@@ -177,7 +177,7 @@ public class DragonAPI {
 	 * @param entity
 	 * @return dragon or null if not found
 	 */
-	private static LimitedEnderDragon getDragonByEntity(Entity entity){
+	public static LimitedEnderDragon getDragonByEntity(Entity entity){
 		return getDragonById(entity.getUniqueId());
 	}
 	

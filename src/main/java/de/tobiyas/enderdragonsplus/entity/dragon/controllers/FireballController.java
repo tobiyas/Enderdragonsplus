@@ -10,9 +10,9 @@ import de.tobiyas.enderdragonsplus.entity.fireball.LimitedFireball;
 
 public class FireballController {
 
-	private TargetController targetController;
-	private int fireballTicks;
-	private EnderdragonsPlus plugin;
+	protected TargetController targetController;
+	protected int fireballTicks;
+	protected EnderdragonsPlus plugin;
 	
 	public FireballController(TargetController targetController){
 		this.targetController = targetController;
@@ -60,7 +60,7 @@ public class FireballController {
 		}
 	}
 	
-	private boolean checkFiredirectionHeight(double heightTarget, double heightDragon){
+	protected boolean checkFiredirectionHeight(double heightTarget, double heightDragon){
 		double directionHeight = heightTarget - heightDragon;
 		if(directionHeight >= 0)
 			return false;
@@ -68,7 +68,7 @@ public class FireballController {
 		return true;
 	}
 	
-	private boolean checkActive(){
+	protected boolean checkActive(){
 		boolean fireFireBall = plugin.interactConfig()
 				.getConfig_dragonsSpitFireballs();
 		return fireFireBall;
@@ -80,10 +80,31 @@ public class FireballController {
 				entity.locX	- locDragon.getBlockX(), 
 				entity.locY - locDragon.getBlockY(), 
 				entity.locZ	- locDragon.getBlockZ());
-		fireFireball(loc);
+		fireFireballToDirection(loc);
 	}
 	
-	private void fireFireball(Location direction){
+	
+	public void fireFireballToDirection(Location direction){
+		if (direction.getWorld() != targetController.getDragonLocation().getWorld())
+			return;		
+		
+		LimitedFireball fireBall = new LimitedFireball(
+				targetController.getDragon().world, 
+				targetController.getDragon(),
+				direction.getBlockX(), 
+				direction.getBlockY(), 
+				direction.getBlockZ());
+		
+		targetController.getDragon().world.addEntity(fireBall);
+		double fireBallSpeedup = plugin.interactConfig().getConfig_FireBallSpeedUp();
+		fireBall.speedUp(fireBallSpeedup);
+	}
+	
+	
+	public void fireFireballOnLocation(Location location){
+		Location direction = location.clone();
+		direction = direction.subtract(targetController.getDragonLocation().clone());
+		
 		if (direction.getWorld() != targetController.getDragonLocation().getWorld())
 			return;		
 		
