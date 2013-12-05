@@ -1,22 +1,18 @@
 package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
-import java.util.ArrayList;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.server.AxisAlignedBB;
 import net.minecraft.server.Block;
-import net.minecraft.server.Blocks;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityComplexPart;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
-import net.minecraft.server.Explosion;
 import net.minecraft.server.Material;
 import net.minecraft.server.MathHelper;
 import net.minecraft.server.Vec3D;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -65,100 +61,76 @@ public class DragonMoveController {
 		}
 	}
 	
-	
-	public void e(float sideMot, float forMot) {
-        double d0;
-
-        forMot = -forMot;
-        sideMot = -sideMot;
-       
-        float f2 = 0.91F;
-
-        if (dragon.onGround) {
-            f2 = dragon.world.getType(MathHelper.floor(dragon.locX), MathHelper.floor(dragon.boundingBox.b) - 1, MathHelper.floor(dragon.locZ)).frictionFactor * 0.91F;
-        }
-
-        float f3 = 0.16277136F / (f2 * f2 * f2);
-        float f4;
-
-        if (dragon.onGround) {
-            f4 = dragon.bl() * f3;
-        } else {
-            f4 = dragon.aR;
-        }
-
-        dragon.a(sideMot, forMot, f4);
-        f2 = 0.91F;
-        if (dragon.onGround) {
-            f2 = dragon.world.getType(MathHelper.floor(dragon.locX), MathHelper.floor(dragon.boundingBox.b) - 1, MathHelper.floor(dragon.locZ)).frictionFactor * 0.91F;
-        }
-
-        if (dragon.h_()) {
-            float f5 = 5.50F;
-
-            if (dragon.motX < (double) (-f5)) {
-                dragon.motX = (double) (-f5);
-            }
-
-            if (dragon.motX > (double) f5) {
-                dragon.motX = (double) f5;
-            }
-
-            if (dragon.motZ < (double) (-f5)) {
-                dragon.motZ = (double) (-f5);
-            }
-
-            if (dragon.motZ > (double) f5) {
-                dragon.motZ = (double) f5;
-            }
-
-            dragon.fallDistance = 0.0F;
-            if (dragon.motY < -f5) {
-                dragon.motY = -f5;
-
-            }
-            if (dragon.motY > f5) {
-            	dragon.motY = f5;
-            }
-        }
+	/**
+	 * Adjusts the Dragon Movement after a player moved.
+	 * 
+	 * @param sideMot to move for
+	 * @param forMot to move for
+	 */
+	public void adjustMotAndLocToPlayerMovement(float sideMot, float forMot) {
+        //forMot = -forMot;
+        //sideMot = -sideMot;
+      
+        dragon.a(sideMot, forMot, 0.02F);
 
         //adjust dragon yaw + pitch
         dragon.yaw = (float) MathHelper.g(dragon.passenger.yaw - 180);
         dragon.pitch = dragon.passenger.pitch;
-
-        dragon.move(dragon.motX, dragon.motY, dragon.motZ);
-        if (dragon.positionChanged && dragon.h_()) {
-            dragon.motY = 0.2D;
-        }
+       
         
+        //simple move the dragon. Don't use the overloaded NMS method
+        moveToDragonMotion();        
 
+        //check for front/ back movement to get the sugar in the height
         if(forMot > 0.1 || forMot < -0.1){
         	float movementChange = (float) (dragon.passenger.pitch * 0.0001);
         	
         	if(forMot < 0){
-        		dragon.motY -= movementChange;        		
+        		dragon.motY += movementChange;        		
         	}else{
-        		dragon.motY += movementChange;
+        		dragon.motY -= movementChange;
         	}
         }
+
+        
+        final float movementSpeedSlowingMult = 0.91F;
         
         dragon.motY *= 0.9800000190734863D;
-        dragon.motX *= (double) f2;
-        dragon.motZ *= (double) f2;
-
-        dragon.aF = dragon.aG;
-        d0 = dragon.locX - dragon.lastX;
-        double d1 = dragon.locZ - dragon.lastZ;
-        float f6 = MathHelper.sqrt(d0 * d0 + d1 * d1) * 4.0F;
-
-        if (f6 > 1.0F) {
-            f6 = 1.0F;
-        }
-
-        dragon.aG += (f6 - dragon.aG) * 0.4F;
-        dragon.aH += dragon.aG;
+        dragon.motX *= (double) movementSpeedSlowingMult;
+        dragon.motZ *= (double) movementSpeedSlowingMult;
     }
+
 	
+	/**
+	 * A simplification of the Dragon move method in {@link Entity#move(double, double, double)}
+	 * <br>This also checks for collision!
+	 * <br>If an collision is detected, the Motions are inverted.
+	 */
+	protected void moveToDragonMotion(){
+		boolean useSoftCollison = plugin.interactConfig().isConfig_useSoftRidingCollision();
+		boolean collisionDetected = dragon.getCollisionController().checkCollisionAndPortals();
+		
+		if(useSoftCollison){
+			Block block = dragon.world.getType(
+	        		(int) Math.floor(dragon.locX + dragon.motX), 
+	        		(int) Math.floor(dragon.locY + dragon.motY), 
+	        		(int) Math.floor(dragon.locZ + dragon.motZ));
+
+	        collisionDetected = block.getMaterial() != Material.AIR;
+        }
+		
+		if(collisionDetected){
+			dragon.motX = -dragon.motX;
+        	dragon.motY = -dragon.motY;
+        	dragon.motZ = -dragon.motZ;
+		}
+		
+		dragon.boundingBox.d(dragon.motX, dragon.motY, dragon.motZ); //simply adds the speed to the AABB
+		
+        dragon.locX = (dragon.boundingBox.a + dragon.boundingBox.d) / 2.0D;
+        dragon.locY = dragon.boundingBox.b + (double) dragon.height - (double) dragon.W;
+        dragon.locZ = (dragon.boundingBox.c + dragon.boundingBox.f) / 2.0D;
+	}
 	
 	
 	/**
@@ -177,8 +149,7 @@ public class DragonMoveController {
 	    dragon.lastYaw = dragon.yaw = (float) MathHelper.g(dragon.passenger.yaw - 180);
 	    dragon.pitch = dragon.passenger.pitch * 0.5F;
 	 
-	    // Set the entity's pitch, yaw, head rotation etc.
-	    dragon.b(dragon.yaw, dragon.pitch); //[url]https://github.com/Bukkit/mc-dev/blob/master/net/minecraft/server/Entity.java#L155-L158[/url]
+	    dragon.b(dragon.passenger.yaw, dragon.passenger.pitch); //[url]https://github.com/Bukkit/mc-dev/blob/master/net/minecraft/server/Entity.java#L155-L158[/url]
 	    dragon.aP = dragon.aN = dragon.yaw;
 	 
 	    dragon.X = 1.0F;  
@@ -192,122 +163,39 @@ public class DragonMoveController {
 	    sideMot *= 0.75F;
 	 
 	    forMot *= 10; //speed up
-	    sideMot *= 10;	    
+	    sideMot *= 10;
 	    
 	    float speed = 5.0F;
 	    dragon.i(speed);
 	    
-    	e(sideMot, forMot);
+	    checkJump();
+    	adjustMotAndLocToPlayerMovement(sideMot, forMot);
 	    return false;
 	}
 	
+	
 	/**
-	 * The Explosion source as Const
+	 * Checks if the Entity is jumping.
+	 * If so, the MotY is increased by 0.5.
 	 */
-	protected final Explosion explosionSource = new Explosion(null, dragon, Double.NaN, Double.NaN, Double.NaN, Float.NaN); // CraftBukkit - reusable source for CraftTNTPrimed.getSource()
-	
-	
-	// Original: a(AxisAlignedBB axisalignedbb)
-	@SuppressWarnings("deprecation")
-	public boolean checkHitBlocks(AxisAlignedBB axisalignedbb) {
-		int pos1X = MathHelper.floor(axisalignedbb.a);
-		int pos1Y = MathHelper.floor(axisalignedbb.b);
-		int pos1Z = MathHelper.floor(axisalignedbb.c);
-
-		int pos2X = MathHelper.floor(axisalignedbb.d);
-		int pos2Y = MathHelper.floor(axisalignedbb.e);
-		int pos2Z = MathHelper.floor(axisalignedbb.f);
-
-		boolean hitSomethingHard = false;
-		boolean hitSomething = false;
-
-		// CraftBukkit start - create a list to hold all the destroyed blocks
-		List<org.bukkit.block.Block> destroyedBlocks = new ArrayList<org.bukkit.block.Block>();
-		org.bukkit.craftbukkit.CraftWorld craftWorld = dragon.world.getWorld();
-		// CraftBukkit end
-
-		for (int blockX = pos1X; blockX <= pos2X; ++blockX) {
-			for (int blockY = pos1Y; blockY <= pos2Y; ++blockY) {
-				for (int blockZ = pos1Z; blockZ <= pos2Z; ++blockZ) {
-					Block block = dragon.world
-							.getType(blockX, blockY, blockZ);
-
-					if (block.getMaterial() != Material.AIR) {
-						if (block != Blocks.OBSIDIAN
-								&& block != Blocks.WHITESTONE
-								&& block != Blocks.BEDROCK) {
-							
-							hitSomething = true;
-							// CraftBukkit start - add blocks to list rather
-							// than destroying them
-							// dragon.world.setTypeId(k1, l1, i2, 0);
-							destroyedBlocks.add(craftWorld.getBlockAt(blockX,
-									blockY, blockZ));
-							// CraftBukkit end
-						} else {
-							hitSomethingHard = true;
-						}
-					}
-				}
-			}
+	protected void checkJump(){
+		try {
+		    Field jump = null;
+		    jump = EntityLiving.class.getDeclaredField("bd");
+		    jump.setAccessible(true);
+	 
+	        if (jump.getBoolean(dragon.passenger)) {
+	            dragon.motY = 0.2;
+	        }
+	    } catch (IllegalAccessException e) {
+	        e.printStackTrace();
+	    } catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
 		}
-
-		if (!hitSomething)
-			return hitSomethingHard;
-
-		// CraftBukkit start - set off an EntityExplodeEvent for the dragon
-		// exploding all these blocks
-		org.bukkit.entity.Entity bukkitEntity = dragon.getBukkitEntity();
-		org.bukkit.event.entity.EntityExplodeEvent event = new org.bukkit.event.entity.EntityExplodeEvent(
-				bukkitEntity, bukkitEntity.getLocation(), destroyedBlocks, 0F);
-		Bukkit.getPluginManager().callEvent(event);
-		if (event.isCancelled()) {
-			// dragon flag literally means 'Dragon hit something hard' (Obsidian,
-			// White Stone or Bedrock) and will cause the dragon to slow down.
-			// We should consider adding an event extension for it, or perhaps
-			// returning true if the event is cancelled.
-			return hitSomethingHard;
-		} else if (event.getYield() == 0F) {
-			// Yield zero ==> no drops
-			for (org.bukkit.block.Block block : event.blockList()) {
-				dragon.world.setAir(block.getX(), block.getY(), block.getZ());
-			}
-		} else {
-			for (org.bukkit.block.Block block : event.blockList()) {
-				 org.bukkit.Material blockId = block.getType();
-				 if (blockId == org.bukkit.Material.AIR) {
-					continue;
-				 }
-
-				int blockX = block.getX();
-				int blockY = block.getY();
-				int blockZ = block.getZ();
-
-				Block nmsBlock = org.bukkit.craftbukkit.util.CraftMagicNumbers.getBlock(blockId);
-				if (nmsBlock.a(explosionSource)) {
-					nmsBlock.dropNaturally(dragon.world, blockX, blockY, blockZ, block.getData(), event.getYield(), 0);
-				}
-
-				nmsBlock.wasExploded(dragon.world, blockX, blockY, blockZ, explosionSource);
-
-				dragon.world.setAir(blockX, blockY, blockZ);
-			}
-		}
-		// CraftBukkit end
-
-		if (!plugin.interactConfig().getConfig_deactivateBlockExplosionEffect()) {
-			double posX = axisalignedbb.a + (axisalignedbb.d - axisalignedbb.a)
-					* this.random.nextFloat();
-			double posY = axisalignedbb.b + (axisalignedbb.e - axisalignedbb.b)
-					* this.random.nextFloat();
-			double posZ = axisalignedbb.c + (axisalignedbb.f - axisalignedbb.c)
-					* this.random.nextFloat();
-			
-			dragon.world.addParticle("largeexplode", posX, posY, posZ, 0, 0, 0);
-		}
-
-		return hitSomethingHard;
 	}
+	
 	
 	
 	//Logic vars.
@@ -315,6 +203,11 @@ public class DragonMoveController {
 	
 	protected Vector oldSpeed;
 	protected Vector oldTarget;
+	
+	/**
+	 * No idea what this does!
+	 */
+	public float bg = 0f;
 	
 	
 	/**
@@ -452,7 +345,7 @@ public class DragonMoveController {
 			scaledTargetLength = 0.0F;
 		}
 
-		dragon.bg *= 0.8F;
+		bg *= 0.8F;
 		float motionPythagoras = MathHelper.sqrt(dragon.motX * dragon.motX + dragon.motZ
 				* dragon.motZ) + 1;
 
@@ -460,8 +353,8 @@ public class DragonMoveController {
 			motionPythagoras = 40.0F;
 		}
 
-		dragon.bg += toTurnAngle * ((0.7 / motionPythagoras) / motionPythagoras);
-		dragon.yaw += dragon.bg * 0.1;
+		bg += toTurnAngle * ((0.7 / motionPythagoras) / motionPythagoras);
+		dragon.yaw += bg * 0.1;
 		directionDegree = dragon.yaw * Math.PI / 180.0F; //recalculation
 		float f6 = (float) (2.0D / (motionPythagoras + 1.0D));
 
@@ -534,9 +427,9 @@ public class DragonMoveController {
 		double[] adouble = dragon.b(5, 1.0F);
 		double[] adouble1 = dragon.b(0, 1.0F);
 
-		float f19 = MathHelper.sin((float) (directionDegree - dragon.bg * 0.01F));
+		float f19 = MathHelper.sin((float) (directionDegree - bg * 0.01F));
 		float f13 = MathHelper.cos((float)directionDegree
-				- dragon.bg * 0.01F);
+				- bg * 0.01F);
 
 		dragon.bq.h();
 		dragon.bq.setPositionRotation(dragon.locX + (f19 * 5.5F * f2),
@@ -572,8 +465,8 @@ public class DragonMoveController {
 					dragon.locZ + ((f12 * f17 + f16 * f18) * f2), 0.0F, 0.0F);
 		}
 
-		dragon.bA = dragon.getDragonMoveController().checkHitBlocks(dragon.bq.boundingBox)
-				| dragon.getDragonMoveController().checkHitBlocks(dragon.br.boundingBox);
+		dragon.bA = dragon.getCollisionController().checkHitBlocks(dragon.bq.boundingBox)
+				| dragon.getCollisionController().checkHitBlocks(dragon.br.boundingBox);
 	}
 	
 	/**

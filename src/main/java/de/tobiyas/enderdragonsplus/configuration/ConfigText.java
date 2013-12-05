@@ -106,7 +106,6 @@ public class ConfigText {
 		text += "#~age~ is the age Name of the dragon";
 		text += "#default: '&aA new ~age~ Dragon has spawned at: x: ~x~ y: ~y~ z: ~z~ on world: ~world~.'\n";
 		text += "dragonSpawnMessage: '&aA new ~age~ Dragon has spawned at: x: ~x~ y: ~y~ z: ~z~ on world: ~world~.'\n\n";
-
 		text += "#Defines if it is anounces publicaly if a dragon dies\n";
 		text += "#default: true\n";
 		text += "anounceDragonKill: true\n\n";
@@ -127,6 +126,16 @@ public class ConfigText {
 		text += "dragonKillMessageToWorlds: '~all~'\n\n";
 		
 		text += "#	/SUBREGION: EnderDragons.Announcements\n";
+		
+		
+		text += "#  SUBREGION: EnderDragons.Riding\n\n";
+		
+		text += "#If this is set to true, the Collision of a dragon (while riding) is only checked for 1 block where the dragon is moving to.\n";
+		text += "#If set to false, the collosion is checked against the BoundingBox around the Dragon.\n";
+		text += "#default: true'\n";
+		text += "useSoftRidingCollision: true\n\n";		
+		
+		text += "#  /SUBREGION: EnderDragons.Riding\n\n";
 		text += "#	/REGION: EnderDragons\n\n\n";
 
 

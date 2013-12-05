@@ -33,6 +33,9 @@ public class Config
   private boolean config_disableFireballRebounce;
   private double config_fireBallSpeedUp;
   
+  //Riding
+  private boolean config_useSoftRidingCollision;
+  
   //World damage
   private boolean config_disableEnderdragonBlockDamage;
   private boolean config_deactivateBlockExplosionEffect;
@@ -126,6 +129,7 @@ public class Config
 	config.addDefault("uploadMetrics", true);
 	config.addDefault("uploadErrors", false);
 	config.addDefault("dragonGiveXPOnlyToDamagers", false);
+	config.addDefault("useSoftRidingCollision", true);
 
 	config.options().copyDefaults(true);
   }
@@ -171,6 +175,8 @@ public class Config
     this.config_fireballBurnTime = this.plugin.getConfig().getInt("fireballBurnTime", 5);
     this.config_disableFireballRebounce = this.plugin.getConfig().getBoolean("disableFireballRebounce", false);
     this.config_fireBallSpeedUp = this.plugin.getConfig().getDouble("fireBallSpeedUp", 1.0D);
+    
+    this.config_useSoftRidingCollision = this.plugin.getConfig().getBoolean("useSoftRidingCollision", true);
 
     this.config_disableDragonHealthBar = this.plugin.getConfig().getBoolean("disableDragonHealthBar", false);
 
@@ -378,5 +384,9 @@ public class Config
 
 	public boolean isConfig_dragonGiveXPOnlyToDamagers() {
 		return config_dragonGiveXPOnlyToDamagers;
+	}
+
+	public boolean isConfig_useSoftRidingCollision() {
+		return config_useSoftRidingCollision;
 	}
 }

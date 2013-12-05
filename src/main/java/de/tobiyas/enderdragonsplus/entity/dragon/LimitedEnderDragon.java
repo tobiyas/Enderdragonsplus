@@ -30,6 +30,7 @@ import org.bukkit.util.Vector;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeNotFoundException;
+import de.tobiyas.enderdragonsplus.entity.dragon.controllers.CollisionController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonHealthController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonMoveController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.FireballController;
@@ -40,12 +41,6 @@ import de.tobiyas.enderdragonsplus.entity.dragon.controllers.PropertyController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.TargetController;
 
 public class LimitedEnderDragon extends EntityEnderDragon {
-	
-	/**
-	 * No idea what this does!
-	 */
-	public float bg = 0f;
-	
 	
 	private EnderdragonsPlus plugin = EnderdragonsPlus.getPlugin();
 	public static int broadcastedError = 0;
@@ -59,6 +54,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	protected DragonMoveController dragonMoveController;
 	protected AgeContainer ageContainer;
 	protected PropertyController propertyController;
+	protected CollisionController collisionController;
 	
 	protected boolean doNothingLock = false;
 	protected Vector oldSpeed;
@@ -109,6 +105,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		itemController = new ItemLootController(this);
 		dragonHealthController = new DragonHealthController(this, returnContainer.getDamageList());
 		dragonMoveController = new DragonMoveController(this);
+		collisionController = new CollisionController(this);
 		
 		this.uniqueID = returnContainer.getUuid();
 		
@@ -130,6 +127,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		itemController = new ItemLootController(this);
 		dragonHealthController = new DragonHealthController(this);
 		dragonMoveController = new DragonMoveController(this);
+		collisionController = new CollisionController(this);
 		
 		
 		//Schedules the spawnHealth for next Tick. This should prevent settings from CB side.
@@ -198,30 +196,10 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	@Override
 	public boolean dealDamage(DamageSource damagesource, float i) { // CraftBukkit - protected -> public
 		dragonHealthController.rememberDamage(damagesource, i);
-		restoreOldDataIfPossible();
+		dragonMoveController.restoreOldDataIfPossible();
 		return super.dealDamage(damagesource, i);
 	}
 	
-
-	private void restoreOldDataIfPossible() {
-		doNothingLock = false;
-		
-		if(oldSpeed != null){
-			this.motX = oldSpeed.getX();
-			this.motY = oldSpeed.getY();
-			this.motZ = oldSpeed.getZ();
-			
-			oldSpeed = null;
-		}
-		
-		if(oldTarget != null){
-			this.h = oldTarget.getX();
-			this.i = oldTarget.getY();
-			this.j = oldTarget.getZ();
-			
-			oldTarget = null;
-		}
-	}
 
 	/**
 	 *  Logic call. All Dragon logic on tick
@@ -239,7 +217,6 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	
 	public void internalLogicTick(){
 		logicCall++;
-		this.bx = this.by;
 		
 		dragonHealthController.recheckHealthNotOvercaped();
 
@@ -298,7 +275,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	 * ORIGINAL: aA()
 	 * Moved to: ItemLootController
 	 * 
-	 * @see net.minecraft.server.v1_5_R3.EntityEnderDragon#aB()
+	 * @see net.minecraft.server.EntityEnderDragon#aF()
 	 */
 	@Override
 	protected void aF() {
@@ -516,6 +493,13 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	public void setPropertyController(PropertyController propertyController) {
 		this.propertyController = propertyController;
 	}
-	
+
+	public CollisionController getCollisionController() {
+		return collisionController;
+	}
+
+	public void setCollisionController(CollisionController collisionController) {
+		this.collisionController = collisionController;
+	}
 	
 }
