@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.util.Consts;
 
@@ -66,7 +67,7 @@ public class ConfigTemplate {
 		if(!line.contains(":"))
 			return line;
 		
-		String[] nodes = line.split(":");		
+		String[] nodes = line.split(":");
 		String node = nodes[0];
 		Object obj = plugin.getConfig().get(node);
 		if(obj == null)

@@ -2,17 +2,16 @@ package de.tobiyas.enderdragonsplus.listeners;
 
 import static de.tobiyas.enderdragonsplus.util.MinecraftChatColorUtils.decodeColors;
 
-import java.lang.reflect.Field;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import net.minecraft.server.World;
+import me.ThaH3lper.com.API.EpicBossAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEnderDragon;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -20,7 +19,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
@@ -47,9 +45,6 @@ public class Listener_Dragon_Spawn implements Listener {
 			plugin.log("enderdragon id: " + event.getEntity().getEntityId());
 		
 		
-		if(plugin.interactConfig().getConfig_debugOutput())
-			plugin.log("id detection failed.");
-		
 		if(plugin.interactBridgeController().isSpecialDragon(event.getEntity())) return;
 		
 		if(recDepth > 40){
@@ -66,22 +61,10 @@ public class Listener_Dragon_Spawn implements Listener {
 		//replacing
 		UUID id = event.getEntity().getUniqueId();
 		
-		String uidString = id.toString();
-		event.getEntity().remove();
-		
-		Entity newDragon = spawnLimitedEnderDragon(event.getLocation(), uidString).getBukkitEntity();
-		try{
-			EntityEvent entityEvent = (EntityEvent) event;
-			
-			Field field = entityEvent.getClass().getSuperclass().getDeclaredField("entity");
-			field.setAccessible(true);
-			field.set(entityEvent, newDragon);
-			
-		}catch (Exception exp) {
-			plugin.log("Something gone Wrong with Injecting!");
-			plugin.getDebugLogger().logStackTrace(exp);
-			//spawning went wrong. Returning...
-			return;
+		EnderDragon oldDragon = (EnderDragon) event.getEntity();
+		LimitedEnderDragon.replaceEntityWithEDPDragon(oldDragon, "Normal");
+		if(isEpicBossPresent()){
+			scheduleEBCheck(oldDragon);
 		}
 		
 		//Anouncing
@@ -91,7 +74,7 @@ public class Listener_Dragon_Spawn implements Listener {
 			return;
 		}
 	}
-	
+
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void listenDragonSpawn(CreatureSpawnEvent event){
 		Entity entity = event.getEntity();
@@ -134,13 +117,34 @@ public class Listener_Dragon_Spawn implements Listener {
 		}
 	}
 	
-	private LimitedEnderDragon spawnLimitedEnderDragon(Location location, String uid){
-		World world = ((CraftWorld)location.getWorld()).getHandle();
-		
-		UUID uuid = UUID.fromString(uid);
-		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, uuid);
-		dragon.spawn();
-		return dragon;
+	
+	/**
+	 * Checks if the EpicBoss Plugin is present.
+	 * 
+	 * @return true if is, false otherwise.
+	 */
+	private boolean isEpicBossPresent(){
+		return plugin.getServer().getPluginManager().isPluginEnabled("EpicBoss Gold Edition");
 	}
-
+	
+	/**
+	 * schedules an Epic Boss Check for the Display name.
+	 * 
+	 * @param oldDragon to check.
+	 */
+	private void scheduleEBCheck(final EnderDragon oldDragon) {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				if(oldDragon.isDead()) return;
+				if(!isEpicBossPresent()) return;
+				
+				if(EpicBossAPI.isBoss(oldDragon)){
+					String ageName = EpicBossAPI.getBossDisplayName(oldDragon);
+					LimitedEnderDragon.replaceEntityWithEDPDragon(oldDragon, ageName);
+				}
+			}
+		}, 1);
+	}
 }

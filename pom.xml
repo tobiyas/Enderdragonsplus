@@ -12,7 +12,7 @@
 		<utilsVersion>1.0.11</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
 		<cbRelocation>v1_7_R1</cbRelocation>
-		<cb.version>1.7.2-R0.1-SNAPSHOT</cb.version>
+		<cb.version>1.7.2-R0.3-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
@@ -73,6 +73,12 @@
 			<groupId>de.tobiyas</groupId>
 			<artifactId>Utils</artifactId>
 			<version>${utilsVersion}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>me.ThaH3lper</groupId>
+			<artifactId>EpicBossGoldEdition</artifactId>
+			<version>0.1.0</version>
 		</dependency>
 	</dependencies>
 

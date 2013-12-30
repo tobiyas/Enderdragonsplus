@@ -36,6 +36,7 @@ import de.tobiyas.enderdragonsplus.datacontainer.OnTheFlyReplacer;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainer;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeContainerManager;
+import de.tobiyas.enderdragonsplus.listeners.Listener_DragonRiderTeleport;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Dragon_Spawn;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Entity;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Fireball;
@@ -182,6 +183,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		new Listener_Sign();
 		new Listener_Fireball();
 		new Listener_Dragon_Spawn();
+		new Listener_DragonRiderTeleport();
 	}
 	
 	private void registerCommands(){

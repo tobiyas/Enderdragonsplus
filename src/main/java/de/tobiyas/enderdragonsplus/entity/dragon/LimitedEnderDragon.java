@@ -2,6 +2,7 @@ package de.tobiyas.enderdragonsplus.entity.dragon;
 
 import static de.tobiyas.enderdragonsplus.util.MinecraftChatColorUtils.decodeColors;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -21,8 +22,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -331,7 +334,37 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 			return false;
 		setPosition(locX, locY, locZ);
 		return true;
-	}	
+	}
+	
+	/**
+	 * Tries to replace a OldDragon with a new One.
+	 * 
+	 * @param oldDragon
+	 */
+	public static boolean replaceEntityWithEDPDragon(EnderDragon oldDragon, String ageName){
+		EntityEnderDragon castedOldDragon = ((CraftEnderDragon)oldDragon).getHandle();
+		castedOldDragon.dead = true;
+		
+		LimitedEnderDragon newdragon = new LimitedEnderDragon(oldDragon.getLocation(), castedOldDragon.world, oldDragon.getUniqueId(), ageName);		
+		newdragon.bukkitEntity = (CraftEnderDragon) oldDragon;
+		
+		try{
+			Field field = CraftEntity.class.getDeclaredField("entity");
+			field.setAccessible(true);
+			
+			field.set(oldDragon, newdragon);
+
+			newdragon.spawn();
+			return true;
+		}catch (Exception exp) {
+			EnderdragonsPlus plugin = EnderdragonsPlus.getPlugin();
+			
+			plugin.log("Something gone Wrong with Injecting!");
+			plugin.getDebugLogger().logStackTrace(exp);
+			//spawning went wrong. Returning...
+			return false;
+		}
+	}
 
 	public Location getHomeLocation() {
 		return targetController.getHomeLocation();

@@ -19,6 +19,7 @@ public class BridgeController {
 	public BridgeController(){
 		plugin = EnderdragonsPlus.getPlugin();
 		bridge = new ArrayList<SpecialDragonBridge>();
+		
 		bridge.add(new DragonTravelBridge());
 		bridge.add(new RideThaDragonBridge());
 	}
