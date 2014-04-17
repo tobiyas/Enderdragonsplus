@@ -35,6 +35,7 @@ public class Config
   
   //Riding
   private boolean config_useSoftRidingCollision;
+  private int config_maxRidingSpeed;
   
   //World damage
   private boolean config_disableEnderdragonBlockDamage;
@@ -130,6 +131,7 @@ public class Config
 	config.addDefault("uploadErrors", false);
 	config.addDefault("dragonGiveXPOnlyToDamagers", false);
 	config.addDefault("useSoftRidingCollision", true);
+	config.addDefault("maxRidingSpeed", 4);
 
 	config.options().copyDefaults(true);
   }
@@ -177,6 +179,7 @@ public class Config
     this.config_fireBallSpeedUp = this.plugin.getConfig().getDouble("fireBallSpeedUp", 1.0D);
     
     this.config_useSoftRidingCollision = this.plugin.getConfig().getBoolean("useSoftRidingCollision", true);
+    this.config_maxRidingSpeed = this.plugin.getConfig().getInt("maxRidingSpeed", 4);
 
     this.config_disableDragonHealthBar = this.plugin.getConfig().getBoolean("disableDragonHealthBar", false);
 
@@ -388,5 +391,9 @@ public class Config
 
 	public boolean isConfig_useSoftRidingCollision() {
 		return config_useSoftRidingCollision;
+	}
+
+	public int getConfig_maxRidingSpeed() {
+		return config_maxRidingSpeed;
 	}
 }

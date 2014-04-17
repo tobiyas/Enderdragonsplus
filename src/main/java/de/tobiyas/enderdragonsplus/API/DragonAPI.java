@@ -4,17 +4,15 @@ import java.util.UUID;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.minecraft.server.World;
-
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonVersionManager;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeNotFoundException;
 
 public class DragonAPI {
@@ -28,7 +26,7 @@ public class DragonAPI {
 	public static boolean setTarget(LivingEntity dragon, LivingEntity target){
 		if(!(dragon.getType() == EntityType.ENDER_DRAGON)) return false;
 		
-		LimitedEnderDragon limitedDragon = getDragonByEntity(dragon);
+		LimitedED limitedDragon = getDragonByEntity(dragon);
 		
 		if(limitedDragon != null) 
 			limitedDragon.setTarget(target);
@@ -51,7 +49,7 @@ public class DragonAPI {
 	 * @return boolean if it worked
 	 */
 	public static boolean setTarget(LivingEntity dragon, Location location){
-		LimitedEnderDragon limitedDragon = getDragonByEntity(dragon);
+		LimitedED limitedDragon = getDragonByEntity(dragon);
 		if(limitedDragon != null)
 			limitedDragon.goToLocation(location);
 		
@@ -65,7 +63,7 @@ public class DragonAPI {
 	public static boolean sendHome(LivingEntity dragon){
 		if(!(dragon.getType() == EntityType.ENDER_DRAGON)) return false;
 		
-		LimitedEnderDragon limitedDragon = getDragonByEntity(dragon);
+		LimitedED limitedDragon = getDragonByEntity(dragon);
 		if(limitedDragon != null)
 			limitedDragon.goToLocation(limitedDragon.getHomeLocation());
 		
@@ -79,7 +77,7 @@ public class DragonAPI {
 	 */
 	public static boolean setNewHome(LivingEntity bukkitDragon, Location location){
 		if(!(bukkitDragon.getType() == EntityType.ENDER_DRAGON)) return false;
-		LimitedEnderDragon dragon = getDragonByEntity(bukkitDragon);
+		LimitedED dragon = getDragonByEntity(bukkitDragon);
 		if(dragon != null){
 			dragon.setNewHome(location);
 		}
@@ -117,15 +115,14 @@ public class DragonAPI {
 			return null;
 		}
 		
-		World world = ((CraftWorld)location.getWorld()).getHandle();
-		LimitedEnderDragon dragon = new LimitedEnderDragon(location, world, ageName);
+		LimitedED dragon = LimitedEnderDragonVersionManager.generate(location, ageName);
 		dragon.spawn();
 		
 		if(dragon.getBukkitEntity() == null){
 			return null;
 		}
 			
-		return (LivingEntity)dragon.getBukkitEntity();
+		return (LivingEntity) dragon.getBukkitEntity();
 	}
 	
 	/**
@@ -135,7 +132,7 @@ public class DragonAPI {
 	 * @return boolean if it worked
 	 */
 	public static boolean setPropertyToDragon(LivingEntity dragon, String property, Object value) throws OperationNotSupportedException{
-		LimitedEnderDragon limitedDragon = getDragonByEntity(dragon);
+		LimitedED limitedDragon = getDragonByEntity(dragon);
 		if(limitedDragon == null)
 			return false;
 		
@@ -149,7 +146,7 @@ public class DragonAPI {
 	 * @return Object found by property
 	 */
 	public static Object getPropertyToDragon(LivingEntity dragon, String property){
-		LimitedEnderDragon limitedDragon = getDragonByEntity(dragon);
+		LimitedED limitedDragon = getDragonByEntity(dragon);
 		if(limitedDragon == null)
 			return null;
 		
@@ -163,12 +160,12 @@ public class DragonAPI {
 	 * @param target
 	 * @return if it worked
 	 */
-	public static boolean spitFireballOnTarget(LivingEntity dragon, Entity target){
-		LimitedEnderDragon LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
+	public static boolean spitFireballOnTarget(LivingEntity dragon, LivingEntity target){
+		LimitedED LEdragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(dragon.getUniqueId());
 		if(LEdragon == null)
 			return false;
 		
-		return LEdragon.spitFireBallOnTarget((net.minecraft.server.Entity) target);
+		return LEdragon.spitFireBallOnTarget(target);
 	}
 	
 	
@@ -177,13 +174,13 @@ public class DragonAPI {
 	 * @param entity
 	 * @return dragon or null if not found
 	 */
-	public static LimitedEnderDragon getDragonByEntity(Entity entity){
+	public static LimitedED getDragonByEntity(Entity entity){
 		return getDragonById(entity.getUniqueId());
 	}
 	
 	
-	private static LimitedEnderDragon getDragonById(UUID id){
-		LimitedEnderDragon dragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(id);
+	private static LimitedED getDragonById(UUID id){
+		LimitedED dragon = EnderdragonsPlus.getPlugin().getContainer().getDragonById(id);
 		return dragon;
 	}
 }

@@ -6,13 +6,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 
 public class FireBreath {
 
 	private Location location;
 	private Vector direction;
-	private LimitedEnderDragon shooter;
+	private LimitedED shooter;
 	
 	private double speed = 1;
 	private boolean alive = true;
@@ -21,7 +21,7 @@ public class FireBreath {
 	private BurningBlocksContainer blockContainer;
 	
 	
-	public FireBreath(Location location, Vector direction, LimitedEnderDragon shooter) {
+	public FireBreath(Location location, Vector direction, LimitedED shooter) {
 		this.location = location;
 		this.shooter = shooter;
 
@@ -89,7 +89,7 @@ public class FireBreath {
 		return speed;
 	}
 
-	public LimitedEnderDragon getShooter() {
+	public LimitedED getShooter() {
 		return shooter;
 	}
 }

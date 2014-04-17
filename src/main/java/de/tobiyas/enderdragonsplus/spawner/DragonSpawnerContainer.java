@@ -6,14 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.PacketPlayOutUpdateSign;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
@@ -228,9 +224,9 @@ public class DragonSpawnerContainer {
 			}
 			String[] lines = sign.getLines();
 			
-			player.sendBlockChange(loc, Material.SIGN_POST, new Byte("0"));
-			EntityPlayer craftPlayer = ((CraftPlayer) player).getHandle();
-			craftPlayer.playerConnection.sendPacket(new PacketPlayOutUpdateSign(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), lines));
+			player.sendBlockChange(loc, Material.SIGN_POST, new Byte(""));
+			//EntityPlayer craftPlayer = ((CraftPlayer) player).getHandle();
+			//craftPlayer.playerConnection.sendPacket(new PacketPlayOutUpdateSign(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), lines));
 		}
 	}
 

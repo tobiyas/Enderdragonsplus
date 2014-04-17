@@ -135,6 +135,11 @@ public class ConfigText {
 		text += "#default: true'\n";
 		text += "useSoftRidingCollision: true\n\n";		
 		
+		text += "#This is the maximal Riding speed that can be passed to /edpRide <speed>\n";
+		text += "#default: 4'\n";
+		text += "maxRidingSpeed: 4\n\n";		
+		
+		
 		text += "#  /SUBREGION: EnderDragons.Riding\n\n";
 		text += "#	/REGION: EnderDragons\n\n\n";
 

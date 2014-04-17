@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 
 public class DragonLogicTicker implements Runnable {
 
@@ -31,9 +31,9 @@ public class DragonLogicTicker implements Runnable {
 		if(limit > 0){
 			Set<UUID> ids = plugin.getContainer().getAllIDs();
 			for(UUID id : ids){
-				LimitedEnderDragon dragon = plugin.getContainer().getDragonById(id);
+				LimitedED dragon = plugin.getContainer().getDragonById(id);
 				
-				if(dragon == null || !dragon.isAlive()){
+				if(dragon == null || dragon.getBukkitEntity().isDead()){
 					locs.remove(id);
 					continue;
 				}
@@ -44,12 +44,13 @@ public class DragonLogicTicker implements Runnable {
 					continue;
 				}
 				
-				double flyDistance = lastDragonLoc.distance(dragon.getLocation());					
+				boolean toOtherWorld = lastDragonLoc.getWorld() != dragon.getLocation().getWorld();
+				double flyDistance = toOtherWorld ? Double.MAX_VALUE : lastDragonLoc.distance(dragon.getLocation());
 				if(flyDistance < 0.01){
 					for(int i = 0; i < limit; i++){
 						try{
 							if(dragon == null) break;
-							dragon.e();
+							dragon.internalLogicTick();
 						}catch(Exception exp)
 						{}//prevent Craftbukkit from crashing
 					}

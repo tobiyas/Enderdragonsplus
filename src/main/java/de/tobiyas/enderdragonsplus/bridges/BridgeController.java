@@ -3,9 +3,6 @@ package de.tobiyas.enderdragonsplus.bridges;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.server.EntityEnderDragon;
-
-import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.entity.LivingEntity;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
@@ -25,10 +22,11 @@ public class BridgeController {
 	}
 	
 	public boolean isSpecialDragon(LivingEntity entity){
-		Class<?> entityClass = ((CraftEnderDragon) entity).getHandle().getClass();
-		Class<?> enderDragonClass = EntityEnderDragon.class;
-		
-		return ! entityClass.equals(enderDragonClass);
+		return false;
+//		Class<?> entityClass = ((CraftEnderDragon) entity).getHandle().getClass();
+//		String enderDragonClassName = "EntityEnderDragon";
+//		
+//		return ! entityClass.getName().equalsIgnoreCase(enderDragonClassName);
 	}
 	
 	public boolean isDTActive(String pluginName){

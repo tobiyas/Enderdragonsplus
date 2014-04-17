@@ -1,7 +1,6 @@
 package de.tobiyas.enderdragonsplus.listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -10,7 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 
 public class Listener_DragonRiderTeleport implements Listener {
 
@@ -22,7 +21,7 @@ public class Listener_DragonRiderTeleport implements Listener {
 	
 	public Listener_DragonRiderTeleport() {
 		this.plugin = EnderdragonsPlus.getPlugin();
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		//plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
 	
@@ -32,12 +31,9 @@ public class Listener_DragonRiderTeleport implements Listener {
 		
 		Entity vehicle = player.getVehicle();
 		if(vehicle != null && vehicle.getType() == EntityType.ENDER_DRAGON){
-			CraftEnderDragon dragon = (CraftEnderDragon) vehicle;
-			if(dragon.getHandle() instanceof LimitedEnderDragon){
-				LimitedEnderDragon limitedDragon = (LimitedEnderDragon) dragon.getHandle();
-				boolean portal = event.getFrom().getWorld() != event.getTo().getWorld();
-				limitedDragon.teleportTo(event.getTo(), portal);
-				
+			LimitedED dragon = plugin.getContainer().getDragonById(vehicle.getUniqueId());
+			if(dragon != null){
+				dragon.getBukkitEntity().teleport(event.getTo());
 				scheduleReattatch(player, dragon);
 			}
 		}
@@ -50,7 +46,7 @@ public class Listener_DragonRiderTeleport implements Listener {
 	 * @param player to attach
 	 * @param dragon to attach to
 	 */
-	private void scheduleReattatch(final Player player, final CraftEnderDragon dragon) {
+	private void scheduleReattatch(final Player player, final LimitedED dragon) {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			
 			@Override

@@ -3,16 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tobiyas</groupId>
 	<artifactId>EnderdragonsPlus</artifactId>
-	<version>1.11.1</version>
+	<version>1.11.2</version>
 	<name>EnderdragonsPlus</name>
 	<url>http://dev.bukkit.org/server-mods/enderdragonsplus/</url>
-
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<utilsVersion>1.0.11</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
-		<cbRelocation>v1_7_R1</cbRelocation>
-		<cb.version>1.7.2-R0.3-SNAPSHOT</cb.version>
+		<cbRelocation>v1_7_R2</cbRelocation>
+		<cb.version>1.7.5-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
@@ -68,6 +68,13 @@
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<version>1.7.8-R0.1-SNAPSHOT</version>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- Workspace Dependency -->
 		<dependency>
 			<groupId>de.tobiyas</groupId>
@@ -79,6 +86,34 @@
 			<groupId>me.ThaH3lper</groupId>
 			<artifactId>EpicBossGoldEdition</artifactId>
 			<version>0.1.0</version>
+		</dependency>
+		
+		<!-- Compat for Oder CB -->
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit-1</artifactId>
+		    <version>1.7.2</version>
+   			<scope>system</scope>
+			<systemPath>${basedir}\..\Libaries\CraftBukkit\cb-1.7.2.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit-2</artifactId>
+		    <version>1.7.5</version>
+   			<scope>system</scope>
+			<systemPath>${basedir}\..\Libaries\CraftBukkit\cb-1.7.5.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit-3</artifactId>
+		    <version>1.7.5</version>
+   			<scope>system</scope>
+			<systemPath>${basedir}\..\Libaries\CraftBukkit\cb-1.7.8.jar</systemPath>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 
@@ -101,7 +136,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.4</version>
+				<version>2.2</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -120,16 +155,6 @@
 								<relocation>
 									<pattern>de.tobiyas.util</pattern>
 									<shadedPattern>de.tobiyas.util.v${utilsVersion}.${utilsAddition}</shadedPattern>
-								</relocation>
-								
-								<relocation>
-									<pattern>net.minecraft.server</pattern>
-									<shadedPattern>net.minecraft.server.${cbRelocation}</shadedPattern>
-								</relocation>
-	
-								<relocation>
-									<pattern>org.bukkit.craftbukkit</pattern>
-									<shadedPattern>org.bukkit.craftbukkit.${cbRelocation}</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>

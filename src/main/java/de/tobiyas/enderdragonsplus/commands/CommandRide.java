@@ -2,11 +2,6 @@ package de.tobiyas.enderdragonsplus.commands;
 
 import java.util.List;
 
-
-
-
-
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,10 +20,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.API.DragonAPI;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
-import de.tobiyas.enderdragonsplus.entity.dragon.controllers.DragonMoveController;
-import de.tobiyas.enderdragonsplus.entity.dragon.controllers.FireballController;
-import de.tobiyas.enderdragonsplus.entity.dragon.controllers.TargetController;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
+import de.tobiyas.enderdragonsplus.entity.dragon.controllers.fireball.FireballController;
+import de.tobiyas.enderdragonsplus.entity.dragon.controllers.move.DragonMoveController;
+import de.tobiyas.enderdragonsplus.entity.dragon.controllers.targeting.ITargetController;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
 
 public class CommandRide implements CommandExecutor {
@@ -40,7 +35,7 @@ private EnderdragonsPlus plugin;
 		try{
 			plugin.getCommand("edpride").setExecutor(this);
 		}catch(Exception e){
-			plugin.log("Could not register command: /spawnenderdragon");
+			plugin.log("Could not register command: /edpride");
 		}
 	}
 	
@@ -64,13 +59,16 @@ private EnderdragonsPlus plugin;
 			}catch(NumberFormatException exp){}
 		}
 		
+
+		int maxSpeed = 4;
+		speed = Math.min(speed, maxSpeed);
 		
 		Player player = (Player) sender;
 		LivingEntity entity = DragonAPI.spawnNewEnderdragon(player.getLocation());
-		LimitedEnderDragon dragon = DragonAPI.getDragonByEntity(entity);
+		LimitedED dragon = DragonAPI.getDragonByEntity(entity);
 		entity.setPassenger(player);
 		dragon.setDragonMoveController(new DumbMoveController(dragon, player, speed));
-		dragon.setFireballController(new PlayerFireFireballController(dragon.getTargetController(), player));
+		dragon.setFireballController(new PlayerFireFireballController(dragon, dragon.getTargetController(), player));
 		
 		player.sendMessage(ChatColor.GREEN + "Mounted you on a dragon.");
 		
@@ -92,7 +90,7 @@ private EnderdragonsPlus plugin;
 		private final int speed;
 		
 		
-		public DumbMoveController(LimitedEnderDragon dragon, Player player, int speed) {
+		public DumbMoveController(LimitedED dragon, Player player, int speed) {
 			super(dragon);
 			
 			this.speed = speed;
@@ -102,12 +100,12 @@ private EnderdragonsPlus plugin;
 		@Override
 		public void moveDragon() {
 			//remove dragon when no passenger.
-			if(dragon.passenger == null){
+			if(dragon.getPassenger() == null){
 				dragon.getBukkitEntity().remove();
 			}
 
 			for(int i = 0; i < speed; i++){
-				dragon.e(0.89f, 0.89f);
+				dragon.playerMovedEntity(0.89f, 0.89f);
 			}
 		}
 		
@@ -127,8 +125,8 @@ private EnderdragonsPlus plugin;
 		private final Player player;
 		
 		
-		public PlayerFireFireballController(TargetController targetController, Player player) {
-			super(targetController);
+		public PlayerFireFireballController(LimitedED dragon, ITargetController iTargetController, Player player) {
+			super(dragon, iTargetController);
 			
 			this.player = player;
 			Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -145,8 +143,7 @@ private EnderdragonsPlus plugin;
 				return;
 			}
 			
-			LimitedEnderDragon dragon = targetController.getDragon();
-			if(dragon == null || !dragon.isAlive()){
+			if(dragon == null || dragon.getBukkitEntity().isDead()){
 				HandlerList.unregisterAll(this);
 				return;
 			}

@@ -49,6 +49,11 @@ commands:
     aliases: [edpr]
     usage: |
            /edpr
+  edplag:
+    description: checks how much time the Plugin took for lag.
+    aliases: []
+    usage: |
+           /edplag
   #edpbreath: #Disabled. Not for production code. Only for testing
   #  description: fires a breath in your sight direction.
   #  aliases: [edpb]

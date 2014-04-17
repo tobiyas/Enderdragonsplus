@@ -14,8 +14,6 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -31,7 +29,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 
 
 public class Listener_Entity implements Listener {
@@ -86,18 +84,18 @@ public class Listener_Entity implements Listener {
 			
 			if(damager.getType() == EntityType.ARROW){
 				Arrow arrow = (Arrow) event.getDamager();
-				LivingEntity shooter = arrow.getShooter();
+				LivingEntity shooter = (LivingEntity)arrow.getShooter();
 				damager = shooter;
 			}
 			
 			if(damager instanceof Player){
 				Player player = (Player) damager;
 				UUID uid = event.getEntity().getUniqueId();
-				LimitedEnderDragon dragon = plugin.getContainer().getDragonById(uid);
+				LimitedED dragon = plugin.getContainer().getDragonById(uid);
 				if(dragon == null)
 					return;
 
-				dragon.addEnemy(damager);
+				dragon.addEnemy(player);
 				plugin.getDamageWhisperController().dragonGotDamage((EnderDragon)dragon.getBukkitEntity(), player);
 			}
 		}
@@ -108,10 +106,12 @@ public class Listener_Entity implements Listener {
 		if(!plugin.interactConfig().getConfig_anounceDragonKill())
 			return;
 
-		if(!(((CraftEntity)event.getEntity()).getHandle() instanceof LimitedEnderDragon))
+		if(plugin.getContainer().getDragonById(event.getEntity().getUniqueId()) == null){
+			//no enderdragon
 			return;
+		}
 		
-		LimitedEnderDragon dragon = (LimitedEnderDragon) ((CraftEnderDragon)event.getEntity()).getHandle();
+		LimitedED dragon = plugin.getContainer().getDragonById(event.getEntity().getUniqueId());
 		String lastPlayerAttacked = dragon.getLastPlayerAttacked();
 		if(lastPlayerAttacked.equals("")){
 			return;
@@ -120,7 +120,7 @@ public class Listener_Entity implements Listener {
 		parseDragonDeath(dragon, event.getEntity().getWorld());
 	}
 	
-	private void parseDragonDeath(LimitedEnderDragon dragon,org.bukkit.World dragonDeathWorld){
+	private void parseDragonDeath(LimitedED dragon,org.bukkit.World dragonDeathWorld){
 		String message = plugin.interactConfig().getConfig_dragonKillMessage();
 		double damage = dragon.getDamageByPlayer(dragon.getLastPlayerAttacked());
 		

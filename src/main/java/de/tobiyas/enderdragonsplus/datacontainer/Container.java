@@ -7,21 +7,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import net.minecraft.server.DamageSource;
-
 import org.bukkit.Location;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 
 public class Container {
 
-	private HashMap<UUID, LimitedEnderDragon> dragonList;
+	private HashMap<UUID, LimitedED> dragonList;
 	private EnderdragonsPlus plugin;
 	
 	public Container(){
 		plugin = EnderdragonsPlus.getPlugin();
-		dragonList = new HashMap<UUID, LimitedEnderDragon>();
+		dragonList = new HashMap<UUID, LimitedED>();
 		new CleanRunner(this);
 	}
 	
@@ -29,8 +28,8 @@ public class Container {
 		List<UUID> toDelete = new ArrayList<UUID>();
 		
 		for(UUID id : dragonList.keySet()){
-			LimitedEnderDragon dragon = dragonList.get(id);
-			if(dragon == null || !dragon.isAlive())
+			LimitedED dragon = dragonList.get(id);
+			if(dragon == null || dragon.getBukkitEntity().isDead())
 				toDelete.add(id);
 		}
 		
@@ -48,13 +47,13 @@ public class Container {
 	public int killEnderDragons(Location location, int range, boolean instantRemove){
 		ArrayList<UUID> toRemove = new ArrayList<UUID>();
 		for(UUID dragonID : dragonList.keySet()){
-			LimitedEnderDragon dragon = dragonList.get(dragonID);
+			LimitedED dragon = dragonList.get(dragonID);
 			if(dragon != null && (range == 0 || dragon.isInRange(location, range))){
 				toRemove.add(dragonID);
 				if(instantRemove){
 					dragon.remove();
 				}else{
-					dragon.dealDamage(DamageSource.MAGIC, 1000);
+					dragon.damage(DamageCause.MAGIC, 100000);
 				}
 			}
 		}
@@ -73,7 +72,7 @@ public class Container {
 		int i = 0;
 		
 		for(UUID dragonID : dragonList.keySet()){
-			LimitedEnderDragon dragon = dragonList.get(dragonID);
+			LimitedED dragon = dragonList.get(dragonID);
 			if(dragon != null){
 				dragon.forceFlyHome(true);
 				i++;
@@ -104,18 +103,18 @@ public class Container {
 	}
 	
 	
-	public LimitedEnderDragon getDragonById(UUID id){
+	public LimitedED getDragonById(UUID id){
 		return dragonList.get(id);
 	}
 	
 	public Location getPositionByID(UUID id){
-		LimitedEnderDragon dragon = dragonList.get(id);
+		LimitedED dragon = dragonList.get(id);
 		if(dragon == null) return null;
 		return dragon.getLocation();
 	}
 
 	public boolean isLoaded(UUID id) {
-		LimitedEnderDragon dragon = dragonList.get(id);
+		LimitedED dragon = dragonList.get(id);
 		
 		boolean isNotDeleted = dragon != null;
 		boolean isLoaded = false;
@@ -125,7 +124,7 @@ public class Container {
 		return isNotDeleted && isLoaded;
 	}
 	
-	public void registerDragon(LimitedEnderDragon dragon){
+	public void registerDragon(LimitedED dragon){
 		dragonList.put(dragon.getUUID(), dragon);
 	}
 	
@@ -133,7 +132,7 @@ public class Container {
 		dragonList.remove(dragonId);
 	}
 
-	public List<LimitedEnderDragon> getAllDragons() {
-		return new LinkedList<LimitedEnderDragon>(dragonList.values());
+	public List<LimitedED> getAllDragons() {
+		return new LinkedList<LimitedED>(dragonList.values());
 	}
 }

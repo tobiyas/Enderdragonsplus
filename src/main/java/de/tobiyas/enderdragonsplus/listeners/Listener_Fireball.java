@@ -3,8 +3,8 @@ package de.tobiyas.enderdragonsplus.listeners;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -16,9 +16,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.fireball.FireballRebounceEvent;
@@ -48,7 +48,7 @@ public class Listener_Fireball implements Listener {
 			return;
 		}
 		
-		if(fireball.getShooter().getType() == EntityType.ENDER_DRAGON){
+		if(((LivingEntity)fireball.getShooter()).getType() == EntityType.ENDER_DRAGON){
 			if(plugin.interactConfig().getConfig_disableFireballWorldDamage()){
 				handleFireballWithoutExplosion((Fireball) fireball);
 				event.setCancelled(true);
@@ -68,7 +68,7 @@ public class Listener_Fireball implements Listener {
 				if(entity instanceof EnderDragon) continue;
 				
 				EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(fireball, entity, DamageCause.ENTITY_EXPLOSION, dmg);
-				event = CraftEventFactory.callEvent(event);
+				Bukkit.getPluginManager().callEvent(event);
 				if(!event.isCancelled())
 					setOnFire((LivingEntity) entity);
 			}

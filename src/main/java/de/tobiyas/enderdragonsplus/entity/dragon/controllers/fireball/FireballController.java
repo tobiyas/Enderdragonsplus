@@ -1,30 +1,42 @@
-package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
+package de.tobiyas.enderdragonsplus.entity.dragon.controllers.fireball;
 
 import java.util.LinkedList;
 
-import net.minecraft.server.Entity;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.fireball.LimitedFireball;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
+import de.tobiyas.enderdragonsplus.entity.dragon.controllers.targeting.ITargetController;
 
-public class FireballController {
+public class FireballController implements IFireballController {
 
-	protected TargetController targetController;
+	protected ITargetController targetController;
+	protected LimitedED dragon;
 	protected int fireballTicks;
 	protected EnderdragonsPlus plugin;
 	
-	public FireballController(TargetController targetController){
+	public FireballController(LimitedED dragon, ITargetController targetController){
 		this.targetController = targetController;
+		this.dragon = dragon;
 		this.fireballTicks = 0;
 		this.plugin = EnderdragonsPlus.getPlugin();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.tobiyas.enderdragonsplus.entity.dragon.controllers.fireball.IFireballController#forceSpitFireball()
+	 */
+	@Override
 	public void forceSpitFireball(){
 		fireballTicks = plugin.interactConfig().getConfig_dragonSpitFireballsEvery() * 21; //over border
 		checkSpitFireBall();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.tobiyas.enderdragonsplus.entity.dragon.controllers.fireball.IFireballController#checkSpitFireBall()
+	 */
+	@Override
 	public void checkSpitFireBall(){
 		if(!checkActive()) return;
 		fireballTicks++;
@@ -40,16 +52,16 @@ public class FireballController {
 			maxDistanceSquared *= maxDistanceSquared;
 			
 			int maxFireballTargets = plugin.interactConfig().getConfig_maxFireballTargets();
-			LinkedList<Entity> entities = targetController.getTargetsInRange(maxFireballTargets, maxDistanceSquared);
+			LinkedList<LivingEntity> entities = targetController.getTargetsInRange(maxFireballTargets, maxDistanceSquared);
 			
-			for(Entity target : entities){
-				if(target == null || !(target.getBukkitEntity() instanceof Player)) continue;
-				if(!checkFiredirectionHeight(target.locY, targetController.getDragonLocation().getY())){
+			for(LivingEntity target : entities){
+				if(target == null || !(target instanceof Player)) continue;
+				if(!checkFiredirectionHeight(target.getLocation().getY(), targetController.getDragonLocation().getY())){
 					fireballTicks = (fireEveryX * 20) / 2;
 					continue;
 				}
 				
-				Player player = (Player) target.getBukkitEntity();
+				Player player = (Player) target;
 				Location playerLocation = player.getLocation();
 				Location dragonLocation = targetController.getDragonLocation();
 				
@@ -74,33 +86,48 @@ public class FireballController {
 		return fireFireBall;
 	}
 	
-	public void fireFireball(Entity entity){
+	/* (non-Javadoc)
+	 * @see de.tobiyas.enderdragonsplus.entity.dragon.controllers.fireball.IFireballController#fireFireball(org.bukkit.entity.LivingEntity)
+	 */
+	@Override
+	public void fireFireball(LivingEntity target){
 		Location locDragon = targetController.getDragonLocation();
 		Location loc = new Location(locDragon.getWorld(), 
-				entity.locX	- locDragon.getBlockX(), 
-				entity.locY - locDragon.getBlockY(), 
-				entity.locZ	- locDragon.getBlockZ());
+				target.getLocation().getX()	- locDragon.getBlockX(), 
+				target.getLocation().getY() - locDragon.getBlockY(), 
+				target.getLocation().getZ()	- locDragon.getBlockZ());
 		fireFireballToDirection(loc);
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see de.tobiyas.enderdragonsplus.entity.dragon.controllers.fireball.IFireballController#fireFireballToDirection(org.bukkit.Location)
+	 */
+	@Override
 	public void fireFireballToDirection(Location direction){
 		if (direction.getWorld() != targetController.getDragonLocation().getWorld())
 			return;		
 		
+		//TODO check spawning somehow...
+		/*
 		LimitedFireball fireBall = new LimitedFireball(
-				targetController.getDragon().world, 
+				targetController.getDragon().getWorld(), 
 				targetController.getDragon(),
 				direction.getBlockX(), 
 				direction.getBlockY(), 
 				direction.getBlockZ());
 		
-		targetController.getDragon().world.addEntity(fireBall);
+		fireBall.spawnIn(world);
 		double fireBallSpeedup = plugin.interactConfig().getConfig_FireBallSpeedUp();
 		fireBall.speedUp(fireBallSpeedup);
+		*/
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see de.tobiyas.enderdragonsplus.entity.dragon.controllers.fireball.IFireballController#fireFireballOnLocation(org.bukkit.Location)
+	 */
+	@Override
 	public void fireFireballOnLocation(Location location){
 		Location direction = location.clone();
 		direction = direction.subtract(targetController.getDragonLocation().clone());
@@ -108,6 +135,8 @@ public class FireballController {
 		if (direction.getWorld() != targetController.getDragonLocation().getWorld())
 			return;		
 		
+		//TODO check spawning somehow...
+		/*
 		LimitedFireball fireBall = new LimitedFireball(
 				targetController.getDragon().world, 
 				targetController.getDragon(),
@@ -118,5 +147,6 @@ public class FireballController {
 		targetController.getDragon().world.addEntity(fireBall);
 		double fireBallSpeedup = plugin.interactConfig().getConfig_FireBallSpeedUp();
 		fireBall.speedUp(fireBallSpeedup);
+		*/
 	}
 }

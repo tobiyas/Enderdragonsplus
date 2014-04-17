@@ -10,7 +10,6 @@ import me.ThaH3lper.com.API.EpicBossAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -21,7 +20,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
+import de.tobiyas.enderdragonsplus.entity.dragon.v1_7_2.LimitedEnderDragon;
 
 public class Listener_Dragon_Spawn implements Listener {
 
@@ -47,7 +47,10 @@ public class Listener_Dragon_Spawn implements Listener {
 		
 		if(plugin.interactBridgeController().isSpecialDragon(event.getEntity())) return;
 		
-		if(recDepth > 40){
+		//own dragon.
+		if(plugin.getContainer().containsID(event.getEntity().getUniqueId())) return;
+		
+		if(recDepth > 4){
 			plugin.log("CRITICAL: Concurring plugins detected! Disable the concurring plugin!");
 			return;
 		}
@@ -89,11 +92,12 @@ public class Listener_Dragon_Spawn implements Listener {
 	}
 	
 	private void announceDragon(Entity entity){
-		
-		LimitedEnderDragon dragon = null;
+		LimitedED dragon = null;
 		try{
-			dragon = (LimitedEnderDragon)((CraftEnderDragon) entity).getHandle();
-		}catch(ClassCastException exp){return;}
+			dragon = plugin.getContainer().getDragonById(entity.getUniqueId());
+			if(dragon == null) return;
+			if(dragon.getPassenger() != null) return;
+		}catch(Throwable exp){return;}
 		
 		String ageName = dragon.getAgeName();
 		

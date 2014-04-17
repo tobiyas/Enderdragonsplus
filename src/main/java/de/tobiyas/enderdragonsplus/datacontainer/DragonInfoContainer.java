@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 
-import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 
 public class DragonInfoContainer {
 
@@ -14,12 +14,12 @@ public class DragonInfoContainer {
 	public Location homeLocation;
 	public boolean flyingHome;
 	public boolean isLoaded;
-	public LimitedEnderDragon dragon;
+	public LimitedED dragon;
 	public boolean firstLoad = true;
 	public HashMap<String, Object> properties;
 	
 	
-	public DragonInfoContainer(UUID ID, Location location, Location homeLocation, boolean flyingHome, boolean isLoaded, LimitedEnderDragon dragon){
+	public DragonInfoContainer(UUID ID, Location location, Location homeLocation, boolean flyingHome, boolean isLoaded, LimitedED dragon){
 		this.ID = ID;
 		this.location = location;
 		this.homeLocation = homeLocation;
