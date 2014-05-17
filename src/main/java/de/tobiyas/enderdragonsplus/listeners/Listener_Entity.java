@@ -86,7 +86,7 @@ public class Listener_Entity implements Listener {
 			
 			if(damager.getType() == EntityType.ARROW){
 				Arrow arrow = (Arrow) event.getDamager();
-				LivingEntity shooter = arrow.getShooter();
+				LivingEntity shooter = ((LivingEntity)arrow.getShooter());
 				damager = shooter;
 			}
 			

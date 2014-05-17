@@ -165,19 +165,19 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	}
 	
 	
-	/** This method sets the Life of the EnderDragon
-	 * @see net.minecraft.server.EntityEnderDragon#aD()
-	 */
-	@Override
-	protected void aD() {
-		super.aD();
-		//Health is set somewehere else.
-		
-		/*  Actually doing this: 
-		this.datawatcher.a(8, Integer.valueOf(0));
-		this.datawatcher.a(9, Byte.valueOf(0));
-		this.datawatcher.a(16, new Integer(this.getMaxHealth()));*/
-	}
+//	/** This method sets the Life of the EnderDragon
+//	 * @see net.minecraft.server.EntityEnderDragon#aD()
+//	 */
+//	@Override
+//	protected void aD() {
+//		super.aD();
+//		//Health is set somewehere else.
+//		
+//		/*  Actually doing this: 
+//		this.datawatcher.a(8, Integer.valueOf(0));
+//		this.datawatcher.a(9, Byte.valueOf(0));
+//		this.datawatcher.a(16, new Integer(this.getMaxHealth()));*/
+//	}
 	
 	@Override
 	protected void dropDeathLoot(boolean flag, int i) {
@@ -276,12 +276,14 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	/** 
 	 * Function to drop the EXP if a Dragon is dead
 	 * ORIGINAL: aA()
+	 * 1.7.9: aE
+	 * 
 	 * Moved to: ItemLootController
 	 * 
 	 * @see net.minecraft.server.EntityEnderDragon#aF()
 	 */
 	@Override
-	protected void aF() {
+	protected void aE() {
 		if(this.dead) return; // CraftBukkit - can't kill what's already dead
 		itemController.deathTick();
 	}

@@ -47,12 +47,12 @@ public class LimitedFireball extends EntityLargeFireball {
 		if (damageSource.getEntity() != null) {
 			if (damageSource.getEntity() instanceof LimitedEnderDragon)
 				return false;
-			Vec3D vec3d = damageSource.getEntity().ag();
+			Vec3D vec3d = damageSource.getEntity().af();
 
 			if (vec3d != null) {
-				this.motX = vec3d.c;
-				this.motY = vec3d.d;
-				this.motZ = vec3d.e;
+				this.motX = vec3d.a;
+				this.motY = vec3d.b;
+				this.motZ = vec3d.c;
 				this.dirX = (this.motX * 0.1D);
 				this.dirY = (this.motY * 0.1D);
 				this.dirZ = (this.motZ * 0.1D);

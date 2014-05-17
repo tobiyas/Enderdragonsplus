@@ -152,10 +152,10 @@ public class DragonMoveController {
 	    dragon.b(dragon.passenger.yaw, dragon.passenger.pitch); //[url]https://github.com/Bukkit/mc-dev/blob/master/net/minecraft/server/Entity.java#L155-L158[/url]
 	    dragon.aP = dragon.aN = dragon.yaw;
 	 
-	    dragon.X = 1.0F;  
+	    dragon.W = 1.0F;  
 	 
-	    sideMot = ((EntityLiving) dragon.passenger).be * 0.5F;
-	    forMot = ((EntityLiving) dragon.passenger).bf;
+	    sideMot = ((EntityLiving) dragon.passenger).bd * 0.5F;
+	    forMot = ((EntityLiving) dragon.passenger).be;
 	 
 	    if (forMot <= 0.0F) {
 	        forMot *= 0.25F;  
@@ -326,14 +326,14 @@ public class DragonMoveController {
 			toTurnAngle = -50.0D;
 		}
 
-		Vec3D targetVector = dragon.world.getVec3DPool().create(
+		Vec3D targetVector = Vec3D.a(
 				dragon.h - dragon.locX, 
 				dragon.i - dragon.locY, 
 				dragon.j - dragon.locZ
 			).a();
 		
 		double directionDegree = dragon.yaw * Math.PI / 180.0F;
-        Vec3D motionVector = dragon.world.getVec3DPool().create(
+        Vec3D motionVector = Vec3D.a(
         		MathHelper.sin((float) directionDegree), 
         		dragon.motY, 
         		-MathHelper.cos((float) directionDegree)
@@ -369,7 +369,7 @@ public class DragonMoveController {
 			}
 		}
 
-		Vec3D currentMotionVector = dragon.world.getVec3DPool().create(dragon.motX, dragon.motY, dragon.motZ).a();
+		Vec3D currentMotionVector = Vec3D.a(dragon.motX, dragon.motY, dragon.motZ).a();
 		float scaledMotionLength = (float) (currentMotionVector.b(motionVector) + 1.0D) / 2.0F;
 
 		scaledMotionLength *= 0.15F;
