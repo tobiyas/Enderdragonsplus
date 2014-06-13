@@ -10,7 +10,7 @@ description: >
              plugin to handle Enderdragons better
 commands:
   enderdragonsplus:
-    descroption: gives help for the Plugin
+    description: gives help for the Plugin
     aliases: [edp,edphelp,edph]
     usage: |
            /edp
