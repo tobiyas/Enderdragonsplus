@@ -22,7 +22,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.fireball.FireballRebounceEvent;
-import de.tobiyas.enderdragonsplus.entity.fireball.LimitedFireball;
+import de.tobiyas.enderdragonsplus.entity.fireball.v1_7_R3.LimitedFireball_1_7R3;
 
 public class Listener_Fireball implements Listener {
 
@@ -38,7 +38,7 @@ public class Listener_Fireball implements Listener {
 	
 	@EventHandler
 	public void HandleFireballHit(ExplosionPrimeEvent event){
-		if(!(event.getEntity() instanceof LimitedFireball)) return; //No fireball -> not interesting for us.
+		if(!(event.getEntity() instanceof LimitedFireball_1_7R3)) return; //No fireball -> not interesting for us.
 		Projectile fireball = (Projectile) event.getEntity();
 		if(fireball.getShooter() == null || !(fireball.getShooter() instanceof EnderDragon))
 			return;

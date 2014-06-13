@@ -3,12 +3,15 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers.fireball;
 import java.util.LinkedList;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.targeting.ITargetController;
+import de.tobiyas.enderdragonsplus.entity.fireball.FireballGenerator;
+import de.tobiyas.enderdragonsplus.entity.fireball.LimitedFireball;
 
 public class FireballController implements IFireballController {
 
@@ -108,19 +111,17 @@ public class FireballController implements IFireballController {
 		if (direction.getWorld() != targetController.getDragonLocation().getWorld())
 			return;		
 		
-		//TODO check spawning somehow...
-		/*
-		LimitedFireball fireBall = new LimitedFireball(
-				targetController.getDragon().getWorld(), 
-				targetController.getDragon(),
+		World world = dragon.getWorld();
+		LimitedFireball fireBall = FireballGenerator.generate(world, (LivingEntity) dragon.getBukkitEntity(), 
 				direction.getBlockX(), 
 				direction.getBlockY(), 
-				direction.getBlockZ());
+				direction.getBlockZ()
+				);
 		
+		if(fireBall == null) return;
 		fireBall.spawnIn(world);
 		double fireBallSpeedup = plugin.interactConfig().getConfig_FireBallSpeedUp();
 		fireBall.speedUp(fireBallSpeedup);
-		*/
 	}
 	
 	
@@ -132,21 +133,21 @@ public class FireballController implements IFireballController {
 		Location direction = location.clone();
 		direction = direction.subtract(targetController.getDragonLocation().clone());
 		
-		if (direction.getWorld() != targetController.getDragonLocation().getWorld())
-			return;		
+		if (direction.getWorld() != targetController.getDragonLocation().getWorld()){
+			return;
+		}
 		
-		//TODO check spawning somehow...
-		/*
-		LimitedFireball fireBall = new LimitedFireball(
-				targetController.getDragon().world, 
-				targetController.getDragon(),
+		World world = dragon.getWorld();
+		LimitedFireball fireBall = FireballGenerator.generate(world, (LivingEntity) dragon.getBukkitEntity(), 
 				direction.getBlockX(), 
 				direction.getBlockY(), 
-				direction.getBlockZ());
+				direction.getBlockZ()
+				);
 		
-		targetController.getDragon().world.addEntity(fireBall);
+		if(fireBall == null) return;
+		
+		fireBall.spawnIn(world);
 		double fireBallSpeedup = plugin.interactConfig().getConfig_FireBallSpeedUp();
 		fireBall.speedUp(fireBallSpeedup);
-		*/
 	}
 }
