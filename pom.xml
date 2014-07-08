@@ -81,12 +81,6 @@
 			<artifactId>Utils</artifactId>
 			<version>${utilsVersion}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>me.ThaH3lper</groupId>
-			<artifactId>EpicBossGoldEdition</artifactId>
-			<version>0.1.0</version>
-		</dependency>
 		
 		<!-- Compat for Oder CB -->
 		<dependency>

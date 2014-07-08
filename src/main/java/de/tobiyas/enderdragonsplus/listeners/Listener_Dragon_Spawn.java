@@ -5,8 +5,6 @@ import static de.tobiyas.enderdragonsplus.util.MinecraftChatColorUtils.decodeCol
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import me.ThaH3lper.com.API.EpicBossAPI;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -144,10 +142,13 @@ public class Listener_Dragon_Spawn implements Listener {
 				if(oldDragon.isDead()) return;
 				if(!isEpicBossPresent()) return;
 				
+				//disabled for current builds
+				//TODO Reenable later.
+				/*
 				if(EpicBossAPI.isBoss(oldDragon)){
 					String ageName = EpicBossAPI.getBossDisplayName(oldDragon);
 					LimitedEnderDragon.replaceEntityWithEDPDragon(oldDragon, ageName);
-				}
+				}*/
 			}
 		}, 1);
 	}
