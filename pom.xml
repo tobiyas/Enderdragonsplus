@@ -94,7 +94,7 @@
 		    <artifactId>craftbukkit-1</artifactId>
 		    <version>1.7.2</version>
    			<scope>system</scope>
-			<systemPath>${basedir}\..\Libaries\CraftBukkit\cb-1.7.2.jar</systemPath>
+			<systemPath>${basedir}\libs\cb\cb-1.7.2.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
 
@@ -103,7 +103,7 @@
 		    <artifactId>craftbukkit-2</artifactId>
 		    <version>1.7.5</version>
    			<scope>system</scope>
-			<systemPath>${basedir}\..\Libaries\CraftBukkit\cb-1.7.5.jar</systemPath>
+			<systemPath>${basedir}\libs\cb\cb-1.7.5.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
 
@@ -112,7 +112,7 @@
 		    <artifactId>craftbukkit-3</artifactId>
 		    <version>1.7.5</version>
    			<scope>system</scope>
-			<systemPath>${basedir}\..\Libaries\CraftBukkit\cb-1.7.8.jar</systemPath>
+			<systemPath>${basedir}\libs\cb\cb-1.7.8.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
