@@ -25,6 +25,10 @@ public class LimitedEnderDragonVersionManager {
 	 * @return the Generated ED
 	 */
 	public static LimitedED generate(Location loc, String ageName){
+		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_7_R4")){
+			return new de.tobiyas.enderdragonsplus.entity.dragon.v1_7_4.LimitedEnderDragon(loc, loc.getWorld(), ageName);
+		}
+		
 		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_7_R3")){
 			return new de.tobiyas.enderdragonsplus.entity.dragon.v1_7_3.LimitedEnderDragon(loc, loc.getWorld(), ageName);
 		}
@@ -48,6 +52,7 @@ public class LimitedEnderDragonVersionManager {
 	 */
 	public static boolean isCurrentVersionSupported(){
 		String support = EnderdragonsPlus.getRelocationAddition();
+		if(support.equalsIgnoreCase("1_7_R4")) return true;
 		if(support.equalsIgnoreCase("1_7_R3")) return true;
 		if(support.equalsIgnoreCase("1_7_R2")) return true;
 		if(support.equalsIgnoreCase("1_7_R1")) return true;
@@ -63,6 +68,7 @@ public class LimitedEnderDragonVersionManager {
 	 */
 	public static Class<?> getCurrentClass(){
 		String support = EnderdragonsPlus.getRelocationAddition();
+		if(support.equalsIgnoreCase("1_7_R4")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_7_4.LimitedEnderDragon.class;
 		if(support.equalsIgnoreCase("1_7_R3")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_7_3.LimitedEnderDragon.class;
 		if(support.equalsIgnoreCase("1_7_R2")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_7_2.LimitedEnderDragon.class;
 		if(support.equalsIgnoreCase("1_7_R1")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_7_1.LimitedEnderDragon.class;

@@ -12,7 +12,7 @@
 		<utilsVersion>1.0.11</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
 		<cbRelocation>v1_7_R3</cbRelocation>
-		<cb.version>1.7.9-R0.3-SNAPSHOT</cb.version>
+		<cb.version>1.7.10-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
@@ -104,9 +104,18 @@
 		<dependency>
 		    <groupId>org.bukkit</groupId>
 		    <artifactId>craftbukkit-3</artifactId>
-		    <version>1.7.5</version>
+		    <version>1.7.8</version>
    			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/cb/cb-1.7.8.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit-4</artifactId>
+		    <version>1.7.10</version>
+   			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/cb/cb-1.7.10.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
