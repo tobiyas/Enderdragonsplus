@@ -20,6 +20,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 import de.tobiyas.enderdragonsplus.entity.dragon.v1_7_2.LimitedEnderDragon;
+import de.tobiyas.util.player.PlayerUtils;
 
 public class Listener_Dragon_Spawn implements Listener {
 
@@ -114,7 +115,7 @@ public class Listener_Dragon_Spawn implements Listener {
 		
 		message = message.replaceAll(Pattern.quote("~world~"), ChatColor.LIGHT_PURPLE + world + ChatColor.GREEN);
 		
-		for(Player player : Bukkit.getOnlinePlayers()){
+		for(Player player : PlayerUtils.getOnlinePlayers()){
 			player.sendMessage(decodeColors(message));
 		}
 	}
