@@ -35,6 +35,10 @@
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
 		<repository>
+			<id>tobiyas</id>
+			<url>http://mc.minerim.de:4242/plugin/repository/everything/</url>
+		</repository>
+		<repository>
 			<id>com.sk89q</id>
 			<name>sk89qRepo</name>
 			<url>http://maven.sk89q.com/repo/</url>
