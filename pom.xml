@@ -66,6 +66,8 @@
 			<artifactId>owncraftbukkit</artifactId>
 			<version>${cb.version}</version>
 			<optional>true</optional>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/CB.jar</systemPath>
 		</dependency>
 
 		<!-- Workspace Dependency -->
