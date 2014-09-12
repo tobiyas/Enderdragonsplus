@@ -152,7 +152,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	private void initStats(){
 		expToDrop = ageContainer.getExp();
 		setHealth((float) ageContainer.getSpawnHealth());
-		this.getAttributeInstance(GenericAttributes.a).setValue((float) ageContainer.getMaxHealth()); //sets health to correct value
+		this.getAttributeInstance(GenericAttributes.maxHealth).setValue((float) ageContainer.getMaxHealth()); //sets health to correct value
 		plugin.getContainer().registerDragon(this);
 		
 		
@@ -277,13 +277,14 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	 * Function to drop the EXP if a Dragon is dead
 	 * ORIGINAL: aA()
 	 * 1.7.9: aE
+	 * 1.7.10: aF
 	 * 
 	 * Moved to: ItemLootController
 	 * 
 	 * @see net.minecraft.server.EntityEnderDragon#aF()
 	 */
 	@Override
-	protected void aE() {
+	protected void aF() {
 		if(this.dead) return; // CraftBukkit - can't kill what's already dead
 		itemController.deathTick();
 	}

@@ -11,8 +11,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<utilsVersion>1.0.11</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
-		<cbRelocation>v1_7_R3</cbRelocation>
-		<cb.version>1.7.9-R0.2-SNAPSHOT</cb.version>
+		<cbRelocation>v1_7_R4</cbRelocation>
+		<cb.version>1.7.10-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
