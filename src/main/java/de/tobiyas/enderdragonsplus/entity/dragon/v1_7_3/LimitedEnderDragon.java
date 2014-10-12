@@ -922,4 +922,10 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 		return damage(damagesource, amount);
 	}
 	
+
+	@Override
+	public String getPlayerIsJumpingFieldName() {
+		return "bd";
+	}
+	
 }

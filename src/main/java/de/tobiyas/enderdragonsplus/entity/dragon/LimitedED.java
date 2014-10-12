@@ -270,6 +270,14 @@ public interface LimitedED {
 	 * @param forMot
 	 */
 	public void callSuperRiding(float sideMot, float forMot, float speed);
+	
+	/**
+	 * Returns the field name for the rider.
+	 * The Field determins if the player is jumping.
+	 * 
+	 * @return
+	 */
+	public String getPlayerIsJumpingFieldName();
 
 
 }

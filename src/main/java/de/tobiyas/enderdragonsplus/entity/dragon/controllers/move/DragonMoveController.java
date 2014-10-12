@@ -219,7 +219,7 @@ public class DragonMoveController implements IDragonMoveController {
 		    while (mcEntityClass != null && mcEntityClass != Object.class && i > 0){
 		    	try{
 		    		if(jump == null){
-				    	jump = mcEntityClass.getDeclaredField("bc");
+				    	jump = mcEntityClass.getDeclaredField(dragon.getPlayerIsJumpingFieldName());
 				    	jump.setAccessible(true);
 		    		}
 		    		

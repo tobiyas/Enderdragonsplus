@@ -923,5 +923,10 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	public boolean dealDamage(DamageCause damagesource, float amount) {
 		return damage(damagesource, amount);
 	}
+
+	@Override
+	public String getPlayerIsJumpingFieldName() {
+		return "bc";
+	}
 	
 }
