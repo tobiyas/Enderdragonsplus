@@ -1,5 +1,6 @@
 package de.tobiyas.enderdragonsplus.commands;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -10,15 +11,17 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.API.DragonAPI;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
+import de.tobiyas.util.autocomplete.AutoCompleteUtils;
 
 
-public class CommandSpawnEnderDragon implements CommandExecutor {
+public class CommandSpawnEnderDragon implements CommandExecutor, TabCompleter {
 
 	private EnderdragonsPlus plugin;
 	
@@ -82,10 +85,23 @@ public class CommandSpawnEnderDragon implements CommandExecutor {
 				return true;
 			}
 		}
-			
 		
 		
 		player.sendMessage(ChatColor.GREEN + "Dragon spawned.");
 		return true;
 	}
+
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command,
+			String alias, String[] args) {
+		
+		Set<String> ages = plugin.getAgeContainerManager().getAllAgeNames();
+		if(args.length == 0) return new LinkedList<String>(ages);
+		if(args.length == 1) return AutoCompleteUtils.getAllNamesWith(ages, args[0]);
+		
+		return new LinkedList<String>();
+	}
+	
+	
 }

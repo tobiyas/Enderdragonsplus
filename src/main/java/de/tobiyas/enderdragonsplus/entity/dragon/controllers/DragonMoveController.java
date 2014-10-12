@@ -145,8 +145,7 @@ public class DragonMoveController {
 		if (dragon.passenger == null || !(dragon.passenger instanceof EntityHuman)) {
 	        return true;
 	    }
-	 
-	    dragon.lastYaw = dragon.yaw = (float) MathHelper.g(dragon.passenger.yaw - 180);
+	    dragon.lastYaw = dragon.yaw = (float) MathHelper.g(dragon.passenger.yaw);
 	    dragon.pitch = dragon.passenger.pitch * 0.5F;
 	 
 	    dragon.b(dragon.passenger.yaw, dragon.passenger.pitch); //[url]https://github.com/Bukkit/mc-dev/blob/master/net/minecraft/server/Entity.java#L155-L158[/url]
@@ -181,7 +180,7 @@ public class DragonMoveController {
 	protected void checkJump(){
 		try {
 		    Field jump = null;
-		    jump = EntityLiving.class.getDeclaredField("bd");
+		    jump = EntityLiving.class.getDeclaredField("bc");
 		    jump.setAccessible(true);
 	 
 	        if (jump.getBoolean(dragon.passenger)) {

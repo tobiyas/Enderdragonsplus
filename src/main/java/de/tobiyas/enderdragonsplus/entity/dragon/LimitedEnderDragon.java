@@ -237,6 +237,9 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		dragonMoveController.moveDragon();
 	}
 	
+	/**
+	 * The should be the Riding thingy.
+	 */
 	@Override
 	public void e(float motX, float motY){
 		if(dragonMoveController.playerMovedEntity(motX, motY)){

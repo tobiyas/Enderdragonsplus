@@ -22,7 +22,9 @@ public class Listener_DragonRiderTeleport implements Listener {
 	
 	public Listener_DragonRiderTeleport() {
 		this.plugin = EnderdragonsPlus.getPlugin();
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		
+		//Disabled due to error on teleport. //TODO maybe fix.
+		//plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
 	
