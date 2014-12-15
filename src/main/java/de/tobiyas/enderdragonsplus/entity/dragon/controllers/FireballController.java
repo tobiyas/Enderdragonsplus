@@ -2,9 +2,11 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
 import java.util.LinkedList;
 
-import net.minecraft.server.Entity;
+import net.minecraft.server.v1_8_R1.Entity;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.fireball.LimitedFireball;
 

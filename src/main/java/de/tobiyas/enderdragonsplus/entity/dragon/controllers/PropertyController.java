@@ -2,7 +2,7 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.minecraft.server.NBTTagCompound;
+import net.minecraft.server.v1_8_R1.NBTTagCompound;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.NBTTagDragonStore.DragonNBTReturn;
 
 public class PropertyController {

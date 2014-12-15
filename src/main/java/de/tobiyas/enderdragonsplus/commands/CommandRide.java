@@ -2,11 +2,6 @@ package de.tobiyas.enderdragonsplus.commands;
 
 import java.util.List;
 
-
-
-
-
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -107,7 +102,7 @@ private EnderdragonsPlus plugin;
 			}
 
 			for(int i = 0; i < speed; i++){
-				dragon.e(0.89f, 0.89f);
+				dragon.g(0.89f, 0.89f);
 			}
 		}
 		
@@ -167,7 +162,6 @@ private EnderdragonsPlus plugin;
 				targetController.getDragon().remove();
 				HandlerList.unregisterAll(this);
 			}
-			
 		}
 
 		@EventHandler
@@ -176,8 +170,8 @@ private EnderdragonsPlus plugin;
 				targetController.getDragon().remove();
 				HandlerList.unregisterAll(this);
 			}
-			
 		}
+
 
 	}
 

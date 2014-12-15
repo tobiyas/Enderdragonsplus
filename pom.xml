@@ -127,16 +127,6 @@
 									<pattern>de.tobiyas.util</pattern>
 									<shadedPattern>de.tobiyas.util.v${utilsVersion}.${utilsAddition}</shadedPattern>
 								</relocation>
-								
-								<relocation>
-									<pattern>net.minecraft.server</pattern>
-									<shadedPattern>net.minecraft.server.${cbRelocation}</shadedPattern>
-								</relocation>
-	
-								<relocation>
-									<pattern>org.bukkit.craftbukkit</pattern>
-									<shadedPattern>org.bukkit.craftbukkit.${cbRelocation}</shadedPattern>
-								</relocation>
 							</relocations>
 						</configuration>
 					</execution>

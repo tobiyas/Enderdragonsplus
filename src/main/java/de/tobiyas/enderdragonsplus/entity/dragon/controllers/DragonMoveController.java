@@ -4,14 +4,15 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.server.Block;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityComplexPart;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.Material;
-import net.minecraft.server.MathHelper;
-import net.minecraft.server.Vec3D;
+import net.minecraft.server.v1_8_R1.Block;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityComplexPart;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.Material;
+import net.minecraft.server.v1_8_R1.MathHelper;
+import net.minecraft.server.v1_8_R1.Vec3D;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -43,8 +44,8 @@ public class DragonMoveController {
 	 * @param entities
 	 */
 	public void knockbackNearbyEntities(List<Entity> entities) {
-		double pointX = (dragon.br.boundingBox.a + dragon.br.boundingBox.d) / 2;
-		double pointZ = (dragon.br.boundingBox.c + dragon.br.boundingBox.f) / 2;
+		double pointX = (dragon.bm.getBoundingBox().a + dragon.bm.getBoundingBox().d) / 2;
+		double pointZ = (dragon.bm.getBoundingBox().c + dragon.bm.getBoundingBox().f) / 2;
 
 		for (Entity entity : entities) {
 			if (entity instanceof EntityLiving) {
@@ -79,14 +80,15 @@ public class DragonMoveController {
        
         
         //simple move the dragon. Don't use the overloaded NMS method
-        moveToDragonMotion();        
+        moveToDragonMotion();
+        
 
         //check for front/ back movement to get the sugar in the height
         if(forMot > 0.1 || forMot < -0.1){
         	float movementChange = (float) (dragon.passenger.pitch * 0.0001);
         	
         	if(forMot < 0){
-        		dragon.motY += movementChange;        		
+        		dragon.motY += movementChange;		
         	}else{
         		dragon.motY -= movementChange;
         	}
@@ -111,10 +113,10 @@ public class DragonMoveController {
 		boolean collisionDetected = dragon.getCollisionController().checkCollisionAndPortals();
 		
 		if(useSoftCollison){
-			Block block = dragon.world.getType(
+			Block block = dragon.world.getType(new BlockPosition(
 	        		(int) Math.floor(dragon.locX + dragon.motX), 
 	        		(int) Math.floor(dragon.locY + dragon.motY), 
-	        		(int) Math.floor(dragon.locZ + dragon.motZ));
+	        		(int) Math.floor(dragon.locZ + dragon.motZ))).getBlock();
 
 	        collisionDetected = block.getMaterial() != Material.AIR;
         }
@@ -125,11 +127,12 @@ public class DragonMoveController {
         	dragon.motZ = -dragon.motZ;
 		}
 		
-		dragon.boundingBox.d(dragon.motX, dragon.motY, dragon.motZ); //simply adds the speed to the AABB
+		//dragon.a sets the bounding box. Since it seems to we can not move the Box... :(
+		dragon.a(dragon.getBoundingBox().c(dragon.motX, dragon.motY, dragon.motZ)); //simply adds the speed to the AABB
 		
-        dragon.locX = (dragon.boundingBox.a + dragon.boundingBox.d) / 2.0D;
-        dragon.locY = dragon.boundingBox.b + (double) dragon.height - (double) dragon.W;
-        dragon.locZ = (dragon.boundingBox.c + dragon.boundingBox.f) / 2.0D;
+        dragon.locX = (dragon.getBoundingBox().a + dragon.getBoundingBox().d) / 2.0D;
+        dragon.locY = dragon.getBoundingBox().b + (double) dragon.getHeadHeight() - (double) dragon.S;
+        dragon.locZ = (dragon.getBoundingBox().c + dragon.getBoundingBox().f) / 2.0D;
 	}
 	
 	
@@ -148,13 +151,15 @@ public class DragonMoveController {
 	    dragon.lastYaw = dragon.yaw = (float) MathHelper.g(dragon.passenger.yaw);
 	    dragon.pitch = dragon.passenger.pitch * 0.5F;
 	 
-	    dragon.b(dragon.passenger.yaw, dragon.passenger.pitch); //[url]https://github.com/Bukkit/mc-dev/blob/master/net/minecraft/server/Entity.java#L155-L158[/url]
-	    dragon.aP = dragon.aN = dragon.yaw;
+	    dragon.yaw = dragon.passenger.yaw % 360f;
+	    dragon.pitch = dragon.passenger.pitch % 360f;
+	    
+	    dragon.aI = dragon.aG = dragon.yaw;
 	 
-	    dragon.W = 1.0F;  
+	    dragon.S = 1.0F;  
 	 
-	    sideMot = ((EntityLiving) dragon.passenger).bd * 0.5F;
-	    forMot = ((EntityLiving) dragon.passenger).be;
+	    sideMot = ((EntityLiving) dragon.passenger).aX * 0.5F;
+	    forMot = ((EntityLiving) dragon.passenger).aY;
 	 
 	    if (forMot <= 0.0F) {
 	        forMot *= 0.25F;  
@@ -165,7 +170,7 @@ public class DragonMoveController {
 	    sideMot *= 10;
 	    
 	    float speed = 5.0F;
-	    dragon.i(speed);
+	    dragon.j(speed);
 	    
 	    checkJump();
     	adjustMotAndLocToPlayerMovement(sideMot, forMot);
@@ -178,21 +183,23 @@ public class DragonMoveController {
 	 * If so, the MotY is increased by 0.5.
 	 */
 	protected void checkJump(){
-		try {
-		    Field jump = null;
-		    jump = EntityLiving.class.getDeclaredField("bc");
-		    jump.setAccessible(true);
-	 
-	        if (jump.getBoolean(dragon.passenger)) {
-	            dragon.motY = 0.2;
-	        }
-	    } catch (IllegalAccessException e) {
-	        e.printStackTrace();
-	    } catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		}
+		if(dragon.passenger == null) return;
+		
+        try {
+            Field jump = null;
+            jump = EntityLiving.class.getDeclaredField("aW");
+            jump.setAccessible(true);
+     
+            if (jump.getBoolean(dragon.passenger)) {
+                dragon.motY = 0.2;
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	
@@ -216,24 +223,24 @@ public class DragonMoveController {
 	public void moveDragon(){
 		dragon.yaw = MathHelper.g(dragon.yaw);
 
-		if (dragon.bo < 0) {
-            for (int d05 = 0; d05 < dragon.bn.length; ++d05) {
-                dragon.bn[d05][0] = (double) dragon.yaw;
-                dragon.bn[d05][1] = dragon.locY;
+		if (dragon.bj < 0) {
+            for (int d05 = 0; d05 < dragon.bi.length; ++d05) {
+                dragon.bi[d05][0] = (double) dragon.yaw;
+                dragon.bi[d05][1] = dragon.locY;
             }
         }
 		
-		if (++dragon.bo == dragon.bn.length) {
-            dragon.bo = 0;
+		if (++dragon.bj == dragon.bi.length) {
+            dragon.bj = 0;
         }
 
-        dragon.bn[dragon.bo][0] = dragon.yaw;
-        dragon.bn[dragon.bo][1] = dragon.locY;
+        dragon.bi[dragon.bj][0] = dragon.yaw;
+        dragon.bi[dragon.bj][1] = dragon.locY;
 
 
-		double oldTargetDistanceX = dragon.h - dragon.locX;
-		double oldTargetDistanceY = dragon.i - dragon.locY;
-		double oldTargetDistanceZ = dragon.j - dragon.locZ;
+		double oldTargetDistanceX = dragon.a - dragon.locX;
+		double oldTargetDistanceY = dragon.b - dragon.locY;
+		double oldTargetDistanceZ = dragon.c - dragon.locZ;
 		double oldTargetDistancePythagoras = 
 				oldTargetDistanceX * oldTargetDistanceX 
 				+ oldTargetDistanceY * oldTargetDistanceY 
@@ -242,11 +249,11 @@ public class DragonMoveController {
 		Entity currentTarget = dragon.getTargetController().getCurrentTarget();
 		boolean attackingMode = true;
 		if (currentTarget != null) {
-			dragon.h = currentTarget.locX;
-			dragon.j = currentTarget.locZ;
+			dragon.a = currentTarget.locX;
+			dragon.c = currentTarget.locZ;
 			
-			double newDragonDistanceX = dragon.h - dragon.locX;
-			double newDragonDistanceY = dragon.j - dragon.locZ;
+			double newDragonDistanceX = dragon.a - dragon.locX;
+			double newDragonDistanceY = dragon.c - dragon.locZ;
 			double newDragonDistancePythagoras = Math.sqrt(newDragonDistanceX * newDragonDistanceX 
 					+ newDragonDistanceY * newDragonDistanceY);
 			double attackAngleAsHeight = 0.4 + ((newDragonDistancePythagoras / 80D) - 1); //this seams to be the attacking mode.
@@ -256,7 +263,7 @@ public class DragonMoveController {
 			}
 
 			//set the attacking angle via height
-			dragon.i = currentTarget.boundingBox.b + attackAngleAsHeight;
+			dragon.b = currentTarget.getBoundingBox().b + attackAngleAsHeight;
 		} else {
 			boolean shouldSitDown = plugin.interactConfig().getConfig_dragonsSitDownIfInactive();
 			if(!dragon.getTargetController().hasTargets() && !dragon.getTargetController().isFlyingHome() && shouldSitDown){
@@ -271,32 +278,32 @@ public class DragonMoveController {
 				dragon.motZ = 0;
 				
 				oldTarget = new Vector()
-							.setX(dragon.h)
-							.setY(dragon.i)
-							.setZ(dragon.j);
+							.setX(dragon.a)
+							.setY(dragon.b)
+							.setZ(dragon.c);
 						
-				dragon.h = dragon.locX;
-				dragon.i = dragon.locY;
-				dragon.j = dragon.locZ;
+				dragon.a = dragon.locX;
+				dragon.b = dragon.locY;
+				dragon.c = dragon.locZ;
 				dragon.yaw = 0;
 				
 				Location loc = dragon.getLocation().clone();
 				loc.subtract(0, 1, 0);
 				if(loc.getBlock().getType() == org.bukkit.Material.AIR){
 					dragon.motY = -0.2;
-					dragon.i = dragon.locY-0.2;
+					dragon.b = dragon.locY-0.2;
 				}else{
 					doNothingLock = true;
 				}
 			}else{
-				dragon.h += random.nextGaussian() * 2D;
-				dragon.j += random.nextGaussian() * 2D;
+				dragon.a += random.nextGaussian() * 2D;
+				dragon.c += random.nextGaussian() * 2D;
 			}
 			
 		}
 
-		if (dragon.bz || (oldTargetDistancePythagoras < 100.0D) || oldTargetDistancePythagoras > 22500D || dragon.positionChanged
-				|| dragon.G) {
+		if (dragon.bu || (oldTargetDistancePythagoras < 100.0D) || oldTargetDistancePythagoras > 22500D || dragon.positionChanged
+				|| dragon.E) {
 			dragon.getTargetController().changeTarget();
 		}
 
@@ -325,14 +332,14 @@ public class DragonMoveController {
 			toTurnAngle = -50.0D;
 		}
 
-		Vec3D targetVector = Vec3D.a(
-				dragon.h - dragon.locX, 
-				dragon.i - dragon.locY, 
-				dragon.j - dragon.locZ
+		Vec3D targetVector = new Vec3D(
+				dragon.a - dragon.locX, 
+				dragon.b - dragon.locY, 
+				dragon.c - dragon.locZ
 			).a();
 		
 		double directionDegree = dragon.yaw * Math.PI / 180.0F;
-        Vec3D motionVector = Vec3D.a(
+        Vec3D motionVector = new Vec3D(
         		MathHelper.sin((float) directionDegree), 
         		dragon.motY, 
         		-MathHelper.cos((float) directionDegree)
@@ -361,14 +368,14 @@ public class DragonMoveController {
 		
 		//From tobiyas stop moving when not needed to
 		if(!doNothingLock){
-			if (dragon.bA) {
+			if (dragon.bv) {
 				dragon.move(dragon.motX * 0.8, dragon.motY * 0.8, dragon.motZ * 0.8);
 			} else {
 				dragon.move(dragon.motX, dragon.motY, dragon.motZ);
 			}
 		}
 
-		Vec3D currentMotionVector = Vec3D.a(dragon.motX, dragon.motY, dragon.motZ).a();
+		Vec3D currentMotionVector = new Vec3D(dragon.motX, dragon.motY, dragon.motZ).a();
 		float scaledMotionLength = (float) (currentMotionVector.b(motionVector) + 1.0D) / 2.0F;
 
 		scaledMotionLength *= 0.15F;
@@ -378,20 +385,20 @@ public class DragonMoveController {
 		dragon.motZ *= scaledMotionLength;
 		dragon.motY *= 0.91;
 
-		dragon.aN = dragon.yaw;
+		dragon.aG = dragon.yaw;
         
 		//setting Complex parts to some fix values. O_o wtf...
-		dragon.bq.width = dragon.bq.length = 3.0F;
-        dragon.bs.width = dragon.bs.length = 2.0F;
-        dragon.bt.width = dragon.bt.length = 2.0F;
-        dragon.bu.width = dragon.bu.length = 2.0F;
+		dragon.bl.width = dragon.bl.length = 3.0F;
+        dragon.bn.width = dragon.bn.length = 2.0F;
+        dragon.bo.width = dragon.bo.length = 2.0F;
+        dragon.bp.width = dragon.bp.length = 2.0F;
         
+        dragon.bm.length = 3.0F;
+        dragon.bm.width = 5.0F;
+        dragon.bq.length = 2.0F;
+        dragon.bq.width = 4.0F;
         dragon.br.length = 3.0F;
-        dragon.br.width = 5.0F;
-        dragon.bv.length = 2.0F;
-        dragon.bv.width = 4.0F;
-        dragon.bw.length = 3.0F;
-        dragon.bw.width = 4.0F;
+        dragon.br.width = 4.0F;
         
         
 		float f1 = (float) ((dragon.b(5, 1.0F)[1] - dragon.b(10, 1.0F)[1]) * 10.0F / 
@@ -403,20 +410,20 @@ public class DragonMoveController {
 		float f11 = MathHelper.sin((float) directionDegree);
 		float f12 = MathHelper.cos((float) directionDegree);
 
-		dragon.br.h();
-		dragon.br.setPositionRotation(dragon.locX + (f11 * 0.5F),
+		dragon.bm.s_();
+		dragon.bm.setPositionRotation(dragon.locX + (f11 * 0.5F),
 				dragon.locY, dragon.locZ - (f12 * 0.5F), 0.0F, 0.0F);
-		dragon.bv.h();
-		dragon.bv.setPositionRotation(dragon.locX + (f12 * 4.5F),
+		dragon.bq.s_();
+		dragon.bq.setPositionRotation(dragon.locX + (f12 * 4.5F),
 				dragon.locY + 2.0D, dragon.locZ + (f11 * 4.5F), 0.0F, 0.0F);
-		dragon.bw.h();
-		dragon.bw.setPositionRotation(dragon.locX - (f12 * 4.5F),
+		dragon.br.s_();
+		dragon.br.setPositionRotation(dragon.locX - (f12 * 4.5F),
 				dragon.locY + 2.0D, dragon.locZ - (f11 * 4.5F), 0.0F, 0.0F);
 
 		if (dragon.hurtTicks == 0 && attackingMode) {
-			dragon.getDragonMoveController().knockbackNearbyEntities(dragon.world.getEntities(dragon, dragon.bv.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0)));
-			dragon.getDragonMoveController().knockbackNearbyEntities(dragon.world.getEntities(dragon, dragon.bw.boundingBox.grow(4.0D, 2.0D, 4.0D).d(0.0D, -2.0D, 0)));
-			dragon.getDragonHealthController().damageEntities(dragon.world.getEntities(dragon, dragon.bq.boundingBox.grow(1.0D, 1.0D, 1.0D)));
+			dragon.getDragonMoveController().knockbackNearbyEntities(dragon.world.getEntities(dragon, dragon.bq.getBoundingBox().grow(4.0D, 2.0D, 4.0D).c(0.0D, -2.0D, 0)));
+			dragon.getDragonMoveController().knockbackNearbyEntities(dragon.world.getEntities(dragon, dragon.br.getBoundingBox().grow(4.0D, 2.0D, 4.0D).c(0.0D, -2.0D, 0)));
+			dragon.getDragonHealthController().damageEntities(dragon.world.getEntities(dragon, dragon.bl.getBoundingBox().grow(1.0D, 1.0D, 1.0D)));
 		}
 
 		// LimitedEnderDragon - begin: Added FireBalls here!
@@ -430,8 +437,8 @@ public class DragonMoveController {
 		float f13 = MathHelper.cos((float)directionDegree
 				- bg * 0.01F);
 
-		dragon.bq.h();
-		dragon.bq.setPositionRotation(dragon.locX + (f19 * 5.5F * f2),
+		dragon.bl.s_();
+		dragon.bl.setPositionRotation(dragon.locX + (f19 * 5.5F * f2),
 				dragon.locY + (adouble1[1] - adouble[1])
 						+ (f9 * 5.5F), dragon.locZ
 						- (f13 * 5.5F * f2), 0, 0);
@@ -440,15 +447,15 @@ public class DragonMoveController {
 			EntityComplexPart entitycomplexpart = null;
 
 			if (j == 0) {
-				entitycomplexpart = dragon.bs;
+				entitycomplexpart = dragon.bn;
 			}
 
 			if (j == 1) {
-				entitycomplexpart = dragon.bt;
+				entitycomplexpart = dragon.bo;
 			}
 
 			if (j == 2) {
-				entitycomplexpart = dragon.bu;
+				entitycomplexpart = dragon.bp;
 			}
 
 			double[] adouble2 = dragon.b(12 + j * 2, 1F);
@@ -458,14 +465,14 @@ public class DragonMoveController {
 			float f17 = 1.5F;
 			float f18 = (j + 1) * 2.0F;
 
-			entitycomplexpart.h();
+			entitycomplexpart.s_();
 			entitycomplexpart.setPositionRotation(dragon.locX - ((f11 * f17 + f15 * f18) * f2), 
 					dragon.locY + (adouble2[1] - adouble[1]) * 1.0D - ((f18 + f17) * f9) + 1.5D, 
 					dragon.locZ + ((f12 * f17 + f16 * f18) * f2), 0.0F, 0.0F);
 		}
 
-		dragon.bA = dragon.getCollisionController().checkHitBlocks(dragon.bq.boundingBox)
-				| dragon.getCollisionController().checkHitBlocks(dragon.br.boundingBox);
+		dragon.bv = dragon.getCollisionController().checkHitBlocks(dragon.bl.getBoundingBox())
+				| dragon.getCollisionController().checkHitBlocks(dragon.bm.getBoundingBox());
 	}
 	
 	/**
@@ -483,9 +490,9 @@ public class DragonMoveController {
 		}
 		
 		if(oldTarget != null){
-			dragon.h = oldTarget.getX();
-			dragon.i = oldTarget.getY();
-			dragon.j = oldTarget.getZ();
+			dragon.a = oldTarget.getX();
+			dragon.b = oldTarget.getY();
+			dragon.c = oldTarget.getZ();
 			
 			oldTarget = null;
 		}

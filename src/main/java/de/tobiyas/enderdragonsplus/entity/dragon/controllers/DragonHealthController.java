@@ -6,14 +6,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import net.minecraft.server.DamageSource;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityEnderCrystal;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.Explosion;
-import net.minecraft.server.NBTTagCompound;
+import net.minecraft.server.v1_8_R1.DamageSource;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityEnderCrystal;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.Explosion;
+import net.minecraft.server.v1_8_R1.NBTTagCompound;
 
 import org.bukkit.Bukkit;
 
@@ -70,11 +70,11 @@ public class DragonHealthController {
 	 * Checks if the Dragon is near a EnderDragonCrystal to regain health
 	 */
 	public void checkRegainHealth() {
-		if (dragon.bC != null) {
-			if (dragon.bC.dead) {
+		if (dragon.getConnectedCrystal() != null) {
+			if (dragon.getConnectedCrystal().dead) {
 				dragon.a(dragon.bq, DamageSource.explosion((Explosion) null), 10F);
 				
-				dragon.bC = null;
+				dragon.setConnectedCrystal(null);
 			} else if (dragon.ticksLived % 10 == 0 && dragon.getHealth() < dragon.getMaxHealth()) {
 				// CraftBukkit start
 				org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(
@@ -95,13 +95,13 @@ public class DragonHealthController {
 			float range = 32;
 			@SuppressWarnings("unchecked")
 			List<Entity> list = dragon.world.a(EntityEnderCrystal.class,
-					dragon.boundingBox.grow(range, range, range));
+					dragon.getBoundingBox().grow(range, range, range));
 			
 			EntityEnderCrystal entityendercrystal = null;
 			double nearestDistance = Double.MAX_VALUE;
 
 			for(Entity entity : list){
-				double currentDistance = entity.e(dragon);
+				double currentDistance = entity.g(dragon);
 
 				if (currentDistance < nearestDistance) {
 					nearestDistance = currentDistance;
@@ -109,7 +109,7 @@ public class DragonHealthController {
 				}
 			}
 
-			dragon.bC = entityendercrystal;
+			dragon.setConnectedCrystal(entityendercrystal);
 		}
 	}
 	

@@ -4,22 +4,18 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.Collections;
 
-import net.minecraft.server.Block;
-import net.minecraft.server.BlockEnderPortal;
-import net.minecraft.server.Blocks;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityExperienceOrb;
-import net.minecraft.server.MathHelper;
+import net.minecraft.server.v1_8_R1.BlockEnderPortal;
+import net.minecraft.server.v1_8_R1.Blocks;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityExperienceOrb;
+import net.minecraft.server.v1_8_R1.EnumParticle;
+import net.minecraft.server.v1_8_R1.MathHelper;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.PortalType;
-import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.util.BlockStateListPopulator;
-import org.bukkit.entity.HumanEntity;
+import org.bukkit.craftbukkit.v1_8_R1.util.BlockStateListPopulator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.ItemStack;
@@ -27,8 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
 import de.tobiyas.enderdragonsplus.entity.dragontemples.DragonTemple;
-import de.tobiyas.enderdragonsplus.entity.dragontemples.DragonTempleStore;
-import de.tobiyas.enderdragonsplus.util.Consts;
 import de.tobiyas.util.config.returncontainer.DropContainer;
 
 @SuppressWarnings("unused")
@@ -60,10 +54,11 @@ public class ItemLootController {
 			float offsetY = (this.random.nextFloat() - 0.5F) * 4.0F;
 			float offsetZ = (this.random.nextFloat() - 0.5F) * 8.0F;
 
-			dragon.world.addParticle("hugeexplosion", dragon.locX + offsetX, 
+			dragon.world.addParticle(EnumParticle.EXPLOSION_HUGE, dragon.locX + offsetX, 
 				dragon.locY + 2 + offsetY,
 				dragon.locZ + offsetZ,
-				0, 0, 0);
+				0d, 0d, 0d,
+				new int[0]);
 		}
 
 		boolean giveDirectlyToPlayer = EnderdragonsPlus.getPlugin().interactConfig().isConfig_dragonGiveXPOnlyToDamagers();
@@ -73,7 +68,7 @@ public class ItemLootController {
 		}
 	
 		dragon.move(0, 0.1, 0);
-		dragon.aN = (dragon.yaw += 20);
+		dragon.aH = (dragon.yaw += 20);
 		if (ticksToDespawn <= 0) {
 			if(giveDirectlyToPlayer){
 				givePlayersDirectlyXP(dragon.getExpReward());
@@ -170,7 +165,7 @@ public class ItemLootController {
 	}
 	
 	private void buildNormalWay(int posX, int spawnHeight, int posZ){
-		BlockEnderPortal.a = true;
+		//BlockEnderPortal.a = true;
 		int b1 = 4;
 		BlockStateListPopulator world = new BlockStateListPopulator(
 				dragon.world.getWorld());
@@ -194,7 +189,7 @@ public class ItemLootController {
 								* ((double) (b1 - 1) - 0.5D)) {
 							world.setTypeUpdate(l, k, i1, Blocks.BEDROCK);
 						} else {
-							world.setTypeUpdate(l, k, i1, Blocks.ENDER_PORTAL);
+							world.setTypeUpdate(l, k, i1, Blocks.END_PORTAL);
 						}
 					}
 				}
@@ -215,7 +210,8 @@ public class ItemLootController {
             state.update(true);
         }
 
-		BlockEnderPortal.a = false;
+		//TODO check if needed.
+		//BlockEnderPortal.a = false;
 	}
 
 	public List<ItemStack> getItemDrops(List<DropContainer> list) {

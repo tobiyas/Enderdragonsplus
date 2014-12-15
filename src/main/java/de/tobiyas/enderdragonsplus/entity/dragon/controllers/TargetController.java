@@ -8,16 +8,16 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.NBTTagCompound;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.NBTTagCompound;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
@@ -356,7 +356,7 @@ public class TargetController {
 	
 	public void changeTarget() {
 		try {
-			dragon.bz = false;
+			dragon.bu = false;
 
 			int homeRange = plugin.interactConfig().getConfig_maxHomeDistance();
 
@@ -438,16 +438,16 @@ public class TargetController {
 
 		double vecDistance = 0;
 		do {
-			dragon.h = location.getX();
-			dragon.i = (70.0F + this.random.nextFloat() * 50.0F);
-			dragon.j = location.getZ();
+			dragon.a = location.getX();
+			dragon.b = (70.0F + this.random.nextFloat() * 50.0F);
+			dragon.c = location.getZ();
 			if (forceGoTo == null  && !isFlyingHome) {
-				dragon.h += (this.random.nextFloat() * 120.0F - 60.0F);
-				dragon.j += (this.random.nextFloat() * 120.0F - 60.0F);
+				dragon.a += (this.random.nextFloat() * 120.0F - 60.0F);
+				dragon.c += (this.random.nextFloat() * 120.0F - 60.0F);
 
-				double distanceX = dragon.locX - dragon.h;
-				double distanceY = dragon.locY - dragon.i;
-				double distanceZ = dragon.locZ - dragon.j;
+				double distanceX = dragon.locX - dragon.a;
+				double distanceY = dragon.locY - dragon.b;
+				double distanceZ = dragon.locZ - dragon.c;
 
 				vecDistance = distanceX * distanceX + distanceY * distanceY
 						+ distanceZ * distanceZ;
@@ -455,7 +455,7 @@ public class TargetController {
 				if(vecDistance > 100){
 					int minHeight = 0;
 					//recalculate Height.
-					Location target = new Location(dragon.getLocation().getWorld(), dragon.h, dragon.i, dragon.j);
+					Location target = new Location(dragon.getLocation().getWorld(), dragon.a, dragon.b, dragon.c);
 					Location currentLocation = dragon.getLocation();
 					
 					Queue<Location> line = Bresenham.line3D(currentLocation, target);
@@ -471,10 +471,10 @@ public class TargetController {
 					}
 					
 					if(minHeight < 10) minHeight = 20;
-					dragon.i = minHeight;
+					dragon.b = minHeight;
 				}
 			} else {
-				dragon.i = location.getY();
+				dragon.b = location.getY();
 				vecDistance = 101;
 			}
 

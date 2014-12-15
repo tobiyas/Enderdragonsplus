@@ -6,14 +6,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.PacketPlayOutUpdateSign;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.ChatComponentText;
+import net.minecraft.server.v1_8_R1.ChatComponentUtils;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.IChatBaseComponent;
+import net.minecraft.server.v1_8_R1.PacketPlayOutUpdateSign;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
@@ -227,10 +231,20 @@ public class DragonSpawnerContainer {
 					
 			}
 			String[] lines = sign.getLines();
+			IChatBaseComponent[] components = new IChatBaseComponent[4];
+			for(int i = 0; i < 4; i++){
+				components[i] = lines.length < i 
+						? new ChatComponentText(lines[i])
+						: new ChatComponentText("");
+			}
 			
 			player.sendBlockChange(loc, Material.SIGN_POST, new Byte("0"));
 			EntityPlayer craftPlayer = ((CraftPlayer) player).getHandle();
-			craftPlayer.playerConnection.sendPacket(new PacketPlayOutUpdateSign(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), lines));
+			craftPlayer.playerConnection.sendPacket(
+					new PacketPlayOutUpdateSign(craftPlayer.world, 
+							new BlockPosition(loc.getX(), loc.getY(), loc.getZ()), 
+							components)
+			);
 		}
 	}
 

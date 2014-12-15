@@ -9,22 +9,22 @@ import java.util.UUID;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.minecraft.server.DamageSource;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityEnderDragon;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.GenericAttributes;
-import net.minecraft.server.LocaleI18n;
-import net.minecraft.server.NBTTagCompound;
-import net.minecraft.server.World;
+import net.minecraft.server.v1_8_R1.DamageSource;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityEnderDragon;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
+import net.minecraft.server.v1_8_R1.LocaleI18n;
+import net.minecraft.server.v1_8_R1.NBTTagCompound;
+import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.event.CraftEventFactory;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
@@ -58,6 +58,11 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	protected AgeContainer ageContainer;
 	protected PropertyController propertyController;
 	protected CollisionController collisionController;
+	
+	/**
+	 * The Connected Crystal.
+	 */
+	protected Entity connectedCrystal;
 	
 	protected boolean doNothingLock = false;
 	protected Vector oldSpeed;
@@ -209,7 +214,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	 * @see net.minecraft.server.EntityEnderDragon#e()
 	 */
 	@Override
-	public void e(){
+	public void m(){
 		try{
 			internalLogicTick();
 		}catch(Exception e){
@@ -241,17 +246,12 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	 * The should be the Riding thingy.
 	 */
 	@Override
-	public void e(float motX, float motY){
+	public void g(float motX, float motY){
 		if(dragonMoveController.playerMovedEntity(motX, motY)){
-			super.e(motX, motY);
+			super.g(motX, motY);
 		}
 	}
-	
-	
-	@Override
-	public void b(float f1, float f2){
-		super.b(f1, f2);
-	}
+
 
 	public boolean spitFireBallOnTarget(Entity target) {
 		if (target == null)
@@ -281,13 +281,14 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 	 * ORIGINAL: aA()
 	 * 1.7.9: aE
 	 * 1.7.10: aF
+	 * 1.8: aY
 	 * 
 	 * Moved to: ItemLootController
 	 * 
-	 * @see net.minecraft.server.EntityEnderDragon#aF()
+	 * @see net.minecraft.server.EntityEnderDragon#aY()
 	 */
 	@Override
-	protected void aF() {
+	protected void aY() {
 		if(this.dead) return; // CraftBukkit - can't kill what's already dead
 		itemController.deathTick();
 	}
@@ -324,6 +325,15 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 	public Location getLocation() {
 		return getBukkitEntity().getLocation();
+	}
+	
+	/**
+	 * Returns if the Dragon is Jumping.
+	 * 
+	 * @return true if jumping.
+	 */
+	public boolean isJumping(){
+		return aW;
 	}
 
 	public boolean spawn() {
@@ -539,6 +549,14 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 
 	public void setCollisionController(CollisionController collisionController) {
 		this.collisionController = collisionController;
+	}
+
+	public Entity getConnectedCrystal() {
+		return connectedCrystal;
+	}
+
+	public void setConnectedCrystal(Entity connectedCrystal) {
+		this.connectedCrystal = connectedCrystal;
 	}
 	
 }
