@@ -9,6 +9,7 @@ import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R1.event.CraftEventFactory;
 import org.bukkit.entity.Explosive;
 import org.bukkit.entity.Fireball;
@@ -32,6 +33,12 @@ public class LimitedFireball_1_8R1 extends EntityLargeFireball implements Limite
 	public LimitedFireball_1_8R1(World world, EntityLiving entityliving, double d0,
 			double d1, double d2) {
 		super(world, entityliving, d0, d1, d2);
+	}
+	
+	public LimitedFireball_1_8R1(org.bukkit.World world, org.bukkit.entity.LivingEntity entityliving, double d0,
+			double d1, double d2) {
+		
+		super(((CraftWorld)world).getHandle(), ((CraftLivingEntity)entityliving).getHandle(), d0, d1, d2);
 	}
 
 	@Override
@@ -116,15 +123,17 @@ public class LimitedFireball_1_8R1 extends EntityLargeFireball implements Limite
 			this.world.createExplosion(this, this.locX, this.locY, this.locZ,
 					event.getRadius(), event.getFire(), this.world
 							.getGameRules().getBoolean("mobGriefing"));
+			
+			this.die();
 		}
 		// CraftBukkit end
 
-		this.die();
 	}
 
 	@Override
 	public void spawnIn(org.bukkit.World world) {
-		this.spawnIn(((CraftWorld) world).getHandle());
+		((CraftWorld) world).getHandle().addEntity(this);
+		//this.spawnIn(((CraftWorld) world).getHandle());
 	}
 
 }

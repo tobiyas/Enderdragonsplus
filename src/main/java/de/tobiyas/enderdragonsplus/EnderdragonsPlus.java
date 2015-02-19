@@ -118,7 +118,8 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		try{
 			Class<?> entityTypeClass = Class.forName("net.minecraft.server.v" + getRelocationAddition() + ".EntityTypes");
 			if(getRelocationAddition().equals("1_7_R1") || getRelocationAddition().equalsIgnoreCase("1_7_R2") 
-					|| getRelocationAddition().equalsIgnoreCase("1_7_R3")){
+					|| getRelocationAddition().equalsIgnoreCase("1_7_R3")
+					|| getRelocationAddition().equalsIgnoreCase("1_8_R1")){
 				
 				Field c = entityTypeClass.getDeclaredField("c"); c.setAccessible(true);
 				HashMap c_map = (HashMap) c.get(null);

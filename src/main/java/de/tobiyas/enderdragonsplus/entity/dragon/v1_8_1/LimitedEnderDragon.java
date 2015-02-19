@@ -916,7 +916,7 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 
 	@Override
 	public String getPlayerIsJumpingFieldName() {
-		return "bc";
+		return "aW";
 	}
 	
 }

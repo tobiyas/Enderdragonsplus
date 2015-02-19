@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
+import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -108,6 +110,7 @@ public class FireballController implements IFireballController {
 	 */
 	@Override
 	public void fireFireballToDirection(Location direction){
+		System.out.println("Fireing Fireball!");
 		if (direction.getWorld() != targetController.getDragonLocation().getWorld())
 			return;		
 		
@@ -119,6 +122,7 @@ public class FireballController implements IFireballController {
 				);
 		
 		if(fireBall == null) return;
+		
 		fireBall.spawnIn(world);
 		double fireBallSpeedup = plugin.interactConfig().getConfig_FireBallSpeedUp();
 		fireBall.speedUp(fireBallSpeedup);
@@ -133,7 +137,7 @@ public class FireballController implements IFireballController {
 		Location direction = location.clone();
 		direction = direction.subtract(targetController.getDragonLocation().clone());
 		
-		if (direction.getWorld() != targetController.getDragonLocation().getWorld()){
+		if (direction.getWorld() != dragon.getBukkitWorld()){
 			return;
 		}
 		

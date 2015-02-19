@@ -13,8 +13,8 @@ public class FireballGenerator {
 		
 		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_8_R1")){
 			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_8_R1.LimitedFireball_1_8R1(
-					((org.bukkit.craftbukkit.v1_8_R1.CraftWorld)world).getHandle(), 
-					((org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity) shooter).getHandle(),
+					world, 
+					shooter,
 					x,y,z
 					);
 		}
@@ -22,8 +22,8 @@ public class FireballGenerator {
 		
 		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_7_R4")){
 			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_7_R4.LimitedFireball_1_7R4(
-					((org.bukkit.craftbukkit.v1_7_R4.CraftWorld)world).getHandle(), 
-					((org.bukkit.craftbukkit.v1_7_R4.entity.CraftLivingEntity) shooter).getHandle(),
+					world, 
+					shooter,
 					x,y,z
 					);
 		}
@@ -31,24 +31,24 @@ public class FireballGenerator {
 		
 		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_7_R3")){
 			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_7_R3.LimitedFireball_1_7R3(
-					((org.bukkit.craftbukkit.v1_7_R3.CraftWorld)world).getHandle(), 
-					((org.bukkit.craftbukkit.v1_7_R3.entity.CraftLivingEntity) shooter).getHandle(),
+					world, 
+					shooter,
 					x,y,z
 			);
 		}
 		
 		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_7_R2")){
 			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_7_R2.LimitedFireball_1_7R2(
-					((org.bukkit.craftbukkit.v1_7_R2.CraftWorld)world).getHandle(), 
-					((org.bukkit.craftbukkit.v1_7_R2.entity.CraftLivingEntity) shooter).getHandle(),
+					world, 
+					shooter,
 					x,y,z
 			);
 		}
 		
 		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_7_R1")){
 			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_7_R1.LimitedFireball_1_7R1(
-					((org.bukkit.craftbukkit.v1_7_R1.CraftWorld)world).getHandle(), 
-					((org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity) shooter).getHandle(),
+					world, 
+					shooter,
 					x,y,z
 			);
 		}

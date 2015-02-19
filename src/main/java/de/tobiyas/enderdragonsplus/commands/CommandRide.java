@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -153,7 +154,8 @@ private EnderdragonsPlus plugin;
 			List<Block> locs = player.getLineOfSight((HashSet<Byte>)null, 200);
 			for(Block block : locs){
 				if(block.getType() != Material.AIR){
-					dragon.spitFireBallOnTarget(block.getLocation());
+					Location loc = block.getLocation();
+					this.fireFireballOnLocation(loc);
 					break;
 				}
 			}

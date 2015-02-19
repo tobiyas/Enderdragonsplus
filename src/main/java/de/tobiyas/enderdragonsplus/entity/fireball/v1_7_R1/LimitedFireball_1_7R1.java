@@ -10,6 +10,7 @@ import net.minecraft.server.v1_7_R1.World;
 import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_7_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.Explosive;
 import org.bukkit.entity.Fireball;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -33,6 +34,14 @@ public class LimitedFireball_1_7R1 extends EntityLargeFireball implements Limite
 			double d1, double d2) {
 		super(world, entityliving, d0, d1, d2);
 	}
+	
+	
+	public LimitedFireball_1_7R1(org.bukkit.World world, org.bukkit.entity.LivingEntity entityliving, double d0,
+			double d1, double d2) {
+		
+		super(((CraftWorld)world).getHandle(), ((CraftLivingEntity)entityliving).getHandle(), d0, d1, d2);
+	}
+	
 
 	@Override
 	public boolean damageEntity(DamageSource damageSource, float i) {
