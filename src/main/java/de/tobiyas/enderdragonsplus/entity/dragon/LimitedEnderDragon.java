@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.naming.OperationNotSupportedException;
-
 import net.minecraft.server.v1_8_R1.DamageSource;
 import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EntityEnderDragon;
@@ -474,7 +472,7 @@ public class LimitedEnderDragon extends EntityEnderDragon {
 		targetController.setHomeLocation(newHomeLocation);
 	}
 
-	public void setProperty(String property, Object value) throws OperationNotSupportedException{
+	public void setProperty(String property, Object value) throws IllegalArgumentException{
 		propertyController.addProperty(property, value);
 	}
 

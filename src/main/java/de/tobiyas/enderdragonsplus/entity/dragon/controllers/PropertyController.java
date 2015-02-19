@@ -17,7 +17,7 @@ public class PropertyController {
 		propertyMap = returnContainer.getProperties();
 	}
 	
-	public void addProperty(String name, Object value) throws OperationNotSupportedException{
+	public void addProperty(String name, Object value) throws IllegalArgumentException{
 		try{
 			NBTTagCompound properties = propertyMap.getCompound("propertyList");
 			boolean setSomething = false;
@@ -78,7 +78,7 @@ public class PropertyController {
 			propertyMap.set("propertyList", properties);
 		}catch(Exception exp){
 			String className = value.getClass().getCanonicalName();
-			throw new OperationNotSupportedException("The given Class '" + className + "' is not supported by NBTTag.");
+			throw new IllegalArgumentException("The given Class '" + className + "' is not supported by NBTTag.");
 		}
 	}
 	
