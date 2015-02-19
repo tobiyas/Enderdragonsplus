@@ -181,8 +181,11 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	
 	@Override
 	public void onDisable(){
-		dragonSpawnerManager.saveList();
-		debugLogger.shutDown();
+		try{
+			dragonSpawnerManager.saveList();
+			debugLogger.shutDown();
+		}catch(Throwable exp){}
+		
 		log("disabled "+description.getFullName());
 
 	}

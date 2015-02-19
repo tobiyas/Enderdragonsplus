@@ -210,7 +210,7 @@ public class CollisionController implements ICollisionController {
 					* this.random.nextFloat();
 
 			
-			dragon.getWorld().createExplosion(new Location(dragon.getWorld(), posX, posY, posZ), 0);
+			dragon.getBukkitWorld().createExplosion(new Location(dragon.getBukkitWorld(), posX, posY, posZ), 0);
 		}
 
 		return hitSomethingHard;

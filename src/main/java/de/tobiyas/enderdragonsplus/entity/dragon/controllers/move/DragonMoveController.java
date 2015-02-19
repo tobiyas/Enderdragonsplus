@@ -144,7 +144,7 @@ public class DragonMoveController implements IDragonMoveController {
 		
 		if(useSoftCollison){
 			
-			Block block = dragon.getWorld().getBlockAt(
+			Block block = dragon.getBukkitWorld().getBlockAt(
 	        		(int) Math.floor(dragonLoc.getX() + motion.getX()), 
 	        		(int) Math.floor(dragonLoc.getY() + motion.getY()), 
 	        		(int) Math.floor(dragonLoc.getZ() + motion.getZ())
@@ -732,7 +732,7 @@ public class DragonMoveController implements IDragonMoveController {
 		}
 		
 		if(oldTarget != null){
-			dragon.getTargetController().setNewTarget(oldTarget.toLocation(dragon.getWorld()), false);
+			dragon.getTargetController().setNewTarget(oldTarget.toLocation(dragon.getBukkitWorld()), false);
 			oldTarget = null;
 		}
 	}

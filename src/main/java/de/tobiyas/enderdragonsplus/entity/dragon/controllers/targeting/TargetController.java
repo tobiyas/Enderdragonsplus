@@ -546,7 +546,7 @@ public class TargetController implements ITargetController {
 				
 				
 				//check if the target is too far away from the home location. if yes, let's revise it.
-				Location tempTargetLocation = new Location(dragon.getWorld(), locationX, locationY, locationZ);
+				Location tempTargetLocation = new Location(dragon.getBukkitWorld(), locationX, locationY, locationZ);
 				if(tempTargetLocation.distanceSquared(homeLocation) > maxHomeDist) continue;
 				
 				
@@ -554,7 +554,7 @@ public class TargetController implements ITargetController {
 					//recalculate Height.
 					Location target = new Location(dragon.getLocation().getWorld(), locationX, locationY, locationZ);
 					Location currentLocation = dragon.getLocation();
-					World world = dragon.getWorld();
+					World world = dragon.getBukkitWorld();
 					
 					target = world.getHighestBlockAt(target).getLocation();
 					target = target.add(0, 10 + random.nextInt(10), 0);

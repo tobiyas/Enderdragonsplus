@@ -68,7 +68,7 @@ public class ItemLootController implements IItemLootController {
 			float offsetY = (this.random.nextFloat() - 0.5F) * 4.0F;
 			float offsetZ = (this.random.nextFloat() - 0.5F) * 8.0F;
 
-			dragon.getWorld().createExplosion(dragon.getLocation().add(offsetX, offsetY, offsetZ), 0);
+			dragon.getBukkitWorld().createExplosion(dragon.getLocation().add(offsetX, offsetY, offsetZ), 0);
 		}
 
 		boolean giveDirectlyToPlayer = EnderdragonsPlus.getPlugin().interactConfig().isConfig_dragonGiveXPOnlyToDamagers();
@@ -130,7 +130,7 @@ public class ItemLootController implements IItemLootController {
 	}
 
 	private void dropEXPOrbs(int totalAmount, int amountOfOrbs){
-		World world = dragon.getWorld();
+		World world = dragon.getBukkitWorld();
 		Location dropLoc = dragon.getLocation();
 		int toDrop = totalAmount / amountOfOrbs;
 		
@@ -191,7 +191,7 @@ public class ItemLootController implements IItemLootController {
 		//BlockEnderPortal.a = true;
 		
 		Map<Location,Material> updateMap = new HashMap<Location, Material>();
-		World world = dragon.getWorld();
+		World world = dragon.getBukkitWorld();
 		
 		int b1 = 4;
 

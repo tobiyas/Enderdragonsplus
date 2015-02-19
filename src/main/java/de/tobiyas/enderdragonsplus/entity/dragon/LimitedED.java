@@ -204,7 +204,7 @@ public interface LimitedED {
 	 * Returns the current world of the Dragon
 	 * @return
 	 */
-	public abstract World getWorld();
+	public abstract World getBukkitWorld();
 	
 	
 	/**

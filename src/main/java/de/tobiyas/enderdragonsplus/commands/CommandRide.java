@@ -1,5 +1,6 @@
 package de.tobiyas.enderdragonsplus.commands;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -149,7 +150,7 @@ private EnderdragonsPlus plugin;
 			}
 			
 			event.setCancelled(true);
-			List<Block> locs = player.getLineOfSight(null, 200);
+			List<Block> locs = player.getLineOfSight((HashSet<Byte>)null, 200);
 			for(Block block : locs){
 				if(block.getType() != Material.AIR){
 					dragon.spitFireBallOnTarget(block.getLocation());

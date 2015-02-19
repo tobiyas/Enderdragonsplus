@@ -804,7 +804,7 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	}
 
 	@Override
-	public org.bukkit.World getWorld() {
+	public org.bukkit.World getBukkitWorld() {
 		return getLocation().getWorld();
 	}
 
@@ -816,12 +816,12 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 
 	@Override
 	public Location getMinBBLocation() {
-		return new Location(getWorld(), boundingBox.a, boundingBox.b, boundingBox.c);
+		return new Location(getBukkitWorld(), boundingBox.a, boundingBox.b, boundingBox.c);
 	}
 
 	@Override
 	public Location getMaxBBLocation() {
-		return new Location(getWorld(), boundingBox.d, boundingBox.e, boundingBox.f);
+		return new Location(getBukkitWorld(), boundingBox.d, boundingBox.e, boundingBox.f);
 	}
 
 	@Override

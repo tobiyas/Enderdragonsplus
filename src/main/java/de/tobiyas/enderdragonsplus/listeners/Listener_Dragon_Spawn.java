@@ -19,7 +19,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
-import de.tobiyas.enderdragonsplus.entity.dragon.v1_7_2.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonVersionManager;
 import de.tobiyas.util.player.PlayerUtils;
 
 public class Listener_Dragon_Spawn implements Listener {
@@ -64,7 +64,7 @@ public class Listener_Dragon_Spawn implements Listener {
 		UUID id = event.getEntity().getUniqueId();
 		
 		EnderDragon oldDragon = (EnderDragon) event.getEntity();
-		LimitedEnderDragon.replaceEntityWithEDPDragon(oldDragon, "Normal");
+		LimitedEnderDragonVersionManager.replaceEntityWithEDPDragon(oldDragon, "Normal");
 		if(isEpicBossPresent()){
 			scheduleEBCheck(oldDragon);
 		}

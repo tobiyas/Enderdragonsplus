@@ -111,7 +111,7 @@ public class FireballController implements IFireballController {
 		if (direction.getWorld() != targetController.getDragonLocation().getWorld())
 			return;		
 		
-		World world = dragon.getWorld();
+		World world = dragon.getBukkitWorld();
 		LimitedFireball fireBall = FireballGenerator.generate(world, (LivingEntity) dragon.getBukkitEntity(), 
 				direction.getBlockX(), 
 				direction.getBlockY(), 
@@ -137,7 +137,7 @@ public class FireballController implements IFireballController {
 			return;
 		}
 		
-		World world = dragon.getWorld();
+		World world = dragon.getBukkitWorld();
 		LimitedFireball fireBall = FireballGenerator.generate(world, (LivingEntity) dragon.getBukkitEntity(), 
 				direction.getBlockX(), 
 				direction.getBlockY(), 

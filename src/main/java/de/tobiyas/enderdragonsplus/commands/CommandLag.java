@@ -6,7 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
-import de.tobiyas.enderdragonsplus.entity.dragon.v1_7_2.LimitedEnderDragon;
+import de.tobiyas.enderdragonsplus.entity.dragon.v1_8_1.LimitedEnderDragon;
 
 public class CommandLag implements CommandExecutor{
 

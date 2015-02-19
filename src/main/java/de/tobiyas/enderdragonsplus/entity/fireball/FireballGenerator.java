@@ -11,8 +11,16 @@ public class FireballGenerator {
 	public static LimitedFireball generate(World world, LivingEntity shooter, 
 			double x, double y, double z){
 		
+		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_8_R1")){
+			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_8_R1.LimitedFireball_1_8R1(
+					((org.bukkit.craftbukkit.v1_8_R1.CraftWorld)world).getHandle(), 
+					((org.bukkit.craftbukkit.v1_8_R1.entity.CraftLivingEntity) shooter).getHandle(),
+					x,y,z
+					);
+		}
+
 		
-		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_7_41")){
+		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_7_R4")){
 			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_7_R4.LimitedFireball_1_7R4(
 					((org.bukkit.craftbukkit.v1_7_R4.CraftWorld)world).getHandle(), 
 					((org.bukkit.craftbukkit.v1_7_R4.entity.CraftLivingEntity) shooter).getHandle(),

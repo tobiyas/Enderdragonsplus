@@ -47,7 +47,7 @@ public class LimitedFireball_1_7R4 extends EntityLargeFireball implements Limite
 				return false;
 		}
 
-		Q();
+		this.Q();
 		if (damageSource.getEntity() != null) {
 			if (damageSource.getEntity() instanceof LimitedED)
 				return false;

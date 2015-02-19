@@ -3,16 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tobiyas</groupId>
 	<artifactId>EnderdragonsPlus</artifactId>
-	<version>1.11.2</version>
+	<version>1.11.4</version>
 	<name>EnderdragonsPlus</name>
 	<url>http://dev.bukkit.org/server-mods/enderdragonsplus/</url>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<utilsVersion>1.0.11</utilsVersion>
+		<utilsVersion>1.0.12</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
-		<cbRelocation>v1_7_R3</cbRelocation>
-		<cb.version>1.7.10-R0.1-SNAPSHOT</cb.version>
+		<cb.version>1.8-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
@@ -61,20 +60,6 @@
 			<version>${cb.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>${cb.version}</version>
-			<optional>true</optional>
-		</dependency>
-
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>1.7.8-R0.1-SNAPSHOT</version>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- Workspace Dependency -->
 		<dependency>
 			<groupId>de.tobiyas</groupId>
@@ -116,6 +101,15 @@
 		    <version>1.7.10</version>
    			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/cb/cb-1.7.10.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit-5</artifactId>
+		    <version>1.8</version>
+   			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/cb/cb-1.8.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
