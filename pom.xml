@@ -9,10 +9,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<utilsVersion>1.0.11</utilsVersion>
+		<utilsVersion>1.0.13</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
-		<cbRelocation>v1_7_R4</cbRelocation>
-		<cb.version>1.7.10-R0.1-SNAPSHOT</cb.version>
+		<cbRelocation>v1_8_R2</cbRelocation>
+		<cb.version>1.8.3-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
@@ -71,7 +71,7 @@
 			<version>${cb.version}</version>
 			<optional>true</optional>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/CB.jar</systemPath>
+            <systemPath>${project.basedir}/libs/cb-1.8.3.jar</systemPath>
 		</dependency>
 
 		<!-- Workspace Dependency -->

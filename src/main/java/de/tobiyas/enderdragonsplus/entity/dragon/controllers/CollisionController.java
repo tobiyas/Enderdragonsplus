@@ -5,20 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.server.v1_8_R1.AxisAlignedBB;
-import net.minecraft.server.v1_8_R1.Block;
-import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.Blocks;
-import net.minecraft.server.v1_8_R1.CrashReport;
-import net.minecraft.server.v1_8_R1.CrashReportSystemDetails;
-import net.minecraft.server.v1_8_R1.EnumParticle;
-import net.minecraft.server.v1_8_R1.Explosion;
-import net.minecraft.server.v1_8_R1.Material;
-import net.minecraft.server.v1_8_R1.MathHelper;
-import net.minecraft.server.v1_8_R1.ReportedException;
+import net.minecraft.server.v1_8_R2.AxisAlignedBB;
+import net.minecraft.server.v1_8_R2.Block;
+import net.minecraft.server.v1_8_R2.BlockPosition;
+import net.minecraft.server.v1_8_R2.Blocks;
+import net.minecraft.server.v1_8_R2.CrashReport;
+import net.minecraft.server.v1_8_R2.CrashReportSystemDetails;
+import net.minecraft.server.v1_8_R2.EnumParticle;
+import net.minecraft.server.v1_8_R2.Explosion;
+import net.minecraft.server.v1_8_R2.Material;
+import net.minecraft.server.v1_8_R2.MathHelper;
+import net.minecraft.server.v1_8_R2.ReportedException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragon;
@@ -197,7 +197,7 @@ public class CollisionController {
 				int blockY = block.getY();
 				int blockZ = block.getZ();
 
-				 Block nmsBlock = org.bukkit.craftbukkit.v1_8_R1.util.CraftMagicNumbers.getBlock(blockId);
+				 Block nmsBlock = org.bukkit.craftbukkit.v1_8_R2.util.CraftMagicNumbers.getBlock(blockId);
                  if (nmsBlock.a(explosionSource)) {
                      nmsBlock.dropNaturally(dragon.world, 
                     		 new BlockPosition(blockX, blockY, blockZ), 

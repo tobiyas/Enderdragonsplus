@@ -6,14 +6,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import net.minecraft.server.v1_8_R1.DamageSource;
-import net.minecraft.server.v1_8_R1.Entity;
-import net.minecraft.server.v1_8_R1.EntityEnderCrystal;
-import net.minecraft.server.v1_8_R1.EntityHuman;
-import net.minecraft.server.v1_8_R1.EntityLiving;
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.Explosion;
-import net.minecraft.server.v1_8_R1.NBTTagCompound;
+import net.minecraft.server.v1_8_R2.DamageSource;
+import net.minecraft.server.v1_8_R2.Entity;
+import net.minecraft.server.v1_8_R2.EntityEnderCrystal;
+import net.minecraft.server.v1_8_R2.EntityHuman;
+import net.minecraft.server.v1_8_R2.EntityLiving;
+import net.minecraft.server.v1_8_R2.EntityPlayer;
+import net.minecraft.server.v1_8_R2.Explosion;
+import net.minecraft.server.v1_8_R2.NBTTagCompound;
 
 import org.bukkit.Bukkit;
 
@@ -93,8 +93,7 @@ public class DragonHealthController {
 
 		if (random.nextInt(10) == 0) {
 			float range = 32;
-			@SuppressWarnings("unchecked")
-			List<Entity> list = dragon.world.a(EntityEnderCrystal.class,
+			List<EntityEnderCrystal> list = dragon.world.a(EntityEnderCrystal.class,
 					dragon.getBoundingBox().grow(range, range, range));
 			
 			EntityEnderCrystal entityendercrystal = null;
@@ -127,6 +126,7 @@ public class DragonHealthController {
 				// The EntityHuman case is handled in EntityHuman, so don't
 				// throw it here
 				if (!(entity instanceof EntityHuman)) {
+					@SuppressWarnings("deprecation")
 					org.bukkit.event.entity.EntityDamageByEntityEvent damageEvent = new org.bukkit.event.entity.EntityDamageByEntityEvent(
 							dragon.getBukkitEntity(),
 							entity.getBukkitEntity(),

@@ -1,5 +1,6 @@
 package de.tobiyas.enderdragonsplus.commands;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +47,8 @@ public class CommandSpawnEnderDragon implements CommandExecutor, TabCompleter {
 		if(!(plugin.getPermissionManager().checkPermissions(player, PermissionNode.createEnderDragon)))
 			return true;
 		
-		List<Block> sightList = player.getLineOfSight(null, 100);
+		@SuppressWarnings("deprecation")
+		List<Block> sightList = player.getLineOfSight((HashSet<Byte>)null, 100);
 		Location spawnLocation = player.getLocation();
 		
 		for(Block block : sightList){

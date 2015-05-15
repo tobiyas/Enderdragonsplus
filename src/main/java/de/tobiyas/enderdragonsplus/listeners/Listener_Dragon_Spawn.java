@@ -10,7 +10,7 @@ import me.ThaH3lper.com.API.EpicBossAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;

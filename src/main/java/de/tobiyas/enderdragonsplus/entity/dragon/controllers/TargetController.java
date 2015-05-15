@@ -8,16 +8,16 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
-import net.minecraft.server.v1_8_R1.Entity;
-import net.minecraft.server.v1_8_R1.EntityLiving;
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.NBTTagCompound;
+import net.minecraft.server.v1_8_R2.Entity;
+import net.minecraft.server.v1_8_R2.EntityLiving;
+import net.minecraft.server.v1_8_R2.EntityPlayer;
+import net.minecraft.server.v1_8_R2.NBTTagCompound;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
@@ -75,13 +75,13 @@ public class TargetController {
 	 * @param isHostile
 	 * @param targetList
 	 */
-	@SuppressWarnings("unchecked")
 	public TargetController(Location homeLocation, LimitedEnderDragon dragon, boolean isHostile, NBTTagCompound targetList){
 		this(homeLocation, dragon, isHostile);
 		
 		for(String key : (Set<String>) targetList.c()){
 			try{
 				String playerName = targetList.getString(key);
+				@SuppressWarnings("deprecation")
 				Player player = Bukkit.getPlayer(playerName);
 				if(player != null && player.isOnline()){
 					targets.add(((CraftPlayer) player).getHandle());
@@ -356,7 +356,7 @@ public class TargetController {
 	
 	public void changeTarget() {
 		try {
-			dragon.bu = false;
+			dragon.bw = false;
 
 			int homeRange = plugin.interactConfig().getConfig_maxHomeDistance();
 
