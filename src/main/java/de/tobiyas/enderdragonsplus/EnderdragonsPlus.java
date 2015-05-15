@@ -22,6 +22,7 @@ import de.tobiyas.enderdragonsplus.commands.CommandEDP;
 import de.tobiyas.enderdragonsplus.commands.CommandGoHome;
 import de.tobiyas.enderdragonsplus.commands.CommandInfo;
 import de.tobiyas.enderdragonsplus.commands.CommandKillEnderDragon;
+import de.tobiyas.enderdragonsplus.commands.CommandFlyTo;
 import de.tobiyas.enderdragonsplus.commands.CommandReloadConfig;
 import de.tobiyas.enderdragonsplus.commands.CommandRespawner;
 import de.tobiyas.enderdragonsplus.commands.CommandRide;
@@ -43,12 +44,12 @@ import de.tobiyas.enderdragonsplus.listeners.Listener_Fireball;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Plugins;
 import de.tobiyas.enderdragonsplus.listeners.Listener_Sign;
 import de.tobiyas.enderdragonsplus.listeners.Listener_World;
+import de.tobiyas.enderdragonsplus.meshing.MeshManager;
 import de.tobiyas.enderdragonsplus.spawner.DragonSpawnerManager;
 import de.tobiyas.enderdragonsplus.util.Consts;
 import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
-import de.tobiyas.util.permissions.PermissionManager;
 
 
 public class EnderdragonsPlus extends UtilsUsingPlugin{
@@ -58,7 +59,6 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	private String prefix;
 	private Config config;
 	
-	private PermissionManager permissionManager;
 	private Container container;
 	
 	private AgeContainerManager ageContainerManager;
@@ -70,6 +70,11 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	
 	private static EnderdragonsPlus plugin;
 
+	/**
+	 * The meshManager to use.
+	 */
+	private MeshManager meshManager;
+	
 	
 	@Override
 	public void onEnable(){
@@ -87,7 +92,8 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 			return;
 		}
 		
-		permissionManager = new PermissionManager(this);
+		meshManager = new MeshManager();
+		meshManager.init();
 		
 		setupConfiguration();
 		setupAgeContainer();
@@ -103,7 +109,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		registerManagers();
 		initMetrics();
 		
-		log(description.getFullName() + " fully loaded with: " + permissionManager.getPermissionsName());
+		log(description.getFullName() + " fully loaded with: " + getPermissionManager().getPermissionsName());
 	}
 	
 	
@@ -214,6 +220,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		new CommandRespawner();
 		new CommandEDP();
 		new CommandRide();
+		new CommandFlyTo(this);
 		//new CommandFireBreath();
 		//new CommandError();
 		//new CommandDEBUGGOTO();
@@ -289,10 +296,6 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		return plugin;
 	}
 	
-	public PermissionManager getPermissionManager(){
-		return permissionManager;
-	}
-	
 	public Container getContainer(){
 		return container;
 	}
@@ -317,7 +320,10 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		return ageContainerManager;
 	}
 	
-	
+	public MeshManager getMeshManager() {
+		return meshManager;
+	}
+
 	/**
 	 * The relocation addition for the classes.
 	 */

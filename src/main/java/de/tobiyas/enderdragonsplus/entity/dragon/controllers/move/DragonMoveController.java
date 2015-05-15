@@ -72,7 +72,7 @@ public class DragonMoveController implements IDragonMoveController {
 	 * @param toRound
 	 * @return
 	 */
-	private float arc(float toRound){
+	protected float arc(float toRound){
 		toRound %= 360.0F;
         if (toRound >= 180.0F) toRound -= 360.0F;
 
@@ -102,7 +102,6 @@ public class DragonMoveController implements IDragonMoveController {
         dragon.setPitch(dragon.getPassenger().getLocation().getPitch());
        
         
-
         //check for front/ back movement to get the sugar in the height
         if(forMot > 0.1 || forMot < -0.1){
         	float movementChange = (float) (dragon.getPassenger().getLocation().getPitch() * 0.001);
@@ -189,7 +188,11 @@ public class DragonMoveController implements IDragonMoveController {
 	    forMot *= 10; //speed up
 	    sideMot *= 10;
 	    
-	    checkJump();
+	    if(checkJump()){
+    		Vector mot = dragon.getMotion();
+    		dragon.setMotion(mot.setY(0.4));
+	    }
+	    
     	adjustMotAndLocToPlayerMovement(sideMot, forMot);
 	    return false;
 	}
@@ -204,7 +207,7 @@ public class DragonMoveController implements IDragonMoveController {
 	 * Checks if the Entity is jumping.
 	 * If so, the MotY is increased by 0.5.
 	 */
-	protected void checkJump(){
+	protected boolean checkJump(){
 		try {
 			Field jump = null;
 			if(jumpFieldCache != null) jump = jumpFieldCache;
@@ -223,10 +226,8 @@ public class DragonMoveController implements IDragonMoveController {
 				    	jump.setAccessible(true);
 		    		}
 		    		
-			    	if (jump != null && jump.getBoolean(mcEntity)) {
-			    		Vector mot = dragon.getMotion();
-			    		dragon.setMotion(mot.setY(0.4));
-			    		break;
+			    	if (jump != null){
+			    		return jump.getBoolean(mcEntity);
 			    	}
 			    	
 		    	}catch(Throwable exp){
@@ -239,6 +240,8 @@ public class DragonMoveController implements IDragonMoveController {
 	    } catch (Throwable exp) {
 	        exp.printStackTrace();
 	    }
+		
+		return false;
 	}
 	
 	
@@ -313,7 +316,7 @@ public class DragonMoveController implements IDragonMoveController {
 			//dragon is going down.
 			Location nextlocation = currentLoc.subtract(0, 0.2, 0);
 			if(nextlocation.getBlock().getType() != Material.AIR){
-				dragon.move(0, 0.2, 0);
+				dragon.move(0, -0.2, 0);
 				return;
 			}else{
 				dragon.move(0, 0, 0);
@@ -399,12 +402,12 @@ public class DragonMoveController implements IDragonMoveController {
 	}
 	
 	/**
-	 * Calculates the Yaw from the vector passed.
+	 * Calculates the Pitch from the vector passed.
 	 * 
 	 * @param vec to calc.
 	 * @return
 	 */
-	private float calcPitchFromVec(Vector vec){
+	protected float calcPitchFromVec(Vector vec){
 		float arc = vec.clone().setY(0).angle(new Vector(1,0,0));
 		return arc;
 	}
@@ -415,7 +418,7 @@ public class DragonMoveController implements IDragonMoveController {
 	 * @param vec to calc.
 	 * @return
 	 */
-	private float calcYawFromVec(Vector vec){
+	protected float calcYawFromVec(Vector vec){
 		double dx = vec.getX();
         double dz = vec.getZ();
         double yaw = 0;

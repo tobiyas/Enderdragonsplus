@@ -61,7 +61,6 @@ private EnderdragonsPlus plugin;
 			}catch(NumberFormatException exp){}
 		}
 		
-
 		int maxSpeed = 4;
 		speed = Math.min(speed, maxSpeed);
 		
@@ -110,7 +109,6 @@ private EnderdragonsPlus plugin;
 				dragon.playerMovedEntity(0.89f, 0.89f);
 			}
 		}
-		
 	}
 	
 	/**

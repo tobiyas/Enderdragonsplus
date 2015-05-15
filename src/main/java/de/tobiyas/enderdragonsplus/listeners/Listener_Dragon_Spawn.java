@@ -24,6 +24,9 @@ import de.tobiyas.util.player.PlayerUtils;
 
 public class Listener_Dragon_Spawn implements Listener {
 
+	
+	public static boolean SUPPRESS_DRAGON_MESSAGE = false;
+	
 	private EnderdragonsPlus plugin;
 	public static int recDepth = 0;
 	
@@ -70,7 +73,7 @@ public class Listener_Dragon_Spawn implements Listener {
 		}
 		
 		//Anouncing
-		if(plugin.getContainer().containsID(id)){
+		if(!SUPPRESS_DRAGON_MESSAGE && plugin.getContainer().containsID(id)){
 			if(plugin.interactConfig().getConfig_anounceDragonSpawning())
 				announceDragon(event.getEntity());
 			return;

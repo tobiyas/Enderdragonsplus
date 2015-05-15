@@ -246,7 +246,9 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	@Override
 	public boolean dealDamage(DamageSource damagesource, float damage) { // CraftBukkit - protected -> public
 		//TODO add this again.
-		//dragonHealthController.rememberDamage(damagesource.getEntity().getBukkitEntity(), damage);
+		if(dragonHealthController.isInvincible()) return false;
+		
+		dragonHealthController.rememberDamage((LivingEntity)damagesource.getEntity().getBukkitEntity(), damage);
 		dragonMoveController.restoreOldDataIfPossible();
 		return super.dealDamage(damagesource, damage);
 	}
@@ -657,6 +659,26 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	public void setProperty(String property, Object value){
 		propertyController.addProperty(property, value);
 	}
+	
+	@Override
+	public void sHealth(double newHealth) {
+		this.setHealth((float) Math.min(this.getMaxHealth(), newHealth));
+	}
+	
+	@Override
+	public void sMaxHealth(double maxHealth) {
+		((EnderDragon)this.getBukkitEntity()).setMaxHealth(maxHealth);
+	}
+	
+	@Override
+	public double gHealth() {
+		return this.getHealth();
+	}
+	
+	@Override
+	public double gMaxHealth() {
+		return super.getMaxHealth();
+	}
 
 	/* (non-Javadoc)
 	 * @see de.tobiyas.enderdragonsplus.entity.dragon.LimitedED#getProperty(java.lang.String)
@@ -906,11 +928,15 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 
 	@Override
 	public boolean damage(DamageCause cause, double value) {
+		if(dragonHealthController.isInvincible()) return false;
+		
 		return this.damageEntity(DamageSource.MAGIC, (float) value);
 	}
 
 	@Override
 	public boolean dealDamage(DamageCause damagesource, float amount) {
+		if(dragonHealthController.isInvincible()) return false;
+		
 		return damage(damagesource, amount);
 	}
 

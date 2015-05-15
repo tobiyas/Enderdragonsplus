@@ -54,6 +54,11 @@ commands:
     aliases: []
     usage: |
            /edplag
+  edpflyto:
+    description: take a dragon to the coords passed
+    aliases: []
+    usage: |
+           /edpflyto
   #edpbreath: #Disabled. Not for production code. Only for testing
   #  description: fires a breath in your sight direction.
   #  aliases: [edpb]

@@ -39,4 +39,8 @@ public interface IDragonHealthContainer {
 
 	public abstract Map<String, Float> generatePlayerDamageMap();
 
+	public abstract void setInvincible(boolean invincible);
+	
+	public abstract boolean isInvincible();
+
 }

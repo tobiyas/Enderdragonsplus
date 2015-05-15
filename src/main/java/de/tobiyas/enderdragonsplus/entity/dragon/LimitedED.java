@@ -264,6 +264,35 @@ public interface LimitedED {
 	
 	
 	/**
+	 * Sets the Health of the dragon.
+	 * 
+	 * @param newHealth to set
+	 */
+	public void sHealth(double newHealth);
+	
+	/**
+	 * Sets the Max health of the Dragon.
+	 * 
+	 * @param maxHealth to set.
+	 */
+	public void sMaxHealth(double maxHealth);
+	
+	/**
+	 * gets the Health of the dragon.
+	 * 
+	 * @return the current Health
+	 */
+	public double gHealth();
+	
+	/**
+	 * gets the Max health of the Dragon.
+	 * 
+	 * @return maxHealth.
+	 */
+	public double gMaxHealth();
+	
+	
+	/**
 	 * This calls the super method for riding.
 	 * 
 	 * @param sideMot

@@ -14,6 +14,7 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedEnderDragonVersionManager;
 import de.tobiyas.enderdragonsplus.entity.dragon.age.AgeNotFoundException;
+import de.tobiyas.enderdragonsplus.listeners.Listener_Dragon_Spawn;
 
 public class DragonAPI {
 
@@ -100,7 +101,23 @@ public class DragonAPI {
 	 * @return
 	 */
 	public static LivingEntity spawnNewEnderdragon(Location location){
-		return spawnNewEnderdragon(location, "Normal");
+		return spawnNewEnderdragon(location, true);
+	}
+	
+	
+	/**
+	 * @param location to spawn at
+	 * @param forceGlobalSpawnNotice if a global notice should be sent.
+	 * 
+	 * @return the spawned dragon.
+	 */
+	public static LivingEntity spawnNewEnderdragon(Location location, boolean forceGlobalSpawnNotice){
+		boolean before = Listener_Dragon_Spawn.SUPPRESS_DRAGON_MESSAGE;
+		if(!forceGlobalSpawnNotice) Listener_Dragon_Spawn.SUPPRESS_DRAGON_MESSAGE = true;
+		
+		LivingEntity spawned = spawnNewEnderdragon(location, "Normal");
+		if(!forceGlobalSpawnNotice) Listener_Dragon_Spawn.SUPPRESS_DRAGON_MESSAGE = before;
+		return spawned;
 	}
 	
 	/**

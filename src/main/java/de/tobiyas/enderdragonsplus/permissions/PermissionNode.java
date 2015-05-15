@@ -27,4 +27,8 @@ public class PermissionNode {
 
 	//Targeting Permissions
 	public final static String getIgnored = pluginPre + "targeting.ignore";
+
+	//fly to Perms
+	public final static String flytoUse = pluginPre + "flyto.use";
+	public final static String flytoEdit = pluginPre + "flyto.edit";
 }

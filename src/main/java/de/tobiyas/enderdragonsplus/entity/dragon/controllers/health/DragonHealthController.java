@@ -17,17 +17,17 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 
-import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 
 public class DragonHealthController implements IDragonHealthContainer {
 
-	private EnderdragonsPlus plugin;
 	private LimitedED dragon;
 	private Random random;
 	
 	private HashMap<String, Float> damageDoneByPlayer;
 	private String lastPlayerAttacked = "";
+	
+	private boolean isInvincible = false;
 	
 	/**
 	 * The nearest Crystal to the Dragon
@@ -36,7 +36,6 @@ public class DragonHealthController implements IDragonHealthContainer {
 	
 	
 	public DragonHealthController(LimitedED dragon){
-		plugin = EnderdragonsPlus.getPlugin();
 		this.dragon = dragon;
 		random = new Random();
 		
@@ -251,6 +250,16 @@ public class DragonHealthController implements IDragonHealthContainer {
 	@Override
 	public Map<String,Float> generatePlayerDamageMap() {
 		return new HashMap<String, Float>(damageDoneByPlayer);
+	}
+	
+	@Override
+	public boolean isInvincible() {
+		return isInvincible;
+	}
+	
+	@Override
+	public void setInvincible(boolean invincible) {
+		this.isInvincible = invincible;
 	}
 	
 }
