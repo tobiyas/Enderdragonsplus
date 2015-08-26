@@ -9,10 +9,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<utilsVersion>1.0.13</utilsVersion>
+		<utilsVersion>1.0.14</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
-		<cbRelocation>v1_8_R2</cbRelocation>
-		<cb.version>1.8.3-R0.1-SNAPSHOT</cb.version>
+		<cbRelocation>v1_8_R3</cbRelocation>
+		<cb.version>1.8.6-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
@@ -71,7 +71,7 @@
 			<version>${cb.version}</version>
 			<optional>true</optional>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/cb-1.8.3.jar</systemPath>
+            <systemPath>${project.basedir}/libs/cb-1.8.6.jar</systemPath>
 		</dependency>
 
 		<!-- Workspace Dependency -->
@@ -95,10 +95,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 

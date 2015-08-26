@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.server.v1_8_R2.EntityTypes;
+import net.minecraft.server.v1_8_R3.EntityTypes;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -55,7 +55,6 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	private DebugLogger debugLogger;
 	private PluginDescriptionFile description;
 
-	private String prefix;
 	private Config config;
 	
 	private PermissionManager permissionManager;
@@ -72,14 +71,13 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 
 	
 	@Override
-	public void onEnable(){
+	public void pluginEnable(){
 		plugin = this;
 		
 		debugLogger = new DebugLogger(this);
 		debugLogger.setAlsoToPlugin(true);
 		
 		description = getDescription();
-		prefix = "["+description.getName()+"] ";
 		
 		if(!tryInjectDragon()) return;
 		permissionManager = new PermissionManager(this);
@@ -170,9 +168,6 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		debugLogger.shutDown();
 		log("disabled "+description.getFullName());
 
-	}
-	public void log(String message){
-		debugLogger.log(prefix + message);
 	}
 
 
@@ -270,9 +265,6 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		return plugin;
 	}
 	
-	public PermissionManager getPermissionManager(){
-		return permissionManager;
-	}
 	
 	public Container getContainer(){
 		return container;
@@ -284,10 +276,6 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	
 	public DragonSpawnerManager getDragonSpawnerManager(){
 		return dragonSpawnerManager;
-	}
-	
-	public DebugLogger getDebugLogger(){
-		return debugLogger;
 	}
 	
 	public EntityDamageWhisperController getDamageWhisperController(){

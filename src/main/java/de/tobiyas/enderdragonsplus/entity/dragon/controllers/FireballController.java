@@ -2,7 +2,7 @@ package de.tobiyas.enderdragonsplus.entity.dragon.controllers;
 
 import java.util.LinkedList;
 
-import net.minecraft.server.v1_8_R2.Entity;
+import net.minecraft.server.v1_8_R3.Entity;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

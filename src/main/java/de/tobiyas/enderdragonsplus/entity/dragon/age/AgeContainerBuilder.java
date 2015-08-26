@@ -3,7 +3,7 @@ package de.tobiyas.enderdragonsplus.entity.dragon.age;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.server.v1_8_R2.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import de.tobiyas.util.config.returncontainer.DropContainer;
 
 public class AgeContainerBuilder {
