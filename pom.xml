@@ -112,6 +112,24 @@
 			<systemPath>${project.basedir}/libs/cb/cb-1.8.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit-6</artifactId>
+		    <version>1.8</version>
+   			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/cb/cb-1.8.3.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit-7</artifactId>
+		    <version>1.8</version>
+   			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/cb/cb-1.8.6.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<build>

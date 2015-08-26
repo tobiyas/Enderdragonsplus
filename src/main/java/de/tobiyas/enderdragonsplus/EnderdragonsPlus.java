@@ -15,14 +15,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginDescriptionFile;
 
 import de.tobiyas.enderdragonsplus.bridges.BridgeController;
 import de.tobiyas.enderdragonsplus.commands.CommandEDP;
+import de.tobiyas.enderdragonsplus.commands.CommandFlyTo;
 import de.tobiyas.enderdragonsplus.commands.CommandGoHome;
 import de.tobiyas.enderdragonsplus.commands.CommandInfo;
 import de.tobiyas.enderdragonsplus.commands.CommandKillEnderDragon;
-import de.tobiyas.enderdragonsplus.commands.CommandFlyTo;
 import de.tobiyas.enderdragonsplus.commands.CommandReloadConfig;
 import de.tobiyas.enderdragonsplus.commands.CommandRespawner;
 import de.tobiyas.enderdragonsplus.commands.CommandRide;
@@ -48,15 +47,11 @@ import de.tobiyas.enderdragonsplus.meshing.MeshManager;
 import de.tobiyas.enderdragonsplus.spawner.DragonSpawnerManager;
 import de.tobiyas.enderdragonsplus.util.Consts;
 import de.tobiyas.util.UtilsUsingPlugin;
-import de.tobiyas.util.debug.logger.DebugLogger;
 import de.tobiyas.util.metrics.SendMetrics;
 
 
 public class EnderdragonsPlus extends UtilsUsingPlugin{
-	private DebugLogger debugLogger;
-	private PluginDescriptionFile description;
-
-	private String prefix;
+	
 	private Config config;
 	
 	private Container container;
@@ -77,14 +72,8 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	
 	
 	@Override
-	public void onEnable(){
+	public void pluginEnable(){
 		plugin = this;
-		
-		debugLogger = new DebugLogger(this);
-		debugLogger.setAlsoToPlugin(true);
-		
-		description = getDescription();
-		prefix = "["+description.getName()+"] ";
 		
 		if(!tryInjectDragon()) {
 			log("Could not inject Dragon. Disabling Plugin.");
@@ -109,7 +98,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		registerManagers();
 		initMetrics();
 		
-		log(description.getFullName() + " fully loaded with: " + getPermissionManager().getPermissionsName());
+		log(getDescription().getFullName() + " fully loaded with: " + getPermissionManager().getPermissionsName());
 	}
 	
 	
@@ -190,14 +179,10 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	public void onDisable(){
 		try{
 			dragonSpawnerManager.saveList();
-			debugLogger.shutDown();
 		}catch(Throwable exp){}
 		
-		log("disabled "+description.getFullName());
+		log("disabled "+getDescription().getFullName());
 
-	}
-	public void log(String message){
-		debugLogger.log(prefix + message);
 	}
 
 
@@ -255,7 +240,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 				ageIncorrectFieldString += incorrectField + ",";
 			}
 			
-			debugLogger.logError(ageIncorrectFieldString);
+			logError(ageIncorrectFieldString);
 			log(ageIncorrectFieldString);
 		}
 		
@@ -284,7 +269,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 			SendMetrics.sendMetrics(this, false);
 		
 		boolean enableErrorReport = interactConfig().getConfig_uploadErrors();
-		debugLogger.enableUploads(enableErrorReport);
+		getDebugLogger().enableUploads(enableErrorReport);
 	}
 
 	
@@ -307,10 +292,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	public DragonSpawnerManager getDragonSpawnerManager(){
 		return dragonSpawnerManager;
 	}
-	
-	public DebugLogger getDebugLogger(){
-		return debugLogger;
-	}
+
 	
 	public EntityDamageWhisperController getDamageWhisperController(){
 		return damageWhisperController;

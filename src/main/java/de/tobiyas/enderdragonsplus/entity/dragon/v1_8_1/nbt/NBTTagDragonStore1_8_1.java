@@ -41,7 +41,7 @@ public class NBTTagDragonStore1_8_1 {
 		compoundToSaveTo.setFloat("currentHealth", dragon.getHealth());
 		
 		compoundToSaveTo.set("properties", getNBTfromMap(propertiesCompound));
-		compoundToSaveTo.set("age", AgeContainerBuilder1_8_1.saveToNBTTagCompound1_7_3(dragon.getAgeContainer()));
+		compoundToSaveTo.set("age", AgeContainerBuilder1_8_1.saveToNBTTagCompound(dragon.getAgeContainer()));
 		compoundToSaveTo.setString("uuid", dragon.getUUID().toString());
 		
 		compoundToSaveTo.set("damagemap", getNBTfromDamageMap(damageMap));

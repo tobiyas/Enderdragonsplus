@@ -11,6 +11,22 @@ public class FireballGenerator {
 	public static LimitedFireball generate(World world, LivingEntity shooter, 
 			double x, double y, double z){
 		
+		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_8_R3")){
+			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_8_R3.LimitedFireball_1_8R3(
+					world, 
+					shooter,
+					x,y,z
+					);
+		}
+		
+		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_8_R2")){
+			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_8_R2.LimitedFireball_1_8R2(
+					world, 
+					shooter,
+					x,y,z
+					);
+		}
+		
 		if(EnderdragonsPlus.getRelocationAddition().equalsIgnoreCase("1_8_R1")){
 			return new de.tobiyas.enderdragonsplus.entity.fireball.v1_8_R1.LimitedFireball_1_8R1(
 					world, 

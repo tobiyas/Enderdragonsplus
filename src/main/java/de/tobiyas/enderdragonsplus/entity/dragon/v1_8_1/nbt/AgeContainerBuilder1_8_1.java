@@ -27,7 +27,7 @@ public class AgeContainerBuilder1_8_1 extends AgeContainerBuilder {
 	}
 
 	
-	public static NBTTagCompound saveToNBTTagCompound1_7_3(AgeContainer ageContainer) {
+	public static NBTTagCompound saveToNBTTagCompound(AgeContainer ageContainer) {
 		NBTTagCompound compound = new NBTTagCompound();
 		
 		compound.setString(NBT_TAG__NAME, ageContainer.getAgeName());
