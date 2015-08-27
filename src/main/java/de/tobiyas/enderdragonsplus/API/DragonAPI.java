@@ -135,11 +135,8 @@ public class DragonAPI {
 		LimitedED dragon = LimitedEnderDragonVersionManager.generate(location, ageName);
 		dragon.spawn();
 		
-		if(dragon.getBukkitEntity() == null){
-			return null;
-		}
-			
-		return (LivingEntity) dragon.getBukkitEntity();
+		LivingEntity dragonEntity = (LivingEntity) dragon.getBukkitEntity();
+		return dragonEntity;
 	}
 	
 	/**

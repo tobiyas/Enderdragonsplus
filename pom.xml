@@ -9,9 +9,9 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<utilsVersion>1.0.12</utilsVersion>
+		<utilsVersion>1.0.14</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
-		<cb.version>1.8-R0.1-SNAPSHOT</cb.version>
+		<cb.version>1.8.8-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>

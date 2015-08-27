@@ -65,6 +65,8 @@ public class LimitedEnderDragonVersionManager {
 	 */
 	public static boolean isCurrentVersionSupported(){
 		String support = EnderdragonsPlus.getRelocationAddition();
+		if(support.equalsIgnoreCase("1_8_R3")) return true;
+		if(support.equalsIgnoreCase("1_8_R2")) return true;
 		if(support.equalsIgnoreCase("1_8_R1")) return true;
 		if(support.equalsIgnoreCase("1_7_R4")) return true;
 		if(support.equalsIgnoreCase("1_7_R3")) return true;
@@ -82,6 +84,8 @@ public class LimitedEnderDragonVersionManager {
 	 */
 	public static Class<?> getCurrentClass(){
 		String support = EnderdragonsPlus.getRelocationAddition();
+		if(support.equalsIgnoreCase("1_8_R3")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_8_3.LimitedEnderDragon.class;
+		if(support.equalsIgnoreCase("1_8_R2")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_8_2.LimitedEnderDragon.class;
 		if(support.equalsIgnoreCase("1_8_R1")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_8_1.LimitedEnderDragon.class;
 		if(support.equalsIgnoreCase("1_7_R4")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_7_4.LimitedEnderDragon.class;
 		if(support.equalsIgnoreCase("1_7_R3")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_7_3.LimitedEnderDragon.class;
@@ -101,6 +105,8 @@ public class LimitedEnderDragonVersionManager {
 	 */
 	public static boolean replaceEntityWithEDPDragon(EnderDragon oldDragon, String ageName){
 		String support = EnderdragonsPlus.getRelocationAddition();
+		if(support.equalsIgnoreCase("1_8_R3")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_8_3.LimitedEnderDragon.replaceEntityWithEDPDragon(oldDragon, ageName);
+		if(support.equalsIgnoreCase("1_8_R2")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_8_2.LimitedEnderDragon.replaceEntityWithEDPDragon(oldDragon, ageName);
 		if(support.equalsIgnoreCase("1_8_R1")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_8_1.LimitedEnderDragon.replaceEntityWithEDPDragon(oldDragon, ageName);
 		if(support.equalsIgnoreCase("1_7_R4")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_7_4.LimitedEnderDragon.replaceEntityWithEDPDragon(oldDragon, ageName);
 		if(support.equalsIgnoreCase("1_7_R3")) return de.tobiyas.enderdragonsplus.entity.dragon.v1_7_3.LimitedEnderDragon.replaceEntityWithEDPDragon(oldDragon, ageName);

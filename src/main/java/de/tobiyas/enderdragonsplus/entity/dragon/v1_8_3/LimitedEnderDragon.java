@@ -444,12 +444,11 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	private boolean spawnCraftBukkit() {
 		World world = ((CraftWorld) getLocation().getWorld()).getHandle();
 		Chunk chunk = getLocation().getChunk();
-		if(!chunk.isLoaded())
-			this.getLocation().getChunk().load();
 		
-		if (!world.addEntity(this))
-			return false;
+		if(!chunk.isLoaded()) this.getLocation().getChunk().load();
+		if (!world.addEntity(this)) return false;
 		setPosition(locX, locY, locZ);
+		
 		return true;
 	}
 	
