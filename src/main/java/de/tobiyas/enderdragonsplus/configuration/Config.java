@@ -1,8 +1,15 @@
 package de.tobiyas.enderdragonsplus.configuration;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
+import de.tobiyas.enderdragonsplus.meshing.WorldMesh;
 
 public class Config
 {
@@ -69,6 +76,9 @@ public class Config
   private boolean config_anounceDragonSpawning;
   private String config_dragonSpawnMessage;
   
+  //Meshing:
+  private final List<WorldMesh> config_worldMeshes = new LinkedList<WorldMesh>();
+  
   //Debug + API layer
   private boolean config_debugOutput;
   private boolean config_fireBukkitEvents;
@@ -77,11 +87,11 @@ public class Config
   
  
 
-  public Config(EnderdragonsPlus plugin)
-  {
+  public Config(EnderdragonsPlus plugin){
     this.plugin = plugin;
     reloadConfiguration();
   }
+  
 
   private void setupConfiguration() {
 	FileConfiguration config = this.plugin.getConfig();
@@ -198,6 +208,23 @@ public class Config
     this.config_uploadErrors = this.plugin.getConfig().getBoolean("uploadErrors");
     
     this.config_dragonGiveXPOnlyToDamagers = this.plugin.getConfig().getBoolean("dragonGiveXPOnlyToDamagers", false);
+    
+    //Mesh loading:
+    List<String> worldMeshes = this.plugin.getConfig().getStringList("meshGeneration");
+    this.config_worldMeshes.clear();
+    for(String worldMesh : worldMeshes){
+    	try{
+    		String[] data = worldMesh.split(Pattern.quote("#"));
+    		if(data.length != 5) continue;
+    		World world = Bukkit.getWorld(data[0]);
+    		int startX = Integer.parseInt(data[1]);
+    		int endX = Integer.parseInt(data[2]);
+    		int startZ = Integer.parseInt(data[3]);
+    		int endZ = Integer.parseInt(data[4]);
+    		
+    		if(world != null) config_worldMeshes.add(new WorldMesh(world, startX, endX, startZ, endZ));
+    	}catch(Throwable exp){}
+    }
   }
 
   public void reload() {
@@ -395,5 +422,9 @@ public class Config
 
 	public int getConfig_maxRidingSpeed() {
 		return config_maxRidingSpeed;
+	}
+	
+	public List<WorldMesh> getConfig_worldMeshes() {
+		return config_worldMeshes;
 	}
 }

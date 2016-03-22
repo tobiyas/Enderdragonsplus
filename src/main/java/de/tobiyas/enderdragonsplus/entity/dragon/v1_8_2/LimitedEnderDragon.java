@@ -946,4 +946,16 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 		return "aW";
 	}
 	
+	@Override
+	public boolean hasCollision() {
+		return this.dragonMoveController.hasCollision();
+	}
+
+	@Override
+	public void setCollision(boolean collision) {
+		this.dragonMoveController.setCollision(collision);
+		this.collisionController.setCollision(collision);
+	}
+	
+	
 }

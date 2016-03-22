@@ -27,6 +27,11 @@ public class CollisionController implements ICollisionController {
 	 */
 	protected final EnderdragonsPlus plugin;
 	
+	/**
+	 * if the dragon does not have collision, skip!
+	 */
+	protected boolean hasCollision;
+	
 	
 	public CollisionController(LimitedED dragon) {
 		this.dragon = dragon;
@@ -36,19 +41,14 @@ public class CollisionController implements ICollisionController {
 
 	@Override
 	public boolean checkCollisionAndPortals(){
+		if(!hasCollision) return false;
+		
 		boolean collisionDetected = false;
 		
 		Location min = dragon.getMinBBLocation();
 		Location max = dragon.getMaxBBLocation();
 		
 		try{
-//			int i = convert(dragon.boundingBox.a + 0.001D);
-//			int j = convert(dragon.boundingBox.b + 0.001D);
-//			int k = convert(dragon.boundingBox.c + 0.001D);
-//			int l = convert(dragon.boundingBox.d - 0.001D);
-//			int i1 = convert(dragon.boundingBox.e - 0.001D);
-//			int j1 = convert(dragon.boundingBox.f - 0.001D);
-			
 			int minX = convert(min.getX());
 			int minY = convert(min.getY());
 			int minZ = convert(min.getZ());
@@ -66,15 +66,6 @@ public class CollisionController implements ICollisionController {
 							if(block.getType().isSolid()){
 								collisionDetected = true;
 							}
-	
-							/*//TODO This is disabled for now.
-							  //What it does: Interaction with the block!
-							  //Disabled because dragons don't need interaction with blocks.
-							try {
-								block.a(dragon.world, loopX, loopY, loopZ, dragon);
-							} catch (Throwable throwable) {
-								return true;
-							}*/
 						}
 					}
 				}
@@ -214,5 +205,14 @@ public class CollisionController implements ICollisionController {
 		}
 
 		return hitSomethingHard;
+	}
+	
+	
+	public void setCollision(boolean collision){
+		this.hasCollision = collision;
+	}
+	
+	public boolean hasCollision(){
+		return hasCollision;
 	}
 }

@@ -307,6 +307,12 @@ public interface LimitedED {
 	 * @return
 	 */
 	public String getPlayerIsJumpingFieldName();
+	
+	
+	public boolean hasCollision();
+	
+	
+	public void setCollision(boolean collison);
 
 
 }

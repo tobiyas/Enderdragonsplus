@@ -20,5 +20,8 @@ public interface ICollisionController {
 	 * @return true if hit a block, false if not.
 	 */
 	public abstract boolean checkHitBlocks(Location min, Location max);
-
+	
+	
+	public void setCollision(boolean collision);
+	public boolean hasCollision();
 }

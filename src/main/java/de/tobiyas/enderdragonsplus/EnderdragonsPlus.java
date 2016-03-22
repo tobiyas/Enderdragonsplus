@@ -77,6 +77,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		
 		if(!tryInjectDragon()) {
 			log("Could not inject Dragon. Disabling Plugin.");
+			Bukkit.getScheduler().cancelTasks(this);
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -116,7 +117,8 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 					|| getRelocationAddition().equalsIgnoreCase("1_7_R3")
 					|| getRelocationAddition().equalsIgnoreCase("1_8_R1")
 					|| getRelocationAddition().equalsIgnoreCase("1_8_R2")
-					|| getRelocationAddition().equalsIgnoreCase("1_8_R3")){
+					|| getRelocationAddition().equalsIgnoreCase("1_8_R3")
+					|| getRelocationAddition().equalsIgnoreCase("1_9_R1")){
 				
 				Field c = entityTypeClass.getDeclaredField("c"); c.setAccessible(true);
 				HashMap c_map = (HashMap) c.get(null);
@@ -138,7 +140,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 				HashMap g_map = (HashMap) g.get(null);
 				g_map.put(edName, edInt);
 				
-				return true;	
+				return true;
 			}
 			
 			

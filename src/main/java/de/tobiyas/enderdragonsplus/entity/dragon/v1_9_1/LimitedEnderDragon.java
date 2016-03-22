@@ -1,4 +1,4 @@
-package de.tobiyas.enderdragonsplus.entity.dragon.v1_8_3;
+package de.tobiyas.enderdragonsplus.entity.dragon.v1_9_1;
 
 import static de.tobiyas.enderdragonsplus.util.MinecraftChatColorUtils.decodeColors;
 
@@ -7,22 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.server.v1_8_R3.DamageSource;
-import net.minecraft.server.v1_8_R3.EntityComplexPart;
-import net.minecraft.server.v1_8_R3.EntityEnderDragon;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.LocaleI18n;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.World;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEnderDragon;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderDragon;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_9_R1.event.CraftEventFactory;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -48,7 +39,15 @@ import de.tobiyas.enderdragonsplus.entity.dragon.controllers.properties.NBTTagDr
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.properties.PropertyController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.targeting.ITargetController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.targeting.TargetController;
-import de.tobiyas.enderdragonsplus.entity.dragon.v1_8_3.nbt.NBTTagDragonStore1_8_3;
+import de.tobiyas.enderdragonsplus.entity.dragon.v1_9_1.nbt.NBTTagDragonStore1_9_1;
+import net.minecraft.server.v1_9_R1.DamageSource;
+import net.minecraft.server.v1_9_R1.EntityComplexPart;
+import net.minecraft.server.v1_9_R1.EntityEnderDragon;
+import net.minecraft.server.v1_9_R1.EntityLiving;
+import net.minecraft.server.v1_9_R1.GenericAttributes;
+import net.minecraft.server.v1_9_R1.LocaleI18n;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.World;
 
 public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	
@@ -229,20 +228,13 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
         // CraftBukkit end
     }
 
-	
 
-	/* (non-Javadoc)
-	 * @see de.tobiyas.enderdragonsplus.entity.dragon.LimitedED#getName()
-	 */
 	@Override
 	public String getName() {
 		return LocaleI18n.get("entity.EnderDragon.name");
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.enderdragonsplus.entity.dragon.LimitedED#dealDamage(net.minecraft.server.DamageSource, float)
-	 */
 	@Override
 	public boolean dealDamage(DamageSource damagesource, float damage) { // CraftBukkit - protected -> public
 		//TODO add this again.
@@ -254,9 +246,6 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see de.tobiyas.enderdragonsplus.entity.dragon.LimitedED#e()
-	 */
 	@Override
 	public void m(){
 		try{
@@ -267,9 +256,6 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.enderdragonsplus.entity.dragon.LimitedED#internalLogicTick()
-	 */
 	@Override
 	public void internalLogicTick(){
 		long before = System.currentTimeMillis();
@@ -333,9 +319,6 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see de.tobiyas.enderdragonsplus.entity.dragon.LimitedED#spitFireBallOnTarget(org.bukkit.Location)
-	 */
 	@Override
 	public boolean spitFireBallOnTarget(Location location) {
 		if(location == null){
@@ -352,21 +335,19 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	 * - 1.7.5: aE()
 	 * - 1.7.10: aF()
 	 * - 1.8_1: aY()
-	 * - 1.8_1: aZ()
+	 * - 1.8_2: aZ()
+	 * - 1.8_3: aZ()
+	 * - 1.9_1: bC()
 	 * Moved to: ItemLootController
 	 * 
 	 * @see net.minecraft.server.EntityEnderDragon#aF()
 	 */
 	@Override
-	protected void aZ() {
+	protected void bC() {
 		if(this.dead) return; // CraftBukkit - can't kill what's already dead
 		itemController.deathTick();
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.enderdragonsplus.entity.dragon.LimitedED#a(net.minecraft.server.NBTTagCompound)
-	 */
 	@Override
 	public void a(NBTTagCompound compound){
 		super.a(compound);
@@ -375,14 +356,11 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	
 	@Override
 	public void loadAdditionalNBTStuffAndCreateControllers(Object compound){
-		NBTTagDragonStore1_8_3 store = new NBTTagDragonStore1_8_3();
+		NBTTagDragonStore1_9_1 store = new NBTTagDragonStore1_9_1();
 		DragonNBTReturn returnContainer = store.loadFromNBT(this, (NBTTagCompound) compound);
 		createAllControllers(returnContainer);
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.tobiyas.enderdragonsplus.entity.dragon.LimitedED#b(net.minecraft.server.NBTTagCompound)
-	 */
+
 	@Override
 	public void b(NBTTagCompound compound){
 		super.b(compound);
@@ -391,7 +369,7 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	
 	@Override
 	public void saveAdditionalNBTStuff(Object compound){
-		NBTTagDragonStore1_8_3 store = new NBTTagDragonStore1_8_3();
+		NBTTagDragonStore1_9_1 store = new NBTTagDragonStore1_9_1();
 		
 		store.saveToNBT(this, (NBTTagCompound)compound, propertyController.getAllProperties(), 
 				dragonHealthController.generatePlayerDamageMap(), targetController.getCurrentTagetsAsStringList());
@@ -410,7 +388,7 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 		Location newDragonloc = getLocation();
 		//now move the parts to get hits on it.
 		for(EntityComplexPart part : children){
-			part.t_();
+			part.m();
 			part.setPositionRotation(newDragonloc.getX(), newDragonloc.getY(), newDragonloc.getZ(), yaw, pitch);
 		}
 	}
@@ -422,7 +400,7 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	 * @return true if jumping.
 	 */
 	public boolean isJumping(){
-		return aY;
+		return bc;
 	}
 
 
@@ -899,26 +877,26 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 	
 	@Override
 	public float getPassengerSideMot() {
-		if(passenger == null) return 0;
-		return ((EntityLiving)passenger).ba;
+		if(passengers.isEmpty()) return 0;
+		return ((EntityLiving)passengers.get(0)).be;
 	}
 
 	@Override
 	public float getPassengerForMot() {
-		if(passenger == null) return 0;
-		return ((EntityLiving)passenger).aZ;
+		if(passengers.isEmpty()) return 0;
+		return ((EntityLiving)passengers.get(0)).bd;
 	}
 
 	@Override
 	public void setPassengerSideMot(float newValue) {
-		if(passenger == null) return;
-		((EntityLiving)passenger).ba = newValue;
+		if(passengers.isEmpty()) return;
+		((EntityLiving)passengers.get(0)).be = newValue;
 	}
 
 	@Override
 	public void setPassengerForMot(float newValue) {
-		if(passenger == null) return;
-		((EntityLiving)passenger).aZ = newValue;
+		if(passengers.isEmpty()) return;
+		((EntityLiving)passengers.get(0)).bd = newValue;
 	}
 
 	@Override
@@ -942,7 +920,7 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 
 	@Override
 	public String getPlayerIsJumpingFieldName() {
-		return "aW";
+		return "ba";
 	}
 
 	@Override

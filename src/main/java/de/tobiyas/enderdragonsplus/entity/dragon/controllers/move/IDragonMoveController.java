@@ -5,7 +5,8 @@ import java.util.List;
 import org.bukkit.entity.LivingEntity;
 
 public interface IDragonMoveController {
-
+	
+	
 	public abstract boolean checkDragonSits();
 
 	/**
@@ -43,5 +44,9 @@ public interface IDragonMoveController {
 	 * Restores all Old data
 	 */
 	public abstract void restoreOldDataIfPossible();
+	
+	
+	public boolean hasCollision();
+	public void setCollision(boolean collision);
 
 }

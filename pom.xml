@@ -11,7 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<utilsVersion>1.0.14</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
-		<cb.version>1.8.8-R0.1-SNAPSHOT</cb.version>
+		<cb.version>1.9-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
@@ -107,7 +107,7 @@
 		<dependency>
 		    <groupId>org.bukkit</groupId>
 		    <artifactId>craftbukkit-5</artifactId>
-		    <version>1.8</version>
+		    <version>1.8_R1</version>
    			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/cb/cb-1.8.jar</systemPath>
 			<optional>true</optional>
@@ -116,7 +116,7 @@
 		<dependency>
 		    <groupId>org.bukkit</groupId>
 		    <artifactId>craftbukkit-6</artifactId>
-		    <version>1.8</version>
+		    <version>1.8_R2</version>
    			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/cb/cb-1.8.3.jar</systemPath>
 			<optional>true</optional>
@@ -125,9 +125,18 @@
 		<dependency>
 		    <groupId>org.bukkit</groupId>
 		    <artifactId>craftbukkit-7</artifactId>
-		    <version>1.8</version>
+		    <version>1.8_R3</version>
    			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/cb/cb-1.8.6.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit-8</artifactId>
+		    <version>1.9_R1</version>
+   			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/cb/cb-1.9.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
@@ -135,6 +144,8 @@
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testSourceDirectory>test/main/java</testSourceDirectory>
+		<finalName>EnderdragonsPlus</finalName>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

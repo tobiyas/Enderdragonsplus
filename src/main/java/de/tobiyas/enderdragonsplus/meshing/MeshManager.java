@@ -7,23 +7,129 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.util.Vector;
+import org.bukkit.World;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
+import de.tobiyas.enderdragonsplus.meshing.MeshGeneratorTask.MeshGenerationDoneCallback;
 import de.tobiyas.util.config.YAMLConfigExtended;
 
-public class MeshManager {
+public class MeshManager implements MeshGenerationDoneCallback {
 
+	public static final int FLIGHT_HEIGHT = 140;
+	
+	private static final int MAP_SIZE = 8200;
+	
+	
 	/**
 	 * The Destinations to use.
 	 */
 	private Map<String,Location> destinations = new HashMap<String, Location>();
 	
+	/**
+	 * All MeshPoints present.
+	 */
+	private final List<MeshPoint> simpleAllPoints = new LinkedList<MeshPoint>();
+	
+	/**
+	 * All MeshPoints present.
+	 */
+	private final List<MeshPoint> complexAllPoints = new LinkedList<MeshPoint>();
+	
 	
 	public MeshManager() {
+		generateConstantMesh();
+		loadOrGenerateComplexMesh();
+		
 	}
+	
+	
+	private void loadOrGenerateComplexMesh() {
+		File file = new File(EnderdragonsPlus.getPlugin().getDataFolder(), "world_mesh");
+		
+		//Start generator!
+		if(!file.exists()) {
+			startComplexMeshGeneration();
+			return;
+		}
+		
+		//Start Loading:
+		try{
+			List<String> lines = FileUtils.readLines(file);
+			
+			for(String line : lines){
+				String[] split = line.split(Pattern.quote("#"));
+				if(split.length != 3){
+					System.out.println("Line: " + line + " is broken in Mesh!");
+					continue;
+				}
+				
+				try{
+					int x = Integer.parseInt(split[0]);
+					int y = Integer.parseInt(split[1]);
+					int z = Integer.parseInt(split[2]);
+					
+					complexAllPoints.add(new MeshPoint(x, y, z));
+				}catch(NumberFormatException exp){}
+			}
+		}catch(Throwable exp){}
+		
+	}
+	
+	/**
+	 * Starts a complete Mesh generation.
+	 */
+	public void startComplexMeshGeneration(){
+		EnderdragonsPlus plugin = EnderdragonsPlus.getPlugin();
+		int everyTicks = 3;
+		World world = Bukkit.getWorld("world");
+		
+		new MeshGeneratorTask(world, 0, 0, 8200, 8200, this)
+			.runTaskTimer(plugin, everyTicks, everyTicks);
+	}
+	
+
+
+	/**
+	 * Generates the Mesh:
+	 */
+	private void generateConstantMesh(){
+		simpleAllPoints.clear();
+		
+		for(int x = 0; x < MAP_SIZE; x+= 25){
+			for(int z = 0; z < MAP_SIZE; z+= 25){
+				simpleAllPoints.add(new MeshPoint(x,FLIGHT_HEIGHT,z));
+			}			
+		}
+	}
+	
+	
+	@Override
+	public void meshGenerationDone(List<MeshPoint> points) {
+		System.out.println("Mesh Generation Done!");
+		long start = System.currentTimeMillis();
+		
+		this.complexAllPoints.clear();
+		this.complexAllPoints.addAll(points);
+		
+		//Now save the mesh.
+		File file = new File(EnderdragonsPlus.getPlugin().getDataFolder(), "world_mesh");
+		try{
+			List<String> toSave = new LinkedList<String>();
+			for(MeshPoint point : points){
+				toSave.add(point.getBlockX() + "#" + point.getBlockY() + "#" + point.getBlockZ());
+			}
+			
+			FileUtils.writeLines(file, toSave);
+		}catch(Throwable exp){}
+		long took = System.currentTimeMillis() - start;
+		System.out.println("Saving mesh took: " + took + "ms");
+	}
+	
 	
 	/**
 	 * inits the Manager and loads up all Destinations.
@@ -96,41 +202,13 @@ public class MeshManager {
 		return loc == null ? null : loc.clone();
 	}
 	
-	
+
 	/**
-	 * Generates a List of Vectors from the Start to the end.
-	 * 
-	 * @param start to generate from
-	 * @param end to generate to.
-	 * 
-	 * @return the Way for the Way (pun intended)
+	 * Returns a copy of the Mesh.
+	 * @return a copy of the mesh.
 	 */
-	public List<Vector> getWay(Vector start, Vector end){
-		List<Vector> way = new LinkedList<Vector>();
-		way.add(start.clone());
-		way.addAll(generateWayUp(start, 150));
-		
-		Vector up = start.clone().setY(150);
-		Vector last = end.clone().setY(150);
-		
-		double dist = up.distance(last);
-		Vector direction = last.clone().subtract(up.clone()).normalize().clone();
-		while(dist > 50){
-			way.add(up.add(direction.clone().multiply(25)).clone());
-			dist -= 25;
-		}
-		
-		way.add(last);
-		way.add(end);
-		return way;
-	}
-	
-	
-	
-	private List<Vector> generateWayUp(Vector start, int height){
-		List<Vector> way = new LinkedList<Vector>();
-		
-		return way;
+	public List<MeshPoint> getMeshCopy(boolean complex) {
+		return new LinkedList<MeshPoint>(complex ? complexAllPoints : simpleAllPoints);
 	}
 	
 

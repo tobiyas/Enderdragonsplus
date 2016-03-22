@@ -8,3 +8,5 @@ target/*
 /target
 copyJar.bat
 dependency-reduced-pom.xml
+.classpath
+*.bat

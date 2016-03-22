@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -19,8 +18,10 @@ import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
 import de.tobiyas.enderdragonsplus.API.DragonAPI;
 import de.tobiyas.enderdragonsplus.entity.dragon.LimitedED;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.fireball.FireballController;
-import de.tobiyas.enderdragonsplus.entity.dragon.controllers.move.DragonMoveController;
 import de.tobiyas.enderdragonsplus.entity.dragon.controllers.targeting.ITargetController;
+import de.tobiyas.enderdragonsplus.meshing.MeshFinderTask;
+import de.tobiyas.enderdragonsplus.meshing.MeshPoint;
+import de.tobiyas.enderdragonsplus.meshing.ToTargetController;
 import de.tobiyas.enderdragonsplus.permissions.PermissionNode;
 
 public class CommandFlyTo implements CommandExecutor {
@@ -47,12 +48,21 @@ public class CommandFlyTo implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 		
+
+		//Check for reload of the Mesh data:
+		if(args.length == 1 && args[0].equalsIgnoreCase("reloadmesh") && sender.isOp()){
+			plugin.getMeshManager().startComplexMeshGeneration();
+			sender.sendMessage(ChatColor.GREEN + "Reloading Mesh! This may take time!");
+			return true;
+		}
+		
+		
 		if(!(sender instanceof Player)){
 			sender.sendMessage(ChatColor.RED + "Only players can use this command.");
 			return true;
 		}
-		Player player = (Player) sender;
 		
+		final Player player = (Player) sender;
 		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.flytoUse)){
 			return true;
 		}
@@ -113,15 +123,17 @@ public class CommandFlyTo implements CommandExecutor {
 		}
 		
 		
-		Vector target = null;
+		Location target = null;
+		String targetName = "";
 		if(args.length == 3){
 			try{
-				Vector newTarget = new Vector();
+				Location newTarget = new Location(player.getWorld(),0,0,0);
 				newTarget.setX(Double.parseDouble(args[0]));
 				newTarget.setY(Double.parseDouble(args[1]));
 				newTarget.setZ(Double.parseDouble(args[2]));
 				
 				target = newTarget;
+				targetName = newTarget.getBlockX() + "," + newTarget.getBlockY() + "," + newTarget.getBlockZ();
 			}catch(Throwable exp){}
 		}
 		
@@ -139,7 +151,8 @@ public class CommandFlyTo implements CommandExecutor {
 				return true;
 			}
 			
-			target = loc.toVector();
+			target = loc;
+			targetName = destination;
 		}
 		
 		if(target == null){
@@ -147,115 +160,27 @@ public class CommandFlyTo implements CommandExecutor {
 			return true;
 		}
 		
-		LivingEntity entity = DragonAPI.spawnNewEnderdragon(player.getLocation(), false);
-		LimitedED dragon = DragonAPI.getDragonByEntity(entity);
 		
-		entity.setCustomName("§1§3§3§7" + ChatColor.AQUA + "Flug nach " + ChatColor.GREEN + args[0]);
-		entity.setPassenger(player);
-		
-		dragon.getDragonHealthController().setInvincible(true);
-		dragon.setDragonMoveController(new ToSpawnController(player, dragon, target));
-		dragon.setFireballController(new SillyFireballContoller(dragon, dragon.getTargetController()));
-		
-		//player.sendMessage(ChatColor.GREEN + "Flying to target.");
+		final String finalLocationName = targetName;
+		new MeshFinderTask(player.getLocation(), target, true) {
+			@Override
+			public void meshWayFound(List<MeshPoint> points) {
+				LivingEntity entity = DragonAPI.spawnNewEnderdragon(player.getLocation(), false);
+				LimitedED dragon = DragonAPI.getDragonByEntity(entity);
+				dragon.setCollision(false);
+				
+				entity.setCustomName("§1§3§3§7" + ChatColor.AQUA + "Flug nach " + ChatColor.GREEN + finalLocationName);
+				entity.setPassenger(player);
+				
+				dragon.getDragonHealthController().setInvincible(true);
+				dragon.setDragonMoveController(new ToTargetController(player, dragon, points));
+				dragon.setFireballController(new SillyFireballContoller(dragon, dragon.getTargetController()));
+			}
+		}.start();
 		
 		return true;
 	}
 
-	
-	
-	
-	public class ToSpawnController extends DragonMoveController{
-		
-		/**
-		 * The Way to use.
-		 */
-		private List<Vector> way;
-		
-		/**
-		 * The Current Target.
-		 */
-		private Vector currentTarget = null;
-		
-		/**
-		 * The current index.
-		 */
-		private int index = 0;
-		
-		/**
-		 * The Player to use.
-		 */
-		private final Player player;
-		
-		/**
-		 * The will be true when the travel is FINALLY done!
-		 */
-		private boolean done = false;
-		
-		
-		public ToSpawnController(Player player, LimitedED dragon, Vector target) {
-			super(dragon);
-			
-			this.player = player;
-			this.way = plugin.getMeshManager().getWay(dragon.getLocation().toVector().clone(), target.clone());
-			player.sendMessage(ChatColor.GREEN + "Die benötigte Zeit ist etwa " + (way.size() * 3) + " Sekunden.");
-		}
-		
-		
-		@Override
-		public void moveDragon() {
-			//remove dragon when no passenger.
-			if(dragon.getPassenger() == null){
-				if(done) return;
-				
-				if(!player.isValid() || !player.isOnline()){
-					dragon.getBukkitEntity().remove();
-					return;
-				}
-				
-				//YOU SHALL NOT DISMOUNT!
-				dragon.setPassenger(player);
-			}
-			
-			if(currentTarget == null){
-				currentTarget = way.get(index);
-				index++;
-			}
-			
-			if(dragon.getLocation().toVector().distanceSquared(currentTarget) < 4){
-				if(index >= way.size()) {
-					//first remove the passenger from to the destination.
-					Entity passenger = dragon.getPassenger();
-					if(passenger != null){
-						//teleport to the destination.
-						passenger.teleport(
-								new Location(
-										passenger.getWorld(), 
-										currentTarget.getX(), 
-										currentTarget.getY(), 
-										currentTarget.getZ()
-								)
-						);
-					}
-					
-					dragon.remove();
-				}
-				
-				currentTarget = null;
-				return;
-			}
-			
-			Vector vec = currentTarget.clone().subtract(dragon.getLocation().toVector().clone()).normalize();
-			dragon.setLastYaw(dragon.getYaw());
-			dragon.setYaw(calcYawFromVec(vec));
-			
-			//MOVE BITCH! GET OUT OF THE WAY.
-			dragon.setMotion(vec);
-			this.moveToDragonMotion();
-		}
-		
-	}
-	
 	
 	/**
 	 * This will do NO fireballs at all.
@@ -263,7 +188,7 @@ public class CommandFlyTo implements CommandExecutor {
 	 * @author Tobiyas
 	 *
 	 */
-	public class SillyFireballContoller extends FireballController{
+	public static class SillyFireballContoller extends FireballController{
 
 		public SillyFireballContoller(LimitedED dragon, ITargetController targetController) {
 			super(dragon, targetController);
