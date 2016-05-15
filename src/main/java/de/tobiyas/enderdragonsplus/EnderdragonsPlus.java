@@ -45,7 +45,6 @@ import de.tobiyas.enderdragonsplus.listeners.Listener_Sign;
 import de.tobiyas.enderdragonsplus.listeners.Listener_World;
 import de.tobiyas.enderdragonsplus.meshing.MeshManager;
 import de.tobiyas.enderdragonsplus.spawner.DragonSpawnerManager;
-import de.tobiyas.enderdragonsplus.util.Consts;
 import de.tobiyas.util.UtilsUsingPlugin;
 import de.tobiyas.util.metrics.SendMetrics;
 
@@ -118,7 +117,9 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 					|| getRelocationAddition().equalsIgnoreCase("1_8_R1")
 					|| getRelocationAddition().equalsIgnoreCase("1_8_R2")
 					|| getRelocationAddition().equalsIgnoreCase("1_8_R3")
-					|| getRelocationAddition().equalsIgnoreCase("1_9_R1")){
+					|| getRelocationAddition().equalsIgnoreCase("1_9_R1")
+					|| getRelocationAddition().equalsIgnoreCase("1_9_R2")
+					){
 				
 				Field c = entityTypeClass.getDeclaredField("c"); c.setAccessible(true);
 				HashMap c_map = (HashMap) c.get(null);
@@ -163,7 +164,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 			return false;
 	    } catch (NoClassDefFoundError exp) {
 	    	log("Could not inject LimitedEnderDragon. Disabling Plugin.");
-	    	log("You are probably using the wrong Version. Your version: " + Bukkit.getVersion() + " supportet EnderDragonsPlusVersion: " + Consts.SupportetVersion);
+	    	log("The plugin probably does not support your version yet: " + Bukkit.getVersion());
 	    	exp.printStackTrace();
 	    	Bukkit.getPluginManager().disablePlugin(this);
 	    	return false;

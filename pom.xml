@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tobiyas</groupId>
 	<artifactId>EnderdragonsPlus</artifactId>
-	<version>1.11.4</version>
+	<version>1.12.1</version>
 	<name>EnderdragonsPlus</name>
 	<url>http://dev.bukkit.org/server-mods/enderdragonsplus/</url>
 	
@@ -11,7 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<utilsVersion>1.0.14</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
-		<cb.version>1.9-R0.1-SNAPSHOT</cb.version>
+		<cb.version>1.9.4-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
@@ -136,7 +136,16 @@
 		    <artifactId>craftbukkit-8</artifactId>
 		    <version>1.9_R1</version>
    			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/cb/cb-1.9.jar</systemPath>
+			<systemPath>${project.basedir}/libs/cb/cb-1.9.2.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit_v1.9_R2</artifactId>
+		    <version>1.9_R2</version>
+   			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/cb/cb-1.9.4.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
@@ -152,8 +161,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 
@@ -162,7 +171,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.2</version>
+				<version>2.3</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
