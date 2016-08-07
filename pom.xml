@@ -11,7 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<utilsVersion>1.0.14</utilsVersion>
 		<utilsAddition>edp</utilsAddition>
-		<cb.version>1.9.4-R0.1-SNAPSHOT</cb.version>
+		<cb.version>1.10-R0.1-SNAPSHOT</cb.version>
 	</properties>
 
 	<scm>
@@ -146,6 +146,15 @@
 		    <version>1.9_R2</version>
    			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/cb/cb-1.9.4.jar</systemPath>
+			<optional>true</optional>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>craftbukkit_v1.10_R1</artifactId>
+		    <version>1.10_R2</version>
+   			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/cb/cb-1.10.jar</systemPath>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>

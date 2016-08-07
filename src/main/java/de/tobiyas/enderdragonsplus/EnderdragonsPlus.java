@@ -119,6 +119,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 					|| getRelocationAddition().equalsIgnoreCase("1_8_R3")
 					|| getRelocationAddition().equalsIgnoreCase("1_9_R1")
 					|| getRelocationAddition().equalsIgnoreCase("1_9_R2")
+					|| getRelocationAddition().equalsIgnoreCase("1_10_R1")
 					){
 				
 				Field c = entityTypeClass.getDeclaredField("c"); c.setAccessible(true);

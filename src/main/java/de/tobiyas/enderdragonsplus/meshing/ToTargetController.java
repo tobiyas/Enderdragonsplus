@@ -104,6 +104,9 @@ public class ToTargetController extends DragonMoveController {
 			if(index >= way.size()) {
 				//first remove the passenger from to the destination.
 				Entity passenger = dragon.getPassenger();
+				
+				//Next remove dragon!
+				dragon.remove();
 				if(passenger != null){
 					//teleport to the destination.
 					passenger.teleport(
@@ -115,8 +118,6 @@ public class ToTargetController extends DragonMoveController {
 							)
 					);
 				}
-				
-				dragon.remove();
 			}
 			
 			currentTarget = null;
